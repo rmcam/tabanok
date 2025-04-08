@@ -14,6 +14,18 @@ backend/src/features/gamification/
 │   ├── cultural-achievement.entity.ts
 │   ├── user-achievement.entity.ts
 │   ├── mission-template.entity.ts
+│   ├── mission.entity.ts
+│   ├── season.entity.ts
+│   ├── special-event.entity.ts
+│   ├── leaderboard.entity.ts
+│   ├── badge.entity.ts
+│   ├── gamification.entity.ts
+│   ├── mentor.entity.ts
+│   ├── mentor-specialization.entity.ts
+│   ├── mentorship-relation.entity.ts
+│   ├── user-level.entity.ts
+│   ├── user-reward.entity.ts
+│   ├── achievement-progress.entity.ts
 │   └── ...
 ├── controllers/
 ├── dto/
@@ -22,6 +34,17 @@ backend/src/features/gamification/
 ├── services/
 ├── gamification.module.ts
 ```
+
+---
+
+## Configuración y despliegue (abril 2025)
+
+- La conexión a la base de datos se realiza preferentemente mediante la variable de entorno `DATABASE_URL`.
+- En producción (Render, Docker), asegúrate de definir `DATABASE_URL` con la URL completa de PostgreSQL.
+- La configuración de TypeORM es asíncrona y prioriza `DATABASE_URL`, pero puede usar `DB_HOST`, `DB_PORT`, etc., como fallback.
+- Todas las entidades relevantes están incluidas en la configuración para evitar errores de metadatos.
+- Se reemplazó `bcrypt` por `bcryptjs` para evitar problemas con binarios nativos en despliegues.
+- En `main.ts` se asigna `globalThis.crypto` condicionalmente para compatibilidad con Node.js y entornos Docker.
 
 ---
 
