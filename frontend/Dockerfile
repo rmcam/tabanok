@@ -3,19 +3,19 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copiar solo los archivos necesarios para instalar dependencias
-COPY ./frontend/pnpm-lock.yaml ./
-COPY ./frontend/package.json ./
+# Copiar lockfile global y package.json del frontend
+COPY pnpm-lock.yaml ./
+COPY frontend/package.json ./
 
-# Instalar pnpm y dependencias
+# Instalar pnpm y dependencias del frontend
 RUN npm install -g pnpm \
-  && pnpm install --frozen-lockfile
+  && pnpm install --filter frontend --frozen-lockfile
 
-# Copiar el resto del código del frontend
-COPY ./frontend ./
+# Copiar el código fuente del frontend
+COPY frontend ./
 
-# Build de Next.js
-RUN pnpm build
+# Build del frontend
+RUN pnpm --filter frontend build
 
 # Etapa de producción
 FROM node:18-alpine AS runner
@@ -26,13 +26,11 @@ ENV NODE_ENV=production
 
 RUN npm install -g pnpm
 
-# Copiar package.json y pnpm-lock.yaml para instalar solo dependencias de producción
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --filter frontend --frozen-lockfile
 
-# Copiar la build y archivos necesarios
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
