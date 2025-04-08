@@ -9,7 +9,7 @@ COPY frontend/package.json ./
 
 # Instalar pnpm y dependencias del frontend
 RUN npm install -g pnpm \
-  && pnpm install --filter frontend --frozen-lockfile
+  && pnpm install --filter frontend --no-frozen-lockfile
 
 # Copiar el código fuente del frontend
 COPY frontend ./
@@ -29,7 +29,7 @@ RUN npm install -g pnpm
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN pnpm install --prod --filter frontend --frozen-lockfile
+RUN pnpm install --prod --filter frontend --no-frozen-lockfile
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
