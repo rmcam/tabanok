@@ -19,7 +19,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { Button } from "./ui/button"
+import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
