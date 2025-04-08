@@ -14,6 +14,7 @@ COPY backend/src ./src
 COPY backend/tsconfig.json ./tsconfig.json
 COPY backend/tsconfig.build.json ./tsconfig.build.json
 COPY backend/nest-cli.json ./nest-cli.json
+COPY backend/files ./files
 
 RUN pnpm --filter backend build
 
@@ -25,6 +26,7 @@ WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/files ./files
 
 ENV NODE_ENV=production
 
