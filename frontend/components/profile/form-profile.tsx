@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { FormSuccess } from "../form-success";
+import { FormSuccess } from "@/components/ui/form-success";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Switch } from "../ui/switch";
 
