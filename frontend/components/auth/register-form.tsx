@@ -5,10 +5,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { registerAction } from "@/actions/auth-action";
-import { CardWrapper } from "@/components/auth/card-wrapper";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
+import { registerAction } from "../../actions/auth/auth-action";
+import { CardWrapper } from "../auth/card-wrapper";
+import { FormError } from "@/components/ui/form-error";
+import { FormSuccess } from "@/components/ui/form-success";
 import { Button } from "@/components/ui/button";
 import {
   Form,
