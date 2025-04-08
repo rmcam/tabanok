@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { TypeOrmConfigService } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './features/account/account.module';
 import { ActivityModule } from './features/activity/activity.module';
@@ -25,28 +25,7 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) =>
-        ({
-          type: 'postgres',
-          host: configService.get('DB_HOST'),
-          port: +configService.get('DB_PORT'),
-          username: configService.get('DB_USER'),
-          password: configService.get('DB_PASSWORD'),
-          database: configService.get('DB_NAME'),
-          autoLoadEntities: true,
-          synchronize: false, // <-- Cambiado a false para producción
-          logging: configService.get<boolean>('DB_LOGGING', false), // <-- Hecho configurable, default false
-          entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          ssl:
-            configService.get('DB_SSL') === 'true'
-              ? {
-                  rejectUnauthorized: false,
-                }
-              : false,
-          migrations: [__dirname + '/../migrations/*{.ts,.js}'], // Añadir ruta de migraciones
-          migrationsRun: false, // Asegurarse de que no corra migraciones automáticamente al iniciar
-        } as PostgresConnectionOptions),
-      inject: [ConfigService],
+      useClass: TypeOrmConfigService,
     }),
     AuthModule,
     UserModule,

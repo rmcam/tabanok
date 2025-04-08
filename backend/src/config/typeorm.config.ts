@@ -24,6 +24,10 @@ import { Topic } from '../features/topic/entities/topic.entity';
 import { Unity } from '../features/unity/entities/unity.entity';
 import { User } from '../auth/entities/user.entity';
 import { Vocabulary } from '../features/vocabulary/entities/vocabulary.entity';
+import { Leaderboard } from '../features/gamification/entities/leaderboard.entity';
+import { Mission } from '../features/gamification/entities/mission.entity';
+import { Season } from '../features/gamification/entities/season.entity';
+import { SpecialEvent } from '../features/gamification/entities/special-event.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -59,7 +63,11 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                     Mentor,
                     MentorSpecialization,
                     MentorshipRelation,
-                    UserLevel
+                    UserLevel,
+                    Leaderboard,
+                    Mission,
+                    Season,
+                    SpecialEvent
                 ],
                 synchronize: false,
                 logging: false,
@@ -98,7 +106,11 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
                     Mentor,
                     MentorSpecialization,
                     MentorshipRelation,
-                    UserLevel
+                    UserLevel,
+                    Leaderboard,
+                    Mission,
+                    Season,
+                    SpecialEvent
                 ],
                 synchronize: false,
                 logging: false,

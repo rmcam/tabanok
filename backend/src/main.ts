@@ -1,5 +1,7 @@
 import * as crypto from 'crypto';
-(globalThis as any).crypto = crypto;
+if (!globalThis.crypto) {
+  (globalThis as any).crypto = crypto;
+}
 
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
