@@ -121,3 +121,9 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Añadir o ajustar `aria-label`, `aria-labelledby`, `aria-hidden`.
 - Revisar estructura semántica y landmarks.
 - Repetir la prueba hasta cumplir los criterios.
+
+---
+
+## Histórico de funcionalidades eliminadas
+
+- **Chat**: Se eliminó el módulo de chat para simplificar el backend y frontend, ya que no era una funcionalidad prioritaria en la revitalización lingüística ni en la hoja de ruta actual. Si se requiere en el futuro, se planificará e implementará nuevamente con la comunidad.

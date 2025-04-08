@@ -9,6 +9,8 @@ Plataforma para la preservación y enseñanza de la lengua Kamëntsá, pueblo in
 - Módulos para contenido cultural y educativo
 - API RESTful para integración con frontend educativo
 
+
+
 ## Estructura del Proyecto
 
 ```
@@ -167,7 +169,7 @@ git push origin feature/nueva-funcionalidad
 
 ## Hoja de Ruta
 
-Próximos Pasos (Q2 2025): Avanzar en la gestión de contenido cultural, realizar una auditoría de accesibilidad WCAG 2.1 y expandir funcionalidades. La integración del diccionario Kamëntsá está **finalizada y verificada con pruebas unitarias exitosas**.
+Próximos Pasos (Q2 2025): Avanzar en la gestión de contenido cultural, realizar una auditoría de accesibilidad WCAG 2.1 y **expandir la lógica de gamificación**. La integración del diccionario Kamëntsá está **finalizada y verificada con pruebas unitarias exitosas**.
 
 Metas a Mediano Plazo (Q3 2025): Desarrollar nuevas APIs para contenido cultural y mejorar la accesibilidad.
 
@@ -197,8 +199,6 @@ La integración del diccionario Kamëntsá se ha completado con éxito. Se han i
 - Se añadió el trigger `LESSON_COMPLETION` al enum `RewardTrigger`.
 - Se unificaron las entidades `Reward` para evitar incompatibilidades entre módulos.
 - Se ajustaron propiedades opcionales para compatibilidad.
-- Todos los tests unitarios y E2E pasan exitosamente (184 tests en total).
-
 La validación lingüística necesita mejoras.
 
 La accesibilidad del frontend requiere mejoras significativas.
