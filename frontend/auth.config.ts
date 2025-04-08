@@ -54,4 +54,5 @@ export default {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
 } satisfies NextAuthConfig;
