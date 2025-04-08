@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { signIn } from "next-auth/react";
 import { Poppins } from "next/font/google";
 
 const font = Poppins({

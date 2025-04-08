@@ -1,17 +1,19 @@
 # Frontend Tabanok
 
-Aplicación frontend construida con **Next.js 15**, **React 19**, **Tailwind CSS** y **TypeScript**.
+Aplicación frontend construida con **Next.js 14 LTS**, **React 19**, **Tailwind CSS** y **TypeScript**.
 
 ## Estructura del proyecto
 
 ```
 frontend/
-├── app/                     # Rutas Next.js agrupadas
+├── app/                     # Rutas Next.js agrupadas (App Router)
 │   ├── (auth)/              # Rutas públicas de autenticación
-│   ├── (protected)/         # Rutas protegidas para usuarios autenticados
 │   ├── (admin)/             # Rutas administrativas
 │   ├── layout.tsx           # Layout raíz
 │   └── ...                  # Otras páginas y layouts
+│
+├── pages/                   # Páginas tradicionales (Pages Router)
+│   └── protected.tsx        # Página protegida (migrada fuera del App Router)
 │
 ├── components/              # Componentes React reutilizables
 │   ├── ui/                  # Componentes UI genéricos (botones, inputs, modales, formularios)
@@ -45,13 +47,14 @@ frontend/
 
 ## Tecnologías principales
 
-- **Next.js 15** con App Router
+- **Next.js 14 LTS** con App Router y Pages Router combinados
 - **React 19**
 - **Tailwind CSS** para estilos
 - **TypeScript**
 - **NextAuth.js** para autenticación
 - **Zod** para validaciones
 - **React Hook Form** para formularios
+- **ESLint Flat Config** para linting moderno
 
 ## Scripts
 
@@ -71,6 +74,7 @@ Abrir en [http://localhost:3000](http://localhost:3000).
 
 ## Notas
 
-- La estructura está pensada para escalar y mantener separadas las funcionalidades por dominio.
+- La página protegida ahora está en `pages/protected.tsx` para evitar errores de prerender.
+- Se migró ESLint a Flat Config para compatibilidad con ESLint 9+.
 - Los imports usan alias `@/` configurado en `tsconfig.json`.
 - Consultar la carpeta `docs/` para más detalles sobre flujos, arquitectura y pendientes.

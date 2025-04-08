@@ -24,7 +24,7 @@ import React from "react";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = (pathname ?? "").split("/").filter(Boolean);
   console.log(pathname, segments);
   return (
     <SidebarProvider>

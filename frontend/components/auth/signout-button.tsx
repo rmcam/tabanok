@@ -8,7 +8,5 @@ export const SignOutButton = () => {
       callbackUrl: "/sign-in",
     });
   };
-  return <Button onClick={() => signOut()}>Sign Out</Button>;
+  return <Button onClick={handleClick}>Sign Out</Button>;
 };
-
-

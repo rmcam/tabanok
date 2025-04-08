@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { checkTextWithLanguageTool, LanguageToolMatch } from "../lib/language-tool";
+import { checkTextWithLanguageTool, LanguageToolMatch } from "../../lib/language-tool";
 
 interface Props {
   initialText?: string;
@@ -19,7 +19,7 @@ export default function TextValidator({ initialText = "" }: Props) {
     try {
       const res = await checkTextWithLanguageTool(text);
       setMatches(res.matches);
-    } catch (err) {
+    } catch {
       setError("Error al validar el texto");
     } finally {
       setLoading(false);

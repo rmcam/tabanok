@@ -1,36 +1,25 @@
 "use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { type LucideIcon } from "lucide-react"
 
 import {
   Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
-import SettingsPage from "@/app/dashboard/settings/page"
-import ProfilePage from "@/app/dashboard/profiles/page"
-import DashboardPage from "@/app/(protected)/page"
-import NotificationPage from "@/app/dashboard/notifications/page"
+import ProtectedPage from "@/pages/protected"
 import PracticePage from "@/app/dashboard/practice/page"
 import ChallengesPage from "@/app/dashboard/challenges/page"
 import ComunityPage from "@/app/dashboard/comunity/page"
 import ResoursesPage from "@/app/dashboard/resources/page"
+import SettingsPage from "@/app/dashboard/settings/page"
 
 export function NavMain({
   
@@ -65,7 +54,7 @@ export function NavMain({
             </SidebarMenuItem>
           </Collapsible>
         ))}
-          {activeView === "dashboard" && <DashboardPage />}
+          {activeView === "dashboard" && <ProtectedPage />}
           {activeView === "learn" && <SettingsPage />}
           {activeView === "practice" && <PracticePage />}
           {activeView === "challenges" && <ChallengesPage />}

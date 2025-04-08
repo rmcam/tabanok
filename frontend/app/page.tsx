@@ -15,7 +15,6 @@ export default function HomePage() {
         <h1 className="text-6xl font-semibold drop-shadow-sm">Auth</h1>
         <p>A simple authentication service</p>
         <LoginButton
-          mode="modal"
           asChild
         >
           <Button

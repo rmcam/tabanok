@@ -5,13 +5,11 @@ import { Slot } from "@radix-ui/react-slot";
 
 interface LoginButtonProps {
   children: React.ReactNode;
-  mode?: "modal" | "redirect";
   asChild?: boolean;
 }
 
 export const LoginButton = ({
   children,
-  mode = "redirect",
   asChild,
 }: LoginButtonProps) => {
   const router = useRouter();
@@ -32,4 +30,3 @@ export const LoginButton = ({
     
   );
 };
-

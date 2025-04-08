@@ -22,7 +22,6 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { FormSuccess } from "@/components/ui/form-success";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Switch } from "../ui/switch";
 
 export const ProfileForm = () => {
   const [error, setError] = useState<string | undefined>("");

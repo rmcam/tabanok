@@ -9,8 +9,8 @@ interface MissionTemplate {
   frequency: string;
   category?: string;
   tags?: string;
-  conditions?: any;
-  rewards?: any;
+  conditions?: unknown;
+  rewards?: unknown;
   startDate?: string;
   endDate?: string;
   isActive: boolean;
@@ -35,8 +35,12 @@ export default function MissionTemplatesAdmin() {
       if (!res.ok) throw new Error("Error al obtener plantillas");
       const data = await res.json();
       setTemplates(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error desconocido");
+      }
     } finally {
       setLoading(false);
     }
@@ -56,8 +60,12 @@ export default function MissionTemplatesAdmin() {
       if (!res.ok) throw new Error("Error al crear plantilla");
       setNewTemplate({ title: "", description: "", frequency: "diaria", isActive: true });
       fetchTemplates();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("Error desconocido");
+      }
     }
   };
 
@@ -67,8 +75,12 @@ export default function MissionTemplatesAdmin() {
       const res = await fetch(`/api/v1/mission-templates/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Error al eliminar plantilla");
       fetchTemplates();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("Error desconocido");
+      }
     }
   };
 
