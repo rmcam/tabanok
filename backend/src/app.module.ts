@@ -17,6 +17,7 @@ import { TopicModule } from './features/topic/topic.module';
 import { UnityModule } from './features/unity/unity.module';
 import { UserModule } from './features/user/user.module';
 import { VocabularyModule } from './features/vocabulary/vocabulary.module';
+import { RootController } from './root.controller';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { VocabularyModule } from './features/vocabulary/vocabulary.module';
     UnityModule,
     VocabularyModule,
   ],
-  controllers: [LanguageValidationController],
+  controllers: [LanguageValidationController, RootController],
   providers: [KamentsaValidatorService],
 })
 export class AppModule {}
