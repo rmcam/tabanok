@@ -4,7 +4,7 @@ import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { MissionDto } from '../dto/mission.dto';
 import { Badge } from '../entities/badge.entity';
 import { Gamification } from '../entities/gamification.entity';
-import { Mission, MissionFrequency, MissionType } from '../entities/mission.entity';
+import { Mission, MissionEntityFrequency as MissionFrequency, MissionType } from '../entities';
 
 @Injectable()
 export class MissionService {
@@ -195,4 +195,4 @@ export class MissionService {
 
         return missions;
     }
-} 
+}

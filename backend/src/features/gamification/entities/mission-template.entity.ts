@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { MissionType } from './mission.entity';
 
 export enum MissionFrequency {
   DIARIA = 'diaria',
@@ -17,6 +18,9 @@ export class MissionTemplate {
 
   @Column('text')
   description: string;
+
+  @Column({ type: 'enum', enum: MissionType })
+  type: MissionType;
 
   @Column({ type: 'enum', enum: MissionFrequency })
   frequency: MissionFrequency;
@@ -41,6 +45,46 @@ export class MissionTemplate {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column('int', { default: 1 })
+  minLevel: number;
+
+  @Column('int', { default: 0 })
+  maxLevel: number;
+
+  @Column('float', { default: 1 })
+  baseTargetValue: number;
+
+  @Column('float', { default: 1 })
+  baseRewardPoints: number;
+
+  @Column('jsonb', { nullable: true })
+  rewardBadge?: {
+    id: string;
+    name: string;
+    icon: string;
+  };
+
+  @Column('jsonb', { nullable: true })
+  bonusConditions?: {
+    condition: string;
+    multiplier: number;
+    description?: string;
+  }[];
+
+  @Column('jsonb', { nullable: true })
+  requirements?: {
+    minimumStreak?: number;
+    specificAchievements?: string[];
+    previousMissions?: string[];
+  };
+
+  @Column('jsonb', { nullable: true })
+  difficultyScaling?: {
+    level: number;
+    targetMultiplier: number;
+    rewardMultiplier: number;
+  }[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
-import { MissionFrequency, MissionType } from "../features/gamification/entities/mission.entity";
+import { MissionEntityFrequency as MissionFrequency, MissionType } from "../features/gamification/entities";
 
 export class CreateMissionTemplateTable1711676500000 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -136,4 +136,4 @@ export class CreateMissionTemplateTable1711676500000 implements MigrationInterfa
             DROP TYPE IF EXISTS mission_frequency;
         `);
     }
-} 
+}

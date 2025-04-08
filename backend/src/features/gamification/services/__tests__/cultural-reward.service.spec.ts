@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Gamification } from '../../entities/gamification.entity';
-import { MissionFrequency, MissionType } from '../../entities/mission.entity';
+import { MissionEntityFrequency as MissionFrequency, MissionType } from '../../entities';
 import { Season, SeasonType } from '../../entities/season.entity';
 import { CulturalRewardService } from '../cultural-reward.service';
 import { User } from '../../../../auth/entities/user.entity';

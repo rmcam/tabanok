@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Gamification } from '../entities/gamification.entity';
 import { MissionTemplate } from '../entities/mission-template.entity';
-import { Mission, MissionFrequency } from '../entities/mission.entity';
+import { Mission, MissionEntityFrequency as MissionFrequency } from '../entities';
 import { StreakService } from './streak.service';
 
 @Injectable()
@@ -176,4 +176,4 @@ export class DynamicMissionService {
 
         return Math.round(totalBonus);
     }
-} 
+}
