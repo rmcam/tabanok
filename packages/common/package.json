@@ -1,0 +1,9 @@
+{
+  "name": "@tabanok/common",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "types": "index.ts",
+  "private": true,
+  "description": "Tipos, utilidades y constantes compartidas para backend y frontend",
+  "license": "UNLICENSED"
+}

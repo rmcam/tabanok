@@ -1,0 +1,65 @@
+# Dependencias
+node_modules/
+pnpm-lock.yaml
+
+# Salidas de compilación
+dist/
+.next/
+out/
+build/
+
+# Archivos de entorno
+.env
+.env.*
+*.env
+
+# Logs y reportes
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+*.lcov
+
+# Archivos temporales y del sistema
+*.tmp
+*.temp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Archivos de Docker y runtime
+*.pid
+*.seed
+*.pid.lock
+*.sock
+
+# Archivos de bases de datos locales
+*.sqlite
+*.sqlite3
+*.db
+
+# Archivos de configuración de IDE
+.vscode/
+.idea/
+*.iml
+
+# Archivos de pruebas
+test-results/
+junit.xml
+
+# Archivos específicos de monorepo
+backend/dist/
+frontend/.next/
+frontend/out/
+backend/.env
+frontend/.env
+
+# Documentación (NO ignorar si quieres versionarla)
+# /docs
+
+# Otros
+*.orig
+*.rej

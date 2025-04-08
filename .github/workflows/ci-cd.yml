@@ -1,0 +1,43 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Instalar dependencias
+        run: pnpm install
+
+      - name: Ejecutar lint en todos los paquetes
+        run: pnpm -r lint
+
+      - name: Ejecutar tests en todos los paquetes
+        run: pnpm -r test
+
+      - name: Build de todos los paquetes
+        run: pnpm -r build
+
+      # - name: Desplegar a producción
+      #   run: |
+      #     echo "Aquí va el script de despliegue"
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
