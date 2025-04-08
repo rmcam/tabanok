@@ -24,6 +24,9 @@ export class Gamification {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Column('jsonb', { default: [] })
+    culturalAchievements: CulturalAchievement[];
+
     @Column()
     userId: string;
 
