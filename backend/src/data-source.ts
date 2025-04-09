@@ -28,74 +28,75 @@ config();
 
 const configService = new ConfigService();
 
-export const dataSourceOptions: DataSourceOptions = {
-  type: 'postgres',
-  host: configService.get('DB_HOST'),
-  port: configService.get('DB_PORT'),
-  username: configService.get('DB_USER'),
-  password: configService.get('DB_PASSWORD'),
-  database: configService.get('DB_NAME'),
-  entities: [
-    Account,
-    Content,
-    CulturalContent,
-    Exercise,
-    Evaluation,
-    Lesson,
-    Progress,
-    Reward,
-    Topic,
-    Unity,
-    User,
-    Vocabulary,
-    Gamification,
-    Mission,
-    UserReward,
-    UserAchievement,
-    Achievement,
-    CulturalAchievement,
-    Leaderboard,
-    Season,
-    SpecialEvent,
-    Badge,
-  ],
-  migrations: ['src/migrations/*.ts'],
-  synchronize: false,
-  ssl: configService.get('DB_SSL') === 'true',
-  extra: {
-    max: configService.get('DB_MAX_CONNECTIONS', 100),
-    connectionTimeoutMillis: 10000,
-    idleTimeoutMillis: 60000,
-  },
-  cache: {
-    type: 'ioredis',
-    options: {
-      host: configService.get('REDIS_HOST', 'localhost'),
-      port: configService.get('REDIS_PORT', 6379),
-      password: configService.get('REDIS_PASSWORD', ''),
-      db: 0,
+export const dataSourceOptions: DataSourceOptions = (() => {
+  const databaseUrl = configService.get<string>('DATABASE_URL');
+
+  const baseConfig = {
+    type: 'postgres',
+    entities: [
+      Account,
+      Content,
+      CulturalContent,
+      Exercise,
+      Evaluation,
+      Lesson,
+      Progress,
+      Reward,
+      Topic,
+      Unity,
+      User,
+      Vocabulary,
+      Gamification,
+      Mission,
+      UserReward,
+      UserAchievement,
+      Achievement,
+      CulturalAchievement,
+      Leaderboard,
+      Season,
+      SpecialEvent,
+      Badge,
+    ],
+    migrations: ['src/migrations/*.ts'],
+    synchronize: false,
+    logging: configService.get('NODE_ENV') === 'development',
+    logger: 'advanced-console',
+    cache: {
+      type: 'ioredis',
+      options: {
+        host: configService.get('REDIS_HOST', 'localhost'),
+        port: configService.get('REDIS_PORT', 6379),
+        password: configService.get('REDIS_PASSWORD', ''),
+        db: 0,
+      },
+      duration: 60000,
     },
-    duration: 60000,
-  },
-  logging: configService.get('NODE_ENV') === 'development',
-  logger: 'advanced-console',
-  replication: {
-    master: {
+    extra: {
+      max: configService.get('DB_MAX_CONNECTIONS', 100),
+      connectionTimeoutMillis: 10000,
+      idleTimeoutMillis: 60000,
+    },
+  };
+
+  if (databaseUrl) {
+    return {
+      ...baseConfig,
+      url: databaseUrl,
+      database: configService.get('DB_NAME') || '',
+      ssl: configService.get('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+    } as DataSourceOptions;
+  } else {
+    return {
+      ...baseConfig,
       host: configService.get('DB_HOST'),
       port: configService.get('DB_PORT'),
       username: configService.get('DB_USER'),
       password: configService.get('DB_PASSWORD'),
       database: configService.get('DB_NAME'),
-    },
-    slaves: configService.get('DB_SLAVES', []).map(slave => ({
-      host: slave.host,
-      port: slave.port,
-      username: slave.username,
-      password: slave.password,
-      database: slave.database,
-    })),
-  },
-};
+      ssl: configService.get('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+    } as DataSourceOptions;
+  }
+})();
 
 const dataSource = new DataSource(dataSourceOptions);
 export default dataSource;

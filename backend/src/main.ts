@@ -72,8 +72,8 @@ async function bootstrap() {
   SwaggerModule.setup('api/v1/docs', app, document);
 
   // Configurar puerto y host
-  const port = configService.get('PORT', 8000);
-  const host = configService.get('HOST', '0.0.0.0');
+  const port = process.env.PORT || 10000; // Render asigna este puerto por defecto
+  const host = '0.0.0.0'; // Render requiere enlazar en 0.0.0.0
 
   // Iniciar la aplicación
   await app.listen(port, host);

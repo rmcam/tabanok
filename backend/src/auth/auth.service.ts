@@ -47,32 +47,42 @@ export class AuthService {
       }
     }
 
-    // Crear nuevo usuario
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await this.userService.create({
-      ...registerDto,
-      password: hashedPassword,
-      languages: registerDto.languages ?? ['es'],
-      preferences: registerDto.preferences ?? {
-        notifications: true,
-        language: 'es',
-        theme: 'light',
-      },
-    });
+    try {
+      // Crear nuevo usuario
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await this.userService.create({
+        ...registerDto,
+        password: hashedPassword,
+        languages: registerDto.languages ?? ['es'],
+        preferences: registerDto.preferences ?? {
+          notifications: true,
+          language: 'es',
+          theme: 'light',
+        },
+      });
 
-    // Generar token
-    const token = await this.generateToken(user);
+      // Generar token
+      const token = await this.generateToken(user);
 
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
-      ...token,
-    };
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        },
+        ...token,
+      };
+    } catch (error) {
+      if (
+        error?.code === '23505' || // Postgres unique violation
+        error?.message?.includes('duplicate key value')
+      ) {
+        throw new BadRequestException('El correo electrónico ya está registrado');
+      }
+      throw error;
+    }
   }
 
   /**
