@@ -4,7 +4,14 @@ import { signUpSchema } from "@/lib/zod";
 
 import { z } from "zod";
 
-export const registerAction = async (values: z.infer<typeof signUpSchema>) => {
+export const registerAction = async (
+  values: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  }
+): Promise<any> => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`,

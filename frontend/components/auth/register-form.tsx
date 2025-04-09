@@ -44,8 +44,16 @@ export const RegisterForm = () => {
     setSuccess(undefined);
     setIsPending(true); // Activar estado de carga
 
+    const payload = {
+      firstName: values.firstName,
+      lastName: `${values.firstLastName ?? ""} ${values.secondLastName ?? ""}`.trim(),
+      email: values.email,
+      password: values.password,
+      // Puedes agregar languages, preferences, etc. si quieres
+    };
+
     try {
-      const response = await registerAction(values);
+      const response = await registerAction(payload);
       if (response.error) {
         setError(response.error);
       }
