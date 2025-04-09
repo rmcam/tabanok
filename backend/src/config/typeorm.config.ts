@@ -73,7 +73,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         logging: false,
         migrations: ['dist/migrations/*.js'],
         migrationsRun: false,
-        ssl: this.configService.get<string>('DB_SSL') === 'false',
+        ssl: this.configService.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
       };
     } else {
       return {
@@ -116,7 +116,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         logging: false,
         migrations: ['dist/migrations/*.js'],
         migrationsRun: false,
-        ssl: this.configService.get<string>('DB_SSL') === 'true',
+        ssl: this.configService.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
       };
     }
   }
