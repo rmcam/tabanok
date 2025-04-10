@@ -6,10 +6,13 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(private configService: ConfigService) {
+        const jwtSecret = configService.get<string>('JWT_SECRET') || 'supersecreto123';
+        console.log('JWT_SECRET en JwtStrategy:', jwtSecret);
+
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.get<string>('JWT_SECRET'),
+            secretOrKey: jwtSecret,
         });
     }
 
@@ -20,4 +23,4 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             roles: payload.roles,
         };
     }
-} 
+}

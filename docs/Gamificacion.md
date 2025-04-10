@@ -98,6 +98,17 @@ Esto permite que administradores gestionen misiones sin modificar código, facil
 
 ---
 
+## Integración automática de actividades con misiones (octubre 2025)
+
+Se implementó la integración automática entre las actividades del usuario y el progreso de sus misiones.
+
+- Cada vez que un usuario completa una actividad (lección, ejercicio, contribución cultural, etc.), el sistema actualiza automáticamente el progreso de las misiones relacionadas.
+- Esta integración es transparente y no requiere intervención manual ni llamadas adicionales desde el frontend.
+- Al alcanzar el objetivo de una misión, se otorgan automáticamente las recompensas y/o insignias configuradas.
+- Esto permite una experiencia más fluida y motivadora para el usuario, que recibe recompensas inmediatas por sus acciones cotidianas.
+
+---
+
 ## Integración frontend-backend (abril 2025)
 
 - Las rutas usan `/api/v1/gamification/...`.

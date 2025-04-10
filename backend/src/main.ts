@@ -25,17 +25,17 @@ async function bootstrap() {
   });
 
   // Middleware para imprimir el cuerpo crudo recibido
-  app.use((req, res, next) => {
-    console.log('Content-Type recibido:', req.headers['content-type']);
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
-    req.on('end', () => {
-      console.log('Raw body recibido:', data);
-      next();
-    });
-  });
+  // app.use((req, res, next) => {
+  //   console.log('Content-Type recibido:', req.headers['content-type']);
+  //   let data = '';
+  //   req.on('data', chunk => {
+  //     data += chunk;
+  //   });
+  //   req.on('end', () => {
+  //     console.log('Raw body recibido:', data);
+  //     next();
+  //   });
+  // });
 
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');

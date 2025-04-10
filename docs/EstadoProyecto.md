@@ -35,7 +35,7 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Expandir la lógica de gamificación.
 - Activar despliegue automático a producción (el pipeline ya construye y sube imágenes, falta activar paso SSH).
 - Mejorar cobertura de tests en frontend (backend ya tiene alta cobertura).
-- Integrar validación lingüística avanzada en frontend (LanguageTool o Grammarly).
+- ~~Integrar validación lingüística avanzada en frontend (LanguageTool o Grammarly).~~ (completado octubre 2025)
 - Finalizar auditorías manuales y con lectores de pantalla para accesibilidad.
 - Revisar y actualizar dependencias obsoletas o con advertencias.
 - Planificar nuevas funcionalidades y mejoras.
@@ -63,7 +63,7 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Estilos con Tailwind CSS y configuración personalizada.
 - Uso de **shadcn/ui** para componentes accesibles, personalizables y consistentes.
 - Componentes reutilizables para navegación, formularios, sidebar, toggles y más.
-- Integración con LanguageTool para validación lingüística avanzada.
+- Integración avanzada con LanguageTool mediante un hook reutilizable (`useLanguageTool`) para validación lingüística en tiempo real.
 - Accesibilidad en proceso, con componentes accesibles y mejoras pendientes para cumplir WCAG 2.1.
 - Consumo de API backend para diccionario Kamëntsá y otros recursos.
 - Uso de hooks personalizados para gestión de estado y lógica de UI.

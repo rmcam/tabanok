@@ -57,7 +57,7 @@ backend/.env
 frontend/.env
 
 # Documentación (NO ignorar si quieres versionarla)
-# /docs
+/docs
 
 # Otros
 *.orig
