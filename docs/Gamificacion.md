@@ -109,6 +109,23 @@ Esto permite que administradores gestionen misiones sin modificar código, facil
 
 ---
 
+## Panel administrativo de misiones (octubre 2025)
+
+Se implementó un **panel administrativo en el frontend** para gestionar dinámicamente las misiones gamificadas, sin necesidad de modificar código.
+
+**Funcionalidades:**
+
+- Listar todas las misiones existentes.
+- Crear nuevas misiones con título, descripción, frecuencia, categorías, fechas y estado.
+- Editar misiones existentes con los mismos campos.
+- Activar o desactivar misiones.
+- Interfaz accesible y coherente con el resto del sistema.
+- Integración directa con la API REST `/api/v1/gamification/missions`.
+
+Este panel facilita la personalización, escalabilidad y adaptación a eventos o campañas culturales y pedagógicas.
+
+---
+
 ## Estado de la licencia
 
 Actualmente **pendiente de definir**. Se recomienda decidir e incluir una licencia adecuada para el proyecto.
@@ -117,7 +134,6 @@ Actualmente **pendiente de definir**. Se recomienda decidir e incluir una licenc
 
 ## Pendientes futuros
 
-- Crear panel de administración para gestionar plantillas de misiones.
 - Documentar endpoints específicos y flujos de negocio.
 - Revisar redundancias y eliminar campos obsoletos restantes.
 - Definir la licencia del proyecto.

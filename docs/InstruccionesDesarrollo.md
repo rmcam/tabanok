@@ -31,12 +31,17 @@ pnpm install
   ```bash
   pnpm --filter frontend dev
   ```
+  (Acceder en http://localhost:3000)
 
 - **Base de datos, backend y frontend con Docker Compose:**
 
   ```bash
-  docker-compose up -d
+  docker-compose up --build
   ```
+
+  - La base de datos estará accesible en **localhost:5433**
+  - Las credenciales y configuración se encuentran en el archivo `.env`
+  - Para conectarte con pgAdmin, usa **SSL mode: disable** y base de mantenimiento según `.env`
 
 ---
 
@@ -82,29 +87,9 @@ pnpm install
 - Sincronizar con el equipo antes de cambios mayores.
 - Usar el paquete común para tipos y utilidades compartidas.
 
----
-
-## Lineamientos específicos para el frontend
-
-- Priorizar la accesibilidad y cumplir con WCAG 2.1.
-- Realizar auditorías de accesibilidad periódicas y documentar hallazgos.
-- Implementar mejoras continuas en accesibilidad y usabilidad.
-- Gestionar tareas y checklist en la documentación.
-- Documentar cada avance y marcar tareas como completadas.
-- Explorar, modificar y mejorar el código con foco en accesibilidad y estándares.
-
----
-
 ## Objetivos actuales
 
 - Mejorar accesibilidad del frontend.
 - Integrar control ortográfico y gramatical avanzado.
 - Mejorar cobertura de tests.
 - Configurar CI/CD y automatizar despliegues.
-
----
-
-## Ubicaciones de los proyectos originales
-
-- Frontend: `C:\Users\rmcam\Documents\rmcam\full-stack-tabanok\frontend-tabanok`
-- Backend: `C:\Users\rmcam\Documents\rmcam\full-stack-tabanok\backend-tabanok`

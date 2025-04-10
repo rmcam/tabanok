@@ -86,4 +86,12 @@ export class AuthController {
         const { token, newPassword } = resetPasswordDto;
         return this.authService.resetPassword(token, newPassword);
     }
+
+    @Post('refresh')
+    @ApiOperation({ summary: 'Renovar token de acceso' })
+    @ApiResponse({ status: 200, description: 'Tokens renovados exitosamente' })
+    @ApiResponse({ status: 401, description: 'Refresh token inválido o expirado' })
+    async refreshTokens(@Body() body: { refreshToken: string }) {
+        return this.authService.refreshTokens(body.refreshToken);
+    }
 }

@@ -4,93 +4,38 @@
 
 ## Resumen
 
-Este documento describe cómo está implementada la autenticación en el frontend de Tabanok usando **Auth.js v5 beta** (antes NextAuth.js), siguiendo buenas prácticas recomendadas.
+Este documento describe cómo está implementada la autenticación en el frontend de Tabanok usando **React con Vite y TypeScript**, delegando la lógica de autenticación al backend (NestJS).
 
 ---
 
-## Proveedores configurados
+## Autenticación
 
-- **GitHub OAuth**
-- **Credenciales (email y contraseña)**, que delegan en el backend (`/auth/signin`)
-
-Configurados en [`frontend/auth.config.ts`](../frontend/auth.config.ts), con secretos y URLs en variables de entorno:
-
-- `GITHUB_ID`
-- `GITHUB_SECRET`
-- `NEXTAUTH_SECRET`
-- `NEXT_PUBLIC_BACKEND_URL`
-
----
+- El frontend envía las credenciales (email y contraseña) al backend (`/auth/signin` o `/auth/signup`).
+- El backend valida las credenciales y genera un token JWT.
+- El frontend almacena el token JWT (por ejemplo, en localStorage o cookies).
+- Para acceder a rutas protegidas, el frontend envía el token JWT en el header `Authorization`.
+- El backend verifica el token JWT y autoriza el acceso a la ruta.
 
 ## Protección de rutas sensibles
 
-- **No se usan middlewares globales.**
-- Se protege el grupo de rutas `/app/(protected)/` mediante su layout:
-
-```tsx
-// frontend/app/(protected)/layout.tsx
-const session = await getServerSession(authConfig);
-if (!session) redirect("/login");
-```
-
-- Esto asegura que cualquier página dentro de `(protected)/` requiera sesión válida.
-- Las rutas públicas (login, registro, landing) están en `(auth)/` o fuera de `(protected)/`.
-
----
-
-## Redirecciones personalizadas
-
-Configuradas en `auth.config.ts`:
-
-```ts
-pages: {
-  signIn: "/login",
-  signOut: "/logout",
-  error: "/login?error=true",
-  verifyRequest: "/verify-request",
-  newUser: "/welcome",
-}
-```
-
----
-
-## Uso en componentes cliente
-
-- Se usa `useSession()` desde `"next-auth/react"` para condicionar la UI según el estado de sesión.
-- Ejemplo en `NavUser`:
-
-```tsx
-const { data: session } = useSession();
-if (session) {
-  // Mostrar avatar, nombre, opciones
-} else {
-  // Mostrar botón login o UI para invitados
-}
-```
-
----
+- El frontend utiliza un hook para verificar si el usuario está autenticado.
+- Si el usuario no está autenticado, se redirige a la página de login.
+- El backend utiliza guards para proteger las rutas sensibles.
+- Si el usuario no está autenticado o no tiene los permisos necesarios, se deniega el acceso a la ruta.
 
 ## Variables sensibles y secretos
 
 Todos los secretos y URLs sensibles están en variables de entorno, **no en el código fuente**.
 
----
-
 ## Buenas prácticas aplicadas
 
-- Protección de rutas con `getServerSession()` en layouts, no con middlewares.
-- Redirecciones configuradas para flujos claros.
-- Uso de `useSession()` en componentes cliente.
+- Separación de responsabilidades entre frontend y backend.
+- Uso de JWT para autenticación y autorización.
+- Protección de rutas con hooks en el frontend y guards en el backend.
 - Código tipado con TypeScript.
-- Accesibilidad mejorada (landmarks, roles, ARIA).
-- Dependencias revisadas y actualizadas.
-- Documentación clara del flujo auth.
-
----
 
 ## Pendientes y recomendaciones
 
-- Migrar a versión estable de Auth.js v5 cuando esté disponible.
-- Continuar pruebas de accesibilidad con lectores de pantalla.
-- Revisar y mejorar UI para estados sin sesión.
-- Mantener secretos fuera del código fuente.
+- Implementar refresh tokens para mejorar la seguridad.
+- Implementar roles y permisos más granulares.
+- Continuar pruebas de seguridad.

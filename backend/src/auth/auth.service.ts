@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { HttpService } from '@nestjs/axios';
+
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { User, UserStatus } from './entities/user.entity'; // <-- Ruta corregida
@@ -23,8 +25,33 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private readonly userService: UserService, // <-- UserService se mantiene
-    private readonly mailService: MailService // Inyectar MailService
+    private readonly mailService: MailService, // Inyectar MailService
+    private readonly httpService: HttpService
   ) {}
+
+  /**
+   * @description Renueva tokens usando un refresh token válido.
+   * @param refreshToken El refresh token enviado por el cliente.
+   * @returns Nuevos tokens si el refresh token es válido.
+   * @throws {UnauthorizedException} Si el refresh token es inválido o expiró.
+   */
+  async refreshTokens(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET') || this.configService.get<string>('JWT_SECRET'),
+      });
+
+      // Opcional: verificar en base de datos si el refresh token está activo
+
+      const user = await this.userService.findOne(payload.sub);
+
+      const tokens = await this.generateToken(user);
+
+      return tokens;
+    } catch (error) {
+      throw new UnauthorizedException('Refresh token inválido o expirado');
+    }
+  }
 
   /**
    * @description Registra un nuevo usuario en la aplicación.
@@ -33,56 +60,34 @@ export class AuthService {
    * @throws {BadRequestException} Si el correo electrónico ya está registrado.
    */
   async register(registerDto: RegisterDto): Promise<any> {
-    const { email, password } = registerDto;
+    const { email, password, firstName, secondName, firstLastName, secondLastName, languages, preferences, role } = registerDto;
 
-    // Verificar si el usuario ya existe (usando UserService)
-    try {
-      await this.userService.findByEmail(email);
-      // Si encuentra, lanza excepción
+    const existing = await this.userService.findByEmailOptional(email);
+    if (existing) {
       throw new BadRequestException('El correo electrónico ya está registrado');
-    } catch (error) {
-      // Si es NotFoundException, el usuario no existe (continuar)
-      if (!(error instanceof NotFoundException)) {
-        throw error; // Relanzar otros errores
-      }
     }
 
-    try {
-      // Crear nuevo usuario
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await this.userService.create({
-        ...registerDto,
-        password: hashedPassword,
-        languages: registerDto.languages ?? ['es'],
-        preferences: registerDto.preferences ?? {
-          notifications: true,
-          language: 'es',
-          theme: 'light',
-        },
-      });
+    const lastName = `${firstLastName ?? ""} ${secondLastName ?? ""}`.trim();
 
-      // Generar token
-      const token = await this.generateToken(user);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-      return {
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-        },
-        ...token,
-      };
-    } catch (error) {
-      if (
-        error?.code === '23505' || // Postgres unique violation
-        error?.message?.includes('duplicate key value')
-      ) {
-        throw new BadRequestException('El correo electrónico ya está registrado');
-      }
-      throw error;
-    }
+    const user = await this.userService.create({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      languages,
+      preferences,
+      role,
+    });
+
+    const tokens = await this.generateToken(user);
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user,
+    };
   }
 
   /**
@@ -94,43 +99,19 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<any> {
     const { email, password } = loginDto;
 
-    // Buscar usuario (usando UserService)
-    let user: User;
-    try {
-      user = await this.userService.findByEmail(email);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new UnauthorizedException('Credenciales inválidas');
-      }
-      throw error;
-    }
+    const user = await this.userService.findByEmail(email);
 
-    // Verificar contraseña
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // Verificar estado del usuario
-    if (user.status !== UserStatus.ACTIVE) {
-      throw new UnauthorizedException('Tu cuenta no está activa');
-    }
-
-    // Actualizar último login (usando UserService)
-    await this.userService.updateLastLogin(user.id);
-
-    // Generar token
-    const token = await this.generateToken(user);
+    const tokens = await this.generateToken(user);
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
-      ...token,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user,
     };
   }
 

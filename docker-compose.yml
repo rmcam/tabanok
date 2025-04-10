@@ -1,37 +1,37 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:latest
-    container_name: tabanok-db
-    environment:
-      POSTGRES_DB: tabanok
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+    container_name: database
+    env_file:
+      - .env
     ports:
-      - "5436:5432"
+      - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backend/files/sql/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      - ./backend/files/sql/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
     restart: always
 
   backend:
-    image: blackcode13/tabanok:backend-latest
-    container_name: tabanok-backend
-    environment:
-      DATABASE_URL: postgres://postgres:root@postgres:5432/tabanok
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    env_file:
+      - .env
     depends_on:
       - postgres
     ports:
-      - "3001:3000"
+      - '8000:8000'
     restart: always
 
   frontend:
-    image: blackcode13/tabanok:frontend-latest
-    container_name: tabanok-frontend
-    depends_on:
-      - backend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
     ports:
-      - "3000:3000"
+      - '3000:80'
     restart: always
 
 volumes:

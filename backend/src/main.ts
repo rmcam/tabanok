@@ -5,13 +5,13 @@ if (!globalThis.crypto) {
 
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
@@ -22,6 +22,19 @@ async function bootstrap() {
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     },
+  });
+
+  // Middleware para imprimir el cuerpo crudo recibido
+  app.use((req, res, next) => {
+    console.log('Content-Type recibido:', req.headers['content-type']);
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      console.log('Raw body recibido:', data);
+      next();
+    });
   });
 
   const configService = app.get(ConfigService);
@@ -66,18 +79,19 @@ async function bootstrap() {
     .addTag('user-notifications', 'Gestión de notificaciones')
     .build();
   const httpAdapterHost = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/v1/docs', app, document);
 
   // Configurar puerto y host
-  const port = process.env.PORT || 10000; // Render asigna este puerto por defecto
+  const port = process.env.PORT || 8000; // Puerto por defecto para local y Docker
   const host = '0.0.0.0'; // Render requiere enlazar en 0.0.0.0
 
   // Iniciar la aplicación
   await app.listen(port, host);
-  logger.log(`Application is running on: http://${host}:${port}/api/v1/docs`);
+  logger.log(`API documentation available at: http://localhost:${port}/api/v1/docs`);
+  logger.log(`Backend running at: http://localhost:${port}`);
 
   // Manejar señales de terminación
   process.on('SIGTERM', async () => {
@@ -93,7 +107,7 @@ async function bootstrap() {
   });
 }
 
-bootstrap().catch(err => {
+bootstrap().catch((err) => {
   console.error('Error during bootstrap:', err);
   process.exit(1);
 });

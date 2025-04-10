@@ -7,7 +7,7 @@
 ```
 /
 ├── backend/          # API REST con NestJS, conexión a base de datos, lógica de negocio
-├── frontend/         # Aplicación Next.js, UI, autenticación, consumo API
+├── frontend/         # Aplicación React + Vite, UI, autenticación, consumo API
 ├── packages/common/  # Tipos y utilidades compartidas
 ├── docs/             # Documentación centralizada
 ├── package.json      # Dependencias y scripts comunes
@@ -31,12 +31,12 @@
 
 ## Tecnologías principales
 
-- **Backend:** NestJS, TypeORM, PostgreSQL, JWT, Docker
-- **Frontend:** Next.js, React, TailwindCSS, NextAuth.js, i18next
-- **Monorepo:** pnpm workspaces, lockfile único
+- **Backend:** NestJS, TypeORM, PostgreSQL (en Docker, puerto 5433, configuración personalizada), JWT, Docker
+- **Frontend:** React + Vite, TailwindCSS, Auth.js, react-i18next
+- **Monorepo:** pnpm workspaces, lockfile único, variables centralizadas en `.env`
 - **Testing:** Jest, Testing Library
 - **Linting/Formateo:** ESLint, Prettier unificados
-- **Internacionalización:** next-i18next
+- **Internacionalización:** react-i18next
 - **Validación:** Zod, LanguageTool (propuesta)
 
 ---

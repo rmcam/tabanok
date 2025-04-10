@@ -1,0 +1,31 @@
+# Ignorar dependencias instaladas
+**/node_modules
+node_modules
+
+# Ignorar salidas de compilación
+**/dist
+dist
+**/.next
+.next
+
+# Ignorar archivos temporales
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Ignorar control de versiones
+.git
+.gitignore
+
+# Ignorar Dockerfiles y compose (no necesarios dentro del contexto)
+docker-compose.yml
+Dockerfile
+
+# Ignorar archivos de entorno sensibles
+.env
+.env.*
+
+# Ignorar caches
+package-lock.json
+yarn.lock

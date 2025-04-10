@@ -6,7 +6,7 @@
 
 - Monorepo optimizado con pnpm workspaces y lockfile único.
 - Backend funcional con NestJS, conectado a PostgreSQL.
-- Frontend funcional con Next.js, autenticación y consumo de API.
+- Frontend funcional con React + Vite, autenticación y consumo de API.
 - Dependencias y configuración centralizadas.
 - Paquete común creado para tipos y utilidades compartidas.
 - Docker Compose unificado para base de datos, backend y frontend.
@@ -56,11 +56,10 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 
 ## Estado del Frontend
 
-- Aplicación Next.js 15 con App Router (`app/`), estructura modular.
-- Rutas públicas agrupadas en `(auth)/` (login, registro, etc.).
-- Rutas protegidas agrupadas en `(protected)/`, protegidas mediante un único layout que usa `getServerSession()` de Auth.js v5 beta.
-- Autenticación implementada con Auth.js v5 beta, sin middlewares personalizados.
-- Internacionalización configurada con `next-i18next`, soporte multilenguaje.
+- Aplicación React + Vite con estructura modular.
+- Rutas públicas y privadas gestionadas con React Router.
+- Autenticación implementada con Auth.js v5 beta.
+- Internacionalización configurada con `react-i18next`, soporte multilenguaje.
 - Estilos con Tailwind CSS y configuración personalizada.
 - Uso de **shadcn/ui** para componentes accesibles, personalizables y consistentes.
 - Componentes reutilizables para navegación, formularios, sidebar, toggles y más.

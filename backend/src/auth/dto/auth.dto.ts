@@ -15,15 +15,25 @@ export class LoginDto {
 }
 
 export class RegisterDto {
-    @ApiProperty({ description: 'Nombre del usuario' })
+    @ApiProperty({ description: 'Primer Nombre del usuario' })
     @IsString({ message: 'El nombre debe ser una cadena de texto.' })
     @IsNotEmpty({ message: 'El nombre no debe estar vacío.' })
     firstName: string;
 
-    @ApiProperty({ description: 'Apellido del usuario' })
+    @ApiProperty({ description: 'Segundo Nombre del usuario', required: false })
+    @IsString({ message: 'El nombre debe ser una cadena de texto.' })
+    @IsOptional()
+    secondName?: string;
+
+    @ApiProperty({ description: 'Primer Apellido del usuario' })
     @IsString({ message: 'El apellido debe ser una cadena de texto.' })
     @IsNotEmpty({ message: 'El apellido no debe estar vacío.' })
-    lastName: string;
+    firstLastName: string;
+
+    @ApiProperty({ description: 'Segundo Apellido del usuario', required: false })
+    @IsString({ message: 'El apellido debe ser una cadena de texto.' })
+    @IsOptional()
+    secondLastName?: string;
 
     @ApiProperty({ description: 'Correo electrónico del usuario' })
     @IsEmail({}, { message: 'El correo electrónico debe ser válido.' })

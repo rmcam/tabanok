@@ -19,11 +19,11 @@ Cumplir con las pautas **WCAG 2.1** para garantizar una experiencia inclusiva y 
 ## Hallazgos preliminares
 
 - [ ] Algunos botones carecen de etiquetas ARIA contextuales (`aria-label`, `aria-disabled`).
-- [ ] Inputs sin asociación explícita con `<label>` o `aria-labelledby`.
+- [x] Inputs sin asociación explícita con `<label>` o `aria-labelledby` (corregido en formulario de búsqueda).
 - [ ] Contraste de color a revisar en estados hover y focus.
 - [ ] Falta de descripciones accesibles para iconos y elementos visuales.
 - [ ] Navegación por teclado funcional, pero mejorable en menús y diálogos.
-- [ ] Formularios sin mensajes de error accesibles (`aria-invalid`, `aria-describedby`).
+- [x] Formularios sin mensajes de error accesibles (`aria-invalid`, `aria-describedby`) (corregido en formulario de búsqueda con `role="status"`).
 
 ---
 
@@ -45,8 +45,8 @@ Cumplir con las pautas **WCAG 2.1** para garantizar una experiencia inclusiva y 
 |-----------------------------------|--------------|-------------------------------------------|
 | Contraste suficiente              | Parcial      | Revisar colores secundarios y hover       |
 | Navegación por teclado            | Parcial      | Mejorar en menús y formularios            |
-| Etiquetas y roles ARIA            | Parcial      | Añadir en botones, inputs, iconos         |
-| Mensajes de error accesibles      | Parcial      | Integrar con validación y ARIA            |
+| Etiquetas y roles ARIA            | Parcial      | Añadir en botones, inputs, iconos (mejorado en formulario de búsqueda) |
+| Mensajes de error accesibles      | Parcial      | Integrar con validación y ARIA (mejorado en formulario de búsqueda)    |
 | Lectura por lectores de pantalla  | Parcial      | Añadir descripciones y roles              |
 
 ---
@@ -61,4 +61,4 @@ Cumplir con las pautas **WCAG 2.1** para garantizar una experiencia inclusiva y 
 
 ## Última actualización
 
-Abril 2025
+Octubre 2025

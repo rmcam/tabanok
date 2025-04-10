@@ -20,7 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "ts-node src/database/seeders/seed.ts",
-    "seed:content": "ts-node src/seed.ts",
+    "seed:content": "ts-node src/database/seeders/seed.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:generate": "pnpm run typeorm -- migration:generate -d src/data-source.ts",
     "migration:run": "pnpm run typeorm -- migration:run -d src/data-source.ts",
@@ -28,6 +28,7 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
+    "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.0.13",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.13",
@@ -65,7 +66,6 @@
     "@nestjs/cli": "^11.0.6",
     "@nestjs/schematics": "^11.0.3",
     "@nestjs/testing": "^11.0.13",
-    "@nestjs/typeorm": "^10.0.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.14.0",
     "prettier": "^3.5.3",
