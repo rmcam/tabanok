@@ -122,6 +122,29 @@ Revisa la carpeta `docs/` para:
 
 ---
 
+## 🚀 Despliegue en Render.com
+
+### Configuración recomendada para monorepo
+
+- **Root Directory:** `.`
+- **Docker Build Context Directory:** `.`
+- **Dockerfile Path:** `backend/Dockerfile`
+- **Docker Command:** *(vacío, usa el del Dockerfile)*
+- **Secret Files:** sube tu `.env` si quieres
+- **Health Check Path:** `/api/v1/health` (o el que uses)
+- **Auto-Deploy:** activado
+
+Render usará todo el monorepo como contexto, permitiendo que el Dockerfile copie cualquier archivo necesario.
+
+### Migraciones automáticas
+
+El backend está configurado para ejecutar automáticamente las migraciones de la base de datos al iniciar, sin necesidad de comandos manuales ni pasos de pago.
+
+### Variables de entorno
+
+Puedes subir un archivo `.env` como Secret File o configurar variables manualmente en Render.
+
+
 ## 📝 Licencia
 
 [Pendiente]

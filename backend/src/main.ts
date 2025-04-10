@@ -88,6 +88,15 @@ async function bootstrap() {
   const port = process.env.PORT || 8000; // Puerto por defecto para local y Docker
   const host = '0.0.0.0'; // Render requiere enlazar en 0.0.0.0
 
+  // Ejecutar migraciones automáticas
+  try {
+    const dataSource = app.get(require('typeorm').DataSource);
+    await dataSource.runMigrations();
+    console.log('Migraciones aplicadas correctamente');
+  } catch (error) {
+    console.error('Error aplicando migraciones:', error);
+  }
+
   // Iniciar la aplicación
   await app.listen(port, host);
   logger.log(`API documentation available at: http://localhost:${port}/api/v1/docs`);
