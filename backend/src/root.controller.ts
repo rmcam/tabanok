@@ -3,7 +3,7 @@ import { Controller, Get } from '@nestjs/common';
 @Controller()
 export class RootController {
   @Get()
-  healthCheck() {
-    return { status: 'ok' };
+  health() {
+    return { status: 'ok', message: 'Tabanok API' };
   }
 }
