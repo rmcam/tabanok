@@ -25,14 +25,10 @@ config();
 
 const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  username: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'root',
-  database: process.env.DB_NAME || 'tabanok',
+  url: process.env.DATABASE_URL,
   entities: [Activity, Topic, Unity, Lesson, Exercise, Progress, User, Account, UserReward, UserAchievement, Achievement, Leaderboard, Reward, Vocabulary],
   synchronize: true,
-  ssl: process.env.DB_SSL === 'true',
+  ssl: process.env.DB_SSL === 'true' || process.env.DATABASE_URL?.includes('render.com'),
 });
 
 AppDataSource.initialize()
