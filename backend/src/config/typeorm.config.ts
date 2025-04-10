@@ -34,7 +34,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    const databaseUrl = this.configService.get<string>('DB_URL');
+    const databaseUrl = this.configService.get<string>('DATABASE_URL');
 
     if (databaseUrl) {
       return {
