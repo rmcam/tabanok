@@ -43,7 +43,6 @@ function App() {
 
     setIsLoading(false);
   }, [setIsAuthenticated, logout]);
-
   const handleLogout = () => {
     logout();
   };
@@ -54,7 +53,11 @@ function App() {
 
   return (
     <BrowserRouter>
-      <nav className="p-4 flex gap-4 bg-gray-100 mb-4">
+      <nav
+        className="p-4 flex gap-4 bg-gray-100 mb-4"
+        role="navigation"
+        aria-label="Menú principal"
+      >
         <Link to="/" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Inicio</Link>
         <Link to="/categories" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Categorías</Link>
         <Link to="/variations" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Variaciones</Link>
@@ -69,17 +72,19 @@ function App() {
           </Button>
         )}
       </nav>
-      <Routes>
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-        <Route path="/" element={<PrivateRoute><SearchView /></PrivateRoute>} />
-        <Route path="/entry/:id" element={<EntryDetailWrapper />} />
-        <Route path="/categories" element={<PrivateRoute requiredRole="admin"><CategoriesList /></PrivateRoute>} />
-        <Route path="/variations" element={<VariationsList />} />
-        <Route path="/gamification" element={<GamificationStats userId="123" />} />
-      </Routes>
+      <main role="main" aria-label="Contenido principal" tabIndex={-1}>
+        <Routes>
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/" element={<PrivateRoute><SearchView /></PrivateRoute>} />
+          <Route path="/entry/:id" element={<EntryDetailWrapper />} />
+          <Route path="/categories" element={<PrivateRoute requiredRole="admin"><CategoriesList /></PrivateRoute>} />
+          <Route path="/variations" element={<VariationsList />} />
+          <Route path="/gamification" element={<GamificationStats userId="123" />} />
+        </Routes>
+      </main>
     </BrowserRouter>
   );
 }
