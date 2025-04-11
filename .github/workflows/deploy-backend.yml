@@ -42,15 +42,19 @@ jobs:
       - name: Push frontend image to Docker Hub
         run: docker push blackcode13/tabanok:frontend-latest
 
-      # Opcional: SSH al servidor y reiniciar contenedor
-      # - name: Deploy to server
-      #   uses: appleboy/ssh-action@v0.1.10
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USER }}
-      #     key: ${{ secrets.SERVER_SSH_KEY }}
-      #     script: |
-      #       docker pull your-dockerhub-username/tabanok-backend:latest
-      #       docker stop tabanok-backend || true
-      #       docker rm tabanok-backend || true
-      #       docker run -d --name tabanok-backend -p 3001:3000 your-dockerhub-username/tabanok-backend:latest
+      # Despliegue automático por SSH al servidor y reinicio de contenedores
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull blackcode13/tabanok:backend-latest
+            docker pull blackcode13/tabanok:frontend-latest
+            docker stop tabanok-backend || true
+            docker rm tabanok-backend || true
+            docker stop tabanok-frontend || true
+            docker rm tabanok-frontend || true
+            docker run -d --name tabanok-backend -p 3001:3000 blackcode13/tabanok:backend-latest
+            docker run -d --name tabanok-frontend -p 3000:80 blackcode13/tabanok:frontend-latest
