@@ -12,6 +12,8 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import favicon from 'serve-favicon';
+import { join } from 'path';
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
@@ -49,6 +51,8 @@ async function bootstrap() {
       max: configService.get('RATE_LIMIT_MAX', 100), // límite por IP
     }) as any,
   );
+
+  app.use(favicon(join(__dirname, '..', 'public', 'favicon.ico')));
 
   // Configurar validación global
   app.useGlobalPipes(

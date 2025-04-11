@@ -1,7 +1,7 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect } from 'react';
-import { useEntry } from '../hooks/useEntry';
 import { useRequireAuth } from '../../auth/hooks/useRequireAuth';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../../../components/ui/card';
+import { useEntry } from '../hooks/useEntry';
 
 interface EntryDetailProps {
   entryId: string;
@@ -13,7 +13,7 @@ export function EntryDetail({ entryId }: EntryDetailProps) {
 
   useEffect(() => {
     fetchEntry(entryId);
-  }, [entryId]);
+  }, [entryId, fetchEntry]);
 
   if (loading) return <p>Cargando entrada...</p>;
   if (error) return <p className="text-red-500">{error}</p>;

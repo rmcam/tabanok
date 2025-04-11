@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Button } from '../../../../components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '../../../../src/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { useNavigate } from 'react-router-dom';
 
 export function LoginForm() {
   const { login } = useAuth();
@@ -9,13 +10,17 @@ export function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      await login(email, password);
+      const response = await login(email, password);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('token', response.accessToken);
+      navigate('/dashboard');
     } catch (err) {
       console.error(err);
       setError('Credenciales incorrectas');
@@ -41,6 +46,7 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full border px-2 py-1 rounded"
           required
+          autoComplete="username"
         />
       </div>
       <div>
@@ -50,7 +56,8 @@ export function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full border px-2 py-1 rounded"
-        required
+          required
+          autoComplete="current-password"
         />
       </div>
       <Button

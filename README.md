@@ -140,6 +140,14 @@ Render usará todo el monorepo como contexto, permitiendo que el Dockerfile copi
 
 El backend está configurado para ejecutar automáticamente las migraciones de la base de datos al iniciar, sin necesidad de comandos manuales ni pasos de pago.
 
+### Solución al error de conexión a la base de datos
+
+Se ha resuelto un error de conexión a la base de datos en el backend. El error "client password must be a string" se solucionó extrayendo la contraseña de la `DATABASE_URL` y pasándola como una opción separada a TypeORM.
+
+### Adición del middleware `serve-favicon`
+
+Se ha agregado el middleware `serve-favicon` al backend para servir el archivo `favicon.ico`. Se ha creado el directorio `public` y se ha agregado un archivo `favicon.ico` por defecto a este directorio.
+
 ### Variables de entorno
 
 Puedes subir un archivo `.env` como Secret File o configurar variables manualmente en Render.

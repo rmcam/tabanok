@@ -35,10 +35,16 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     const databaseUrl = this.configService.get<string>('DATABASE_URL');
+    const url = new URL(databaseUrl);
+    const password = url.password;
 
     return {
       type: 'postgres',
-      url: databaseUrl,
+      host: url.hostname,
+      port: parseInt(url.port, 10),
+      username: url.username,
+      password: String(password),
+      database: url.pathname.slice(1),
       entities: [
         Account,
         Content,
@@ -69,7 +75,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         SpecialEvent,
       ],
       synchronize: false,
-      logging: false,
+      logging: true,
       migrations: ['dist/migrations/*.js'],
       migrationsRun: false,
       ssl: this.configService.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,

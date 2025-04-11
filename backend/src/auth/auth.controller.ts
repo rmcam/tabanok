@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Request, UseGuards, Headers } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { ChangePasswordDto, LoginDto, RegisterDto, RequestPasswordResetDto, ResetPasswordDto, UpdateProfileDto } from './dto/auth.dto';
@@ -40,6 +40,17 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     async getProfile(@Request() req) {
         return req.user;
+    }
+
+    @Get('validate')
+    @ApiOperation({ summary: 'Validar token', description: 'Valida un token de acceso JWT' })
+    async validateToken(@Headers('Authorization') authorization: string) {
+        const token = authorization?.split(' ')[1];
+        if (!token) {
+            return { isValid: false };
+        }
+        const payload = await this.authService.validateToken(token);
+        return { isValid: !!payload };
     }
 
     @Put('profile')

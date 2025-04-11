@@ -1,4 +1,4 @@
-# Estado Actual del Proyecto Tabanok
+"# Estado Actual del Proyecto Tabanok
 
 ---
 
@@ -20,6 +20,9 @@
 - Accesibilidad mejorada: navegación completa por teclado implementada, foco visible asegurado, orden lógico verificado.  
 - **Cumple WCAG 2.1 en navegación, menús y menús desplegables (ARIA labels, landmarks, foco).**  
 - Gamificación parcialmente implementada.
+- **Rutas protegidas y autenticación robusta:** El componente `PrivateRoute` ahora implementa correctamente la protección de rutas, solo permitiendo acceso a usuarios autenticados y con el rol adecuado. El flujo de autenticación y autorización es consistente y seguro.
+- **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas.
+- **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend.
 
 ---
 
@@ -37,28 +40,37 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Mejorar cobertura de tests en frontend (backend ya tiene alta cobertura).
 - ~~Integrar validación lingüística avanzada en frontend (LanguageTool o Grammarly).~~ (completado octubre 2025)
 - Finalizar auditorías manuales y con lectores de pantalla para accesibilidad.
-- Revisar y actualizar dependencias obsoletas o con advertencias.
+- ~~Revisar y actualizar dependencias obsoletas o con advertencias.~~ (completado noviembre 2025)
 - Planificar nuevas funcionalidades y mejoras.
+- Servir el archivo `favicon.ico` desde el backend.
+- **Documentar y testear flujos de error y protección de rutas.**
+- **Agregar pruebas automáticas para rutas privadas y manejo de tokens expirados.**
+- **Revisar y documentar la integración de hooks personalizados (`useUnits`, `useAuth`).**
 
 ---
 
 ## Próximos pasos recomendados
 
-1. Expandir la lógica de gamificación.
-2. Integrar validación lingüística avanzada en frontend.
-3. Mejorar cobertura de tests en frontend.
-4. Activar despliegue automático a producción.
-5. Finalizar auditorías manuales de accesibilidad.
-6. Revisar dependencias y actualizar.
-7. Planificar nuevas funcionalidades y mejoras.
+1. Expandir la lógica de gamificación y testear flujos de usuario.
+2. Mejorar cobertura de tests en frontend, especialmente en rutas protegidas y hooks personalizados.
+3. Activar despliegue automático a producción.
+4. Finalizar auditorías manuales de accesibilidad.
+5. Documentar y testear exhaustivamente la protección de rutas y el manejo de autenticación.
+6. Planificar nuevas funcionalidades y mejoras (panel docente, panel estudiante, integración multimedia).
+7. Servir el archivo `favicon.ico` desde el backend.
+8. Mantener la documentación y la hoja de ruta actualizadas tras cada cambio relevante.
 
 ---
 
 ## Estado del Frontend
 
 - Aplicación React + Vite con estructura modular.
-- Rutas públicas y privadas gestionadas con React Router.
-- Autenticación implementada con Auth.js v5 beta.
+- Rutas públicas y privadas gestionadas con React Router y el componente `PrivateRoute` (actualizado).
+- Autenticación y manejo de roles implementados completamente.
+- La información del usuario, el token de autenticación y los roles se guardan en el almacenamiento local.
+- El componente `PrivateRoute` verifica si el usuario está autenticado y si tiene el rol necesario para acceder a la ruta, devolviendo solo los hijos autorizados.
+- Se ha agregado una ruta para la página "unauthorized".
+- El componente `App` verifica si el usuario está autenticado al cargar la aplicación.
 - Internacionalización configurada con `react-i18next`, soporte multilenguaje.
 - Estilos con Tailwind CSS y configuración personalizada.
 - Uso de **shadcn/ui** para componentes accesibles, personalizables y consistentes.
@@ -66,7 +78,7 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Integración avanzada con LanguageTool mediante un hook reutilizable (`useLanguageTool`) para validación lingüística en tiempo real.
 - Accesibilidad en proceso, con componentes accesibles y mejoras pendientes para cumplir WCAG 2.1.
 - Consumo de API backend para diccionario Kamëntsá y otros recursos.
-- Uso de hooks personalizados para gestión de estado y lógica de UI.
+- Uso de hooks personalizados para gestión de estado y lógica de UI (`useUnits`, `useAuth`).
 - Prisma utilizado para tipado y posible integración directa.
 - Arquitectura preparada para escalabilidad y nuevas funcionalidades.
 

@@ -1,6 +1,6 @@
 import { useCategories } from '../hooks/useCategories';
 import { useRequireAuth } from '../../auth/hooks/useRequireAuth';
-import { Button } from '../../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 
 export function CategoriesList() {
   useRequireAuth();

@@ -178,6 +178,22 @@ export class AuthService {
   }
 
   /**
+   * @description Valida un token de acceso JWT.
+   * @param token El token de acceso a validar.
+   * @returns El payload del token si es válido, o null si no lo es.
+   */
+  async validateToken(token: string): Promise<any> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      });
+      return payload;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
    * @description Restablece la contraseña de un usuario.
    * @param token Token de restablecimiento de contraseña.
    * @param newPassword Nueva contraseña.
