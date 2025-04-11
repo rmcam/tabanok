@@ -11,15 +11,26 @@ interface Achievement {
   points: number;
 }
 
+interface Reward {
+  rewardId: string;
+  status: string;
+  metadata?: Record<string, unknown>;
+  consumedAt?: string;
+  expiresAt?: string;
+  dateAwarded?: string;
+  createdAt?: string;
+}
+
 interface GamificationStats {
   points: number;
   level: number;
-  achievements: Achievement[]; // Agrega la propiedad achievements
-  // Agrega aquí otras propiedades de las estadísticas
+  achievements: Achievement[];
+  // Puedes agregar aquí otras propiedades de las estadísticas
 }
 
 const GamificationStats: React.FC<GamificationStatsProps> = ({ userId }) => {
   const [stats, setStats] = useState<GamificationStats | null>(null);
+  const [rewards, setRewards] = useState<Reward[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,7 +38,7 @@ const GamificationStats: React.FC<GamificationStatsProps> = ({ userId }) => {
       try {
         const response = await fetch(`/api/v1/gamification/stats/${userId}`);
         if (!response.ok) {
-          throw new Error('Error fetching stats: ${response.status}');
+          throw new Error(`Error fetching stats: ${response.status}`);
         }
         const data: GamificationStats = await response.json();
         setStats(data);
@@ -36,7 +47,21 @@ const GamificationStats: React.FC<GamificationStatsProps> = ({ userId }) => {
       }
     };
 
+    const fetchRewards = async () => {
+      try {
+        const response = await fetch(`/api/v1/gamification/rewards/user/${userId}`);
+        if (!response.ok) {
+          throw new Error(`Error fetching rewards: ${response.status}`);
+        }
+        const data: Reward[] = await response.json();
+        setRewards(data);
+      } catch (error: unknown) {
+        setError((error as Error).message);
+      }
+    };
+
     fetchStats();
+    fetchRewards();
   }, [userId]);
 
   if (error) {
@@ -58,7 +83,25 @@ const GamificationStats: React.FC<GamificationStatsProps> = ({ userId }) => {
           <li key={achievement.id}>{achievement.name}</li>
         ))}
       </ul>
-      {/* Muestra aquí otras propiedades de las estadísticas */}
+      <h3>Recompensas obtenidas:</h3>
+      <ul>
+        {rewards.length === 0 && <li>No hay recompensas aún.</li>}
+        {rewards.map((reward) => (
+          <li key={reward.rewardId}>
+            ID: {reward.rewardId} | Estado: {reward.status}
+            {reward.dateAwarded && (
+              <> | Otorgada: {new Date(reward.dateAwarded).toLocaleDateString()}</>
+            )}
+            {reward.consumedAt && (
+              <> | Consumida: {new Date(reward.consumedAt).toLocaleDateString()}</>
+            )}
+            {reward.expiresAt && (
+              <> | Expira: {new Date(reward.expiresAt).toLocaleDateString()}</>
+            )}
+          </li>
+        ))}
+      </ul>
+      {/* Próximamente: misiones activas, racha, ranking, badges */}
     </div>
   );
 };
