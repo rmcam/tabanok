@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth, User } from '../features/auth/hooks/useAuth';
+import { useAuth } from '../features/auth/useAuth';
+import type { AuthUser } from '../features/auth/AuthContext';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -7,15 +8,17 @@ interface PrivateRouteProps {
 }
 
 function PrivateRoute({ children, requiredRole }: PrivateRouteProps) {
-  const { isAuthenticated } = useAuth();
-  const user = localStorage.getItem('user');
-  const parsedUser: User = user ? JSON.parse(user) : null;
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  if (requiredRole && parsedUser?.role !== requiredRole) {
+  if (requiredRole && !user?.roles?.includes(requiredRole)) {
     return <Navigate to="/unauthorized" />;
   }
 

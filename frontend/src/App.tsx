@@ -1,48 +1,20 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import LoginForm from './features/auth/components/LoginForm';
+import LoginForm from './features/auth/LoginForm';
 import SearchView from './features/dictionary/components/SearchView';
 import EntryDetail from './features/dictionary/components/EntryDetail';
 import CategoriesList from './features/dictionary/components/CategoriesList';
 import VariationsList from './features/dictionary/components/VariationsList';
-import RegisterForm from './features/auth/RegisterForm';
+import SignupForm from './features/auth/SignupForm';
 import PrivateRoute from './components/PrivateRoute';
 import GamificationStats from './components/GamificationStats';
-import { useAuth } from './features/auth/hooks/useAuth';
-import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button";
+import { useAuth } from './features/auth/useAuth';
+import { useState } from 'react';
+import { Button } from './components/ui/button';
 import Dashboard from './components/Dashboard';
-import api from './lib/api';
 
 function App() {
-  const { logout, isAuthenticated, setIsAuthenticated } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-
-    if (token && user) {
-      api.get('/auth/validate', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (!response.data.isValid) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setIsAuthenticated(false);
-          }
-        })
-        .catch(() => {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setIsAuthenticated(false);
-        });
-    }
-
-    setIsLoading(false);
-  }, [setIsAuthenticated, logout]);
+  const { logout, isAuthenticated } = useAuth();
+  const [isLoading] = useState(false);
   const handleLogout = () => {
     logout();
   };
@@ -64,7 +36,7 @@ function App() {
         {!isAuthenticated ? (
           <>
             <Link to="/login" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Login</Link>
-            <Link to="/register" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Registrarse</Link>
+            <Link to="/signup" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Registrarse</Link>
           </>
         ) : (
           <Button onClick={handleLogout} variant="outline" size="sm">
@@ -75,14 +47,14 @@ function App() {
       <main role="main" aria-label="Contenido principal" tabIndex={-1}>
         <Routes>
           <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/signup" element={<SignupForm />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/" element={<PrivateRoute><SearchView /></PrivateRoute>} />
-          <Route path="/entry/:id" element={<EntryDetailWrapper />} />
+<Route path="/entry/:id" element={<PrivateRoute><EntryDetailWrapper /></PrivateRoute>} />
           <Route path="/categories" element={<PrivateRoute requiredRole="admin"><CategoriesList /></PrivateRoute>} />
-          <Route path="/variations" element={<VariationsList />} />
-          <Route path="/gamification" element={<GamificationStats userId="123" />} />
+<Route path="/variations" element={<PrivateRoute><VariationsList /></PrivateRoute>} />
+<Route path="/gamification" element={<PrivateRoute><GamificationStats userId="123" /></PrivateRoute>} />
         </Routes>
       </main>
     </BrowserRouter>
