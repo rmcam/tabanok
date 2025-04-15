@@ -156,7 +156,7 @@ const AdminMissionsPanel: React.FC = () => {
             <select
               className="w-full border p-2 rounded"
               value={newMission.frequency}
-              onChange={(e) => setNewMission({ ...newMission, frequency: e.target.value })}
+              onChange={(e) => setNewMission({ ...newMission, frequency: e.target.value as Mission['frequency'] })}
             >
               <option value="diaria">Diaria</option>
               <option value="semanal">Semanal</option>

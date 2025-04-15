@@ -7,6 +7,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages ./packages
 COPY frontend/package.json ./frontend/package.json
 COPY frontend/tsconfig.json ./frontend/tsconfig.json
+COPY frontend/tsconfig.app.json ./frontend/tsconfig.app.json
 COPY frontend/vite.config.ts ./frontend/vite.config.ts
 COPY frontend/index.html ./frontend/index.html
 COPY frontend/src ./frontend/src
