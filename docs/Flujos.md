@@ -52,5 +52,6 @@
 ## Próximos pasos
 
 - Automatizar despliegues a producción.
-- Mejorar cobertura de tests.
+- Mejorar cobertura de tests en el frontend.
 - Documentar nuevas funcionalidades y mejoras.
+- **Licencia:** MIT License

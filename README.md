@@ -119,6 +119,11 @@ Revisa la carpeta `docs/` para:
 - Arquitectura
 - Estado del proyecto
 - Instrucciones de desarrollo
+- Flujos de usuario
+- Accesibilidad
+- Gamificación
+- Validación lingüística
+
 
 ---
 
@@ -155,4 +160,10 @@ Puedes subir un archivo `.env` como Secret File o configurar variables manualmen
 
 ## 📝 Licencia
 
-[Pendiente]
+MIT License
+
+---
+
+##  Contribuciones
+
+Las contribuciones son bienvenidas. Por favor, revisa la guía de contribuciones en la carpeta `docs/`.

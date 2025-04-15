@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect } from 'react';
-import { useRequireAuth } from '../../auth/hooks/useRequireAuth';
+import { useRequireAuth } from '../../auth/useRequireAuth';
 import { useEntry } from '../hooks/useEntry';
 
 interface EntryDetailProps {

@@ -92,6 +92,7 @@ Se han implementado hooks específicos para interactuar con los endpoints del ba
 - `src/features/dictionary/hooks/useEntry.ts` — detalle de una entrada
 - `src/features/dictionary/hooks/useCategories.ts` — categorías
 - `src/features/dictionary/hooks/useVariations.ts` — variaciones dialectales
+- `src/features/gamification/hooks/useGamification.ts` - Gamificación
 
 ### Componentes que usan estos hooks
 
@@ -100,6 +101,11 @@ Se han implementado hooks específicos para interactuar con los endpoints del ba
 - `src/features/dictionary/components/EntryDetail.tsx` — detalle de entrada
 - `src/features/dictionary/components/CategoriesList.tsx` — listado de categorías
 - `src/features/dictionary/components/VariationsList.tsx` — listado de variaciones dialectales
+- `src/features/gamification/components/Leaderboard.tsx` - Leaderboard
+- `src/features/gamification/components/CulturalAchievement.tsx` - Cultural Achievement
+- `src/features/gamification/components/Mentor.tsx` - Mentor
+- `src/features/gamification/components/MissionTemplate.tsx` - Mission Template
+
 
 ### Flujo general
 
@@ -114,3 +120,9 @@ Esto permite una integración **modular, escalable y segura**.
 - Mantener la separación por dominios funcionales
 - Documentar cualquier nuevo hook o componente
 - Actualizar esta sección cuando se agreguen nuevas integraciones
+
+---
+
+## Licencia
+
+MIT License

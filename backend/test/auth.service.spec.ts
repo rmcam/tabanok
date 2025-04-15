@@ -2,18 +2,40 @@ import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import * as argon2 from 'argon2';
 import { AuthService } from '../src/auth/auth.service';
+import { AuthModule } from '../src/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 import { LoginDto, RegisterDto } from '../src/auth/dto/auth.dto';
-import { User, UserRole, UserStatus } from '../src/auth/entities/user.entity';
+import { User } from '../src/auth/entities/user.entity';
+import { UserRole, UserStatus } from '../src/auth/enums/auth.enum';
 import { UserService } from '../src/features/user/user.service';
 import { MailService } from '../src/lib/mail.service';
 
-jest.mock('bcrypt', () => ({
-  ...jest.requireActual('bcrypt'),
-  compare: jest.fn(() => Promise.resolve(true)),
+jest.mock('argon2', () => ({
+  ...jest.requireActual('argon2'),
+  hash: jest.fn(() => Promise.resolve('hashedPassword')),
+  verify: jest.fn((hash, plain) => Promise.resolve(hash === 'hashedPassword' && !!plain)),
 }));
+
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { HttpService } from '@nestjs/axios';
+import { createTestDatabase } from './test-utils';
+
+const dbConfig: TypeOrmModuleOptions = {
+  type: 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432', 10),
+  username: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASS || 'Rm88cam88',
+  database: process.env.DB_NAME || 'tabanok_db',
+  entities: [User],
+  synchronize: true,
+  dropSchema: true,
+  logging: false,
+};
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -21,7 +43,16 @@ describe('AuthService', () => {
   let userServiceMock: jest.Mocked<UserService>;
 
   beforeEach(async () => {
+    // Crear la base de datos de pruebas y ejecutar las migraciones
+    await createTestDatabase();
+
     module = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmModule.forRoot(dbConfig),
+        TypeOrmModule.forFeature([User]),
+        AuthModule,
+      ],
       providers: [
         AuthService,
         {
@@ -40,7 +71,28 @@ describe('AuthService', () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn().mockReturnValue('mockValue'),
+            get: (key: string) => {
+              switch (key) {
+                case 'DB_HOST':
+                  return process.env.DB_HOST || 'localhost';
+                case 'DB_PORT':
+                  return parseInt(process.env.DB_PORT || '5432', 10);
+                case 'DB_USER':
+                  return process.env.DB_USER || 'postgres';
+                case 'DB_PASS':
+                  return process.env.DB_PASS || 'Rm88cam88';
+                case 'DB_NAME':
+                  return process.env.DB_NAME || 'tabanok_db';
+                case 'DB_SSL':
+                  return process.env.DB_SSL === 'true';
+                case 'JWT_SECRET':
+                  return process.env.JWT_SECRET || 'test_secret_key';
+                case 'PORT':
+                  return parseInt(process.env.PORT || '3001', 10);
+                default:
+                  return process.env[key];
+              }
+            },
           },
         },
         {
@@ -61,6 +113,10 @@ describe('AuthService', () => {
           useValue: {
             sendResetPasswordEmail: jest.fn(),
           },
+        },
+        {
+          provide: HttpService,
+          useValue: {},
         },
       ],
     }).compile();
@@ -119,14 +175,14 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should return a token for valid credentials', async () => {
       const loginDto: LoginDto = {
-        email: 'test@example.com',
+        identifier: 'test@example.com',
         password: 'password',
       } as LoginDto;
 
       // Simular usuario encontrado con password hasheado
       userServiceMock.findByEmail.mockResolvedValue({
         id: '1',
-        email: loginDto.email,
+        email: loginDto.identifier,
         password: 'hashedPassword',
         status: UserStatus.ACTIVE,
         role: UserRole.USER,
@@ -143,7 +199,7 @@ describe('AuthService', () => {
       const result = await service.login(loginDto);
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
-      expect(result.user.email).toBe(loginDto.email);
+      expect(result.user.email).toBe(loginDto.identifier);
     });
   });
 });

@@ -113,6 +113,7 @@ Se implementó la integración automática entre las actividades del usuario y e
 
 - Las rutas usan `/api/v1/gamification/...`.
 - Se agregaron funciones para otorgar logros, recompensas, actualizar puntos y nivel.
+- Se agregó la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios.
 - Mensajes internacionalizados en español.
 - Hooks en `frontend/hooks/gamification/useGamification.ts`.
 - Componentes actualizados para usar hooks y mostrar mensajes coherentes.
@@ -139,7 +140,7 @@ Este panel facilita la personalización, escalabilidad y adaptación a eventos o
 
 ## Estado de la licencia
 
-Actualmente **pendiente de definir**. Se recomienda decidir e incluir una licencia adecuada para el proyecto.
+MIT License
 
 ---
 
@@ -147,4 +148,3 @@ Actualmente **pendiente de definir**. Se recomienda decidir e incluir una licenc
 
 - Documentar endpoints específicos y flujos de negocio.
 - Revisar redundancias y eliminar campos obsoletos restantes.
-- Definir la licencia del proyecto.

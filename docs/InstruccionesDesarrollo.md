@@ -87,9 +87,18 @@ pnpm install
 - Sincronizar con el equipo antes de cambios mayores.
 - Usar el paquete común para tipos y utilidades compartidas.
 
+## Endpoints de Gamificación
+
+- **Otorgar puntos a un usuario:**
+  ```
+  POST /api/v1/gamification/grant-points/:userId
+  ```
+  Requiere el ID del usuario y la cantidad de puntos a otorgar en el cuerpo de la solicitud.
+
 ## Objetivos actuales
 
 - Mejorar accesibilidad del frontend.
 - Integrar control ortográfico y gramatical avanzado.
-- Mejorar cobertura de tests.
+- Mejorar cobertura de tests en el frontend.
 - Configurar CI/CD y automatizar despliegues.
+- **Licencia:** MIT License

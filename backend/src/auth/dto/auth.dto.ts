@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Validate } from 'class-validator';
-import { UserRole } from '../entities/user.entity'; // Ruta corregida
+import { UserRole } from '@/auth/enums/auth.enum';
 import { IsPasswordStrong } from '../../common/validators/password.validator';
 
 export class LoginDto {
-    @ApiProperty({ description: 'Correo electrónico del usuario' })
-    @IsEmail({}, { message: 'El correo electrónico debe ser válido.' })
-    email: string;
+    @ApiProperty({ description: 'Usuario o correo institucional' })
+    @IsString({ message: 'El identificador debe ser una cadena de texto.' })
+    @IsNotEmpty({ message: 'El identificador no debe estar vacío.' })
+    identifier: string;
 
     @ApiProperty({ description: 'Contraseña del usuario' })
     @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
@@ -15,6 +16,11 @@ export class LoginDto {
 }
 
 export class RegisterDto {
+    @ApiProperty({ description: 'Nombre de usuario institucional' })
+    @IsString({ message: 'El nombre de usuario debe ser una cadena de texto.' })
+    @IsNotEmpty({ message: 'El nombre de usuario no debe estar vacío.' })
+    username: string;
+
     @ApiProperty({ description: 'Primer Nombre del usuario' })
     @IsString({ message: 'El nombre debe ser una cadena de texto.' })
     @IsNotEmpty({ message: 'El nombre no debe estar vacío.' })

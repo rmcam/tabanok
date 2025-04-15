@@ -1328,7 +1328,7 @@ export class StatisticsService {
     }
 
     async getUserStatistics(userId: string): Promise<UserStatistics> {
-        const gamificationStats = await this.gamificationService.getUserStats(userId);
+        const gamificationStats = await this.gamificationService.getUserStats(Number(userId));
         const userStats = await this.statisticsRepository.findOne({
             where: { userId }
         });

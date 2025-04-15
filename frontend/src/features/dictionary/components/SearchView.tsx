@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { useRequireAuth } from '../../auth/hooks/useRequireAuth';
+import { useRequireAuth } from '../../auth/useRequireAuth';
 import { useSearch } from '../hooks/useSearch';
 
 export function SearchView() {

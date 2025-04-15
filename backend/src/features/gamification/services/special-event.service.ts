@@ -4,6 +4,9 @@ import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Season, SeasonType } from '../entities/season.entity';
 import { EventType, SpecialEvent } from '../entities/special-event.entity';
 import { GamificationService } from './gamification.service';
+import { UserAchievement } from '../entities/user-achievement.entity';
+import { Achievement } from '../entities/achievement.entity';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class SpecialEventService {
@@ -12,7 +15,9 @@ export class SpecialEventService {
         private specialEventRepository: Repository<SpecialEvent>,
         @InjectRepository(Season)
         private seasonRepository: Repository<Season>,
-        private gamificationService: GamificationService
+        private gamificationService: GamificationService,
+        @InjectRepository(Achievement)
+        private achievementRepository: Repository<Achievement>,
     ) { }
 
     async createSpecialEvent(seasonId: string, eventData: Partial<SpecialEvent>): Promise<SpecialEvent> {
@@ -54,7 +59,7 @@ export class SpecialEventService {
         }
 
         // Verificar requisitos
-        const gamification = await this.gamificationService.findByUserId(userId);
+        const gamification = await this.gamificationService.findByUserId(Number(userId));
 
         if (event.requirements.minLevel && gamification.level < event.requirements.minLevel) {
             throw new Error(`Necesitas nivel ${event.requirements.minLevel} para unirte a este evento`);
@@ -62,7 +67,7 @@ export class SpecialEventService {
 
         if (event.requirements.culturalAchievements?.length > 0) {
             const hasAchievements = event.requirements.culturalAchievements.every(
-                achievementId => gamification.culturalAchievements.some(a => a.title === achievementId)
+                achievementId => gamification.userAchievements.some(a => a.achievementId === achievementId)
             );
             if (!hasAchievements) {
                 throw new Error('No cumples con los logros culturales requeridos');
@@ -104,45 +109,31 @@ export class SpecialEventService {
 
     private async awardEventRewards(userId: string, event: SpecialEvent): Promise<void> {
         // Otorgar puntos y valor cultural
-        await this.gamificationService.addPoints(
-            userId,
-            event.rewards.points,
-            'special_event_completed',
-            `¡Evento completado: ${event.name}!`
+        await this.gamificationService.grantPoints(
+            Number(userId),
+            event.rewards.points
         );
 
         // Actualizar logros culturales si es necesario
-        const gamification = await this.gamificationService.findByUserId(userId);
-        gamification.culturalAchievements.push({
-            title: event.name,
-            description: event.description,
-            culturalValue: `Participación en ${event.type}`,
-            achievedAt: new Date(),
-            seasonType: event.season.type
-        });
+        const gamification = await this.gamificationService.findByUserId(Number(userId));
+        
+        const achievement = new Achievement();
+        achievement.name = event.name;
+        achievement.description = event.description;
+        achievement.criteria = `Participación en ${event.type}`;
+        achievement.bonusPoints = event.rewards.points;
+        achievement.iconUrl = event.rewards.specialBadge?.icon;
 
-        // Otorgar insignia especial si existe
-        if (event.rewards.specialBadge) {
-            gamification.badges.push({
-                ...event.rewards.specialBadge,
-                description: `Insignia especial por completar: ${event.name}`,
-                category: 'special_event',
-                tier: 'diamond',
-                requiredPoints: event.rewards.points,
-                iconUrl: event.rewards.specialBadge.icon,
-                requirements: {},
-                isSpecial: true,
-                timesAwarded: 1,
-                benefits: [],
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                expirationDate: null
-            });
-        }
+        const userAchievement = new UserAchievement();
+        userAchievement.achievement = achievement;
+        userAchievement.user = gamification;
+        userAchievement.status = 'active' as any;
+        userAchievement.dateAwarded = new Date();
+        userAchievement.userId = userId;
 
-        await this.gamificationService.updateStats(userId, {
-            culturalContributions: gamification.stats.culturalContributions + 1
-        });
+        gamification.userAchievements = [...gamification.userAchievements, userAchievement];
+
+        await this.specialEventRepository.save(event);
     }
 
     async generateSeasonEvents(season: Season): Promise<void> {
@@ -199,12 +190,17 @@ export class SpecialEventService {
 
         const templates = eventTemplates[season.type] || [];
         for (const template of templates) {
-            await this.createSpecialEvent(season.id, {
-                ...template,
-                startDate: season.startDate,
-                endDate: new Date(season.startDate.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 días
-                isActive: true
-            });
+            const specialEvent = new SpecialEvent()
+            specialEvent.name = template.name
+            specialEvent.description = template.description
+            specialEvent.type = template.type
+            specialEvent.rewards = template.rewards
+            specialEvent.requirements = template.requirements
+            specialEvent.culturalElements = template.culturalElements
+            specialEvent.startDate = season.startDate
+            specialEvent.endDate = new Date(season.startDate.getTime() + 7 * 24 * 60 * 60 * 1000)
+            specialEvent.isActive = true
+            await this.createSpecialEvent(season.id, specialEvent);
         }
     }
-} 
+}

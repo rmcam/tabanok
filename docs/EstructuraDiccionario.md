@@ -8,7 +8,7 @@ La sección de metadatos contiene información general sobre el diccionario:
 
 *   **Título:** Diccionario Bilingüe Kamëntsá-Español Consolidado
 *   **Versión:** 2.0
-*   **Fecha de procesamiento:** 2024-03-28
+*   **Fecha de procesamiento:** Abril 2025
 *   **Fuentes:**
     *   diccionario\_processed.json
     *   kamëntsa\_processed.json
@@ -35,6 +35,7 @@ La sección de metadatos contiene información general sobre el diccionario:
     *   palabras: palabras\_index
     *   clasificadores: clasificadores\_index
     *   variaciones: variaciones\_index
+*   **Licencia:** MIT License
 
 ## Secciones
 

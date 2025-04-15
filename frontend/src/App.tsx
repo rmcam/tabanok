@@ -51,10 +51,10 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/" element={<PrivateRoute><SearchView /></PrivateRoute>} />
-<Route path="/entry/:id" element={<PrivateRoute><EntryDetailWrapper /></PrivateRoute>} />
-          <Route path="/categories" element={<PrivateRoute requiredRole="admin"><CategoriesList /></PrivateRoute>} />
-<Route path="/variations" element={<PrivateRoute><VariationsList /></PrivateRoute>} />
-<Route path="/gamification" element={<PrivateRoute><GamificationStats userId="123" /></PrivateRoute>} />
+          <Route path="/entry/:id" element={<PrivateRoute><EntryDetailWrapper /></PrivateRoute>} />
+          <Route path="/categories" element={<PrivateRoute requiredRoles={["admin"]}><CategoriesList /></PrivateRoute>} />
+          <Route path="/variations" element={<PrivateRoute><VariationsList /></PrivateRoute>} />
+          <Route path="/gamification" element={<PrivateRoute><GamificationStats userId="123" /></PrivateRoute>} />
         </Routes>
       </main>
     </BrowserRouter>

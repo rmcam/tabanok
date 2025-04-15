@@ -4,7 +4,7 @@ interface Mission {
   id: string;
   title: string;
   description: string;
-  frequency: string;
+  frequency: 'diaria' | 'semanal' | 'mensual' | 'temporada' | 'contribucion';
   categories: string[];
   active: boolean;
   startDate: string;
@@ -20,7 +20,7 @@ const AdminMissionsPanel: React.FC = () => {
   const [newMission, setNewMission] = useState<Partial<Mission>>({
     title: '',
     description: '',
-    frequency: 'diaria',
+    frequency: 'diaria' as Mission['frequency'],
     categories: [],
     active: true,
     startDate: '',
@@ -31,7 +31,7 @@ const AdminMissionsPanel: React.FC = () => {
   const fetchMissions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/v1/gamification/missions');
+      const response = await fetch('/api/v1/gamification/mission-templates');
       if (!response.ok) throw new Error('Error al obtener misiones');
       const data = await response.json();
       setMissions(data);
@@ -48,7 +48,7 @@ const AdminMissionsPanel: React.FC = () => {
 
   const toggleMissionStatus = async (missionId: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`/api/v1/gamification/missions/${missionId}/status`, {
+      const response = await fetch(`/api/v1/gamification/mission-templates/${missionId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ active: !currentStatus }),
@@ -162,6 +162,7 @@ const AdminMissionsPanel: React.FC = () => {
               <option value="semanal">Semanal</option>
               <option value="mensual">Mensual</option>
               <option value="temporada">Temporada</option>
+              <option value="contribucion">Contribución</option>
             </select>
           </div>
           <div className="mb-2">
@@ -233,7 +234,9 @@ const AdminMissionsPanel: React.FC = () => {
             <tr key={mission.id} className="border-b">
               <td className="p-2 border">{mission.title}</td>
               <td className="p-2 border">{mission.description}</td>
-              <td className="p-2 border">{mission.frequency}</td>
+              <td className="p-2 border">
+                {mission.frequency === 'contribucion' ? 'Contribución' : mission.frequency}
+              </td>
               <td className="p-2 border">{mission.categories.join(', ')}</td>
               <td className="p-2 border">{mission.active ? 'Activa' : 'Inactiva'}</td>
               <td className="p-2 border">

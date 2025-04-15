@@ -6,6 +6,7 @@ export enum MissionFrequency {
   SEMANAL = 'semanal',
   MENSUAL = 'mensual',
   TEMPORADA = 'temporada',
+  CONTRIBUCION = 'contribucion',
 }
 
 @Entity('mission_templates')

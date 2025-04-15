@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { Account } from '../account/entities/account.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserRole, UserStatus } from '../../auth/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
+import { UserRole, UserStatus } from '@/auth/enums/auth.enum';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,14 @@ export class UserService {
         @InjectRepository(Account)
         private readonly accountRepository: Repository<Account>,
     ) { }
+
+    async findByUsername(username: string): Promise<User> {
+        const user = await this.userRepository.findOne({ where: { username } });
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+        return user;
+    }
 
     async create(createUserDto: CreateUserDto): Promise<User> {
         const user = await this.userRepository.save({

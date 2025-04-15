@@ -6,157 +6,155 @@ import { User } from '../../../../auth/entities/user.entity';
 import { NotificationService } from '../../../notifications/services/notification.service';
 import { UserLevel } from '../../entities/user-level.entity';
 import { UserLevelService } from '../user-level.service';
+import { UserRole, UserStatus } from '@/auth/enums/auth.enum';
+import { DeepPartial } from 'typeorm';
 
 describe('UserLevelService', () => {
-    let service: UserLevelService;
-    let userLevelRepository: Repository<UserLevel>;
-    let userRepository: Repository<User>;
-    let notificationService: NotificationService;
+  let service: UserLevelService;
+  let userLevelRepository: Repository<UserLevel>;
+  let userRepository: Repository<User>;
+  let notificationService: NotificationService;
 
-    const mockUser = {
-        id: '1',
-        email: 'test@example.com',
-        password: 'password',
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'USER',
-        status: 'ACTIVE',
-        languages: [],
-        preferences: {
-            notifications: false,
-            language: 'es',
-            theme: 'light'
-        },
-        points: 0,
-        achievements: [],
-        culturalPoints: 0,
-        lastLoginAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        isActive: true,
-        streakHistory: [],
-        activityLog: [],
-        bonuses: [],
-        milestones: [],
+  const mockUser: DeepPartial<User> = {
+    id: '1',
+    username: 'testuser',
+    email: 'test@example.com',
+    password: 'password',
+    firstName: 'Test',
+    lastName: 'User',
+    role: UserRole.USER,
+    status: UserStatus.ACTIVE,
+    languages: [],
+    preferences: {
+      notifications: false,
+      language: 'es',
+      theme: 'light',
+    },
+    points: 0,
+    gameStats: {
+      totalPoints: 0,
+      level: 1,
+      lessonsCompleted: 0,
+      exercisesCompleted: 0,
+      perfectScores: 0,
+    },
+    userAchievements: [],
+    userRewards: [],
+    culturalPoints: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    isEmailVerified: true,
+    accounts: [],
+    progress: [],
+    leaderboards: [],
+    level: 1,
+    lastLoginAt: new Date(),
+  };
+
+  const mockUserLevel = {
+    id: '1',
+    user: mockUser,
+    currentLevel: 1,
+    experiencePoints: 0,
+    levelHistory: [],
+    consistencyStreak: {
+      current: 0,
+      longest: 0,
+      lastActivityDate: new Date(),
+      streakHistory: [],
+    },
+    userId: '1',
+    experienceToNextLevel: 1000,
+    streakHistory: [],
+    activityLog: [],
+    bonuses: [],
+    achievements: [],
+    milestones: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } as UserLevel;
+
+  const mockLevelUpUserLevel = {
+    ...mockUserLevel,
+    experiencePoints: 500,
+    currentLevel: 2,
+    levelHistory: [
+      {
         level: 1,
-        isEmailVerified: true,
-        accounts: [],
-        userRewards: [],
-        userAchievements: [],
-        progress: [],
-        gameStats: {
-            totalPoints: 0,
-            level: 1,
-            lessonsCompleted: 0,
-            exercisesCompleted: 0,
-            perfectScores: 0
+        achievedAt: new Date(),
+        bonusesReceived: [],
+      },
+    ],
+  } as UserLevel;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UserLevelService,
+        {
+          provide: getRepositoryToken(UserLevel),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue(mockUserLevel),
+            save: jest.fn().mockImplementation((entity) => Promise.resolve(entity)),
+          },
         },
-        leaderboards: [] // Add missing property
-    };
-
-    const mockUserLevel = {
-        id: '1',
-        user: mockUser,
-        currentLevel: 1,
-        experiencePoints: 0,
-        levelHistory: [],
-        consistencyStreak: {
-            current: 0,
-            longest: 0,
-            lastActivityDate: new Date(),
-            streakHistory: []
+        {
+          provide: getRepositoryToken(User),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue(mockUser),
+          },
         },
-        userId: '1',
-        streakHistory: [],
-        experienceToNextLevel: 1000,
-        activityLog: [],
-        bonuses: [],
-        achievements: [],
-        milestones: [],
-        createdAt: new Date(),
-        updatedAt: new Date()
-    } as UserLevel;
+        {
+          provide: NotificationService,
+          useValue: {
+            notifyLevelUp: jest.fn().mockResolvedValue(undefined),
+            createNotification: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+      ],
+    }).compile();
 
-    const mockLevelUpUserLevel = {
-        ...mockUserLevel,
-        experiencePoints: 500,
-        currentLevel: 2,
-        levelHistory: [{
-            level: 1,
-            achievedAt: new Date(),
-            bonusesReceived: []
-        }]
-    } as UserLevel;
+    service = module.get<UserLevelService>(UserLevelService);
+    userLevelRepository = module.get<Repository<UserLevel>>(getRepositoryToken(UserLevel));
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    notificationService = module.get<NotificationService>(NotificationService);
+  });
 
-    beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                UserLevelService,
-                {
-                    provide: getRepositoryToken(UserLevel),
-                    useValue: {
-                        findOne: jest.fn().mockResolvedValue(mockUserLevel),
-                        save: jest.fn().mockImplementation(entity => Promise.resolve(entity))
-                    }
-                },
-                {
-                    provide: getRepositoryToken(User),
-                    useValue: {
-                        findOne: jest.fn().mockResolvedValue(mockUser)
-                    }
-                },
-                {
-                    provide: NotificationService,
-                    useValue: {
-                        notifyLevelUp: jest.fn().mockResolvedValue(undefined),
-                        createNotification: jest.fn().mockResolvedValue(undefined)
-                    }
-                }
-            ]
-        }).compile();
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 
-        service = module.get<UserLevelService>(UserLevelService);
-        userLevelRepository = module.get<Repository<UserLevel>>(getRepositoryToken(UserLevel));
-        userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-        notificationService = module.get<NotificationService>(NotificationService);
+  describe('addExperiencePoints', () => {
+    it('should add experience points without level up', async () => {
+      const userId = '1';
+      const points = 50;
+
+      const result = await service.addExperiencePoints(userId, points);
+
+      expect(result.experiencePoints).toBe(50);
+      expect(result.currentLevel).toBe(1);
+      expect(notificationService.notifyLevelUp).not.toHaveBeenCalled();
     });
 
-    it('should be defined', () => {
-        expect(service).toBeDefined();
+    it('should level up when enough experience points are added', async () => {
+      const userId = '1';
+      const points = 500;
+
+      jest.spyOn(userLevelRepository, 'save').mockResolvedValue(mockLevelUpUserLevel);
+
+      const result = await service.addExperiencePoints(userId, points);
+
+      expect(result.experiencePoints).toBe(500);
+      expect(result.currentLevel).toBe(2);
+      expect(notificationService.notifyLevelUp).toHaveBeenCalledWith(userId, 2);
     });
 
-    describe('addExperiencePoints', () => {
-        it('should add experience points without level up', async () => {
-            const userId = '1';
-            const points = 50;
+    it('should throw NotFoundException when user level not found', async () => {
+      jest.spyOn(userLevelRepository, 'findOne').mockResolvedValue(null);
 
-            const result = await service.addExperiencePoints(userId, points);
-
-            expect(result.experiencePoints).toBe(50);
-            expect(result.currentLevel).toBe(1);
-            expect(notificationService.notifyLevelUp).not.toHaveBeenCalled();
-        });
-
-        it('should level up when enough experience points are added', async () => {
-            const userId = '1';
-            const points = 500;
-
-            jest.spyOn(userLevelRepository, 'save')
-                .mockResolvedValue(mockLevelUpUserLevel);
-
-            const result = await service.addExperiencePoints(userId, points);
-
-            expect(result.experiencePoints).toBe(500);
-            expect(result.currentLevel).toBe(2);
-            expect(notificationService.notifyLevelUp).toHaveBeenCalledWith(userId, 2);
-        });
-
-        it('should throw NotFoundException when user level not found', async () => {
-            jest.spyOn(userLevelRepository, 'findOne').mockResolvedValue(null);
-
-            await expect(service.addExperiencePoints('999', 100))
-                .rejects
-                .toThrow(NotFoundException);
-        });
+      await expect(service.addExperiencePoints('999', 100)).rejects.toThrow(
+        NotFoundException
+      );
     });
+  });
 });

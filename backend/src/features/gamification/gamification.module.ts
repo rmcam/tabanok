@@ -4,7 +4,7 @@ import { User } from '../../auth/entities/user.entity';
 import { Leaderboard } from './entities/leaderboard.entity';
 import { LeaderboardRepository } from './repositories/leaderboard.repository';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { Reward } from '../reward/entities/reward.entity';
+import { Reward } from './entities/reward.entity';
 
 // Controladores
 import { GamificationController } from './controllers/gamification.controller';
@@ -28,18 +28,20 @@ import { UserLevel } from './entities/user-level.entity';
 import { UserReward } from './entities/user-reward.entity';
 
 // Servicios
-import { AchievementService } from './services/achievement.service';
+import { GamificationService } from './services/gamification.service';
 import { CulturalAchievementService } from './services/cultural-achievement.service';
 import { CulturalRewardService } from './services/cultural-reward.service';
 import { EvaluationRewardService } from './services/evaluation-reward.service';
-import { GamificationService } from './services/gamification.service';
 import { MentorService } from './services/mentor.service';
 import { MissionService } from './services/mission.service';
 import { RewardService } from './services/reward.service';
 import { LeaderboardService } from './services/leaderboard.service';
 import { UserLevelService } from './services/user-level.service';
+import { AchievementService } from './services/achievement.service';
+import { MissionTemplateService } from './services/mission-template.service';
 
 import { MissionTemplate } from './entities/mission-template.entity';
+import { MissionTemplateController } from './controllers/mission-template.controller';
 
 const ENTITIES = [
     User,
@@ -60,8 +62,6 @@ const ENTITIES = [
     MissionTemplate
 ];
 
-import { MissionTemplateController } from './controllers/mission-template.controller';
-
 const CONTROLLERS = [
     GamificationController,
     CulturalAchievementController,
@@ -70,8 +70,6 @@ const CONTROLLERS = [
     UserLevelController,
     MissionTemplateController
 ];
-
-import { MissionTemplateService } from './services/mission-template.service';
 
 const SERVICES = [
     GamificationService,

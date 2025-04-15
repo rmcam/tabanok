@@ -1,17 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { User } from '../../../auth/entities/user.entity';
-import { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';
-import { UserReward } from './user-reward.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('rewards')
+@Entity()
 export class Reward {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,71 +8,21 @@ export class Reward {
   @Column()
   name: string;
 
-  @Column()
-  title: string;
-
-  @Column()
+  @Column({ type: 'text' })
   description: string;
 
-  @Column('jsonb', { nullable: true })
-  criteria?: any;
-
-  @Column({
-    type: 'enum',
-    enum: RewardType,
-    default: RewardType.POINTS,
-  })
+  @Column({ type: 'enum', enum: ['POINTS', 'BADGE', 'VIRTUAL_ITEM'] })
   type: RewardType;
 
-  @Column({
-    type: 'enum',
-    enum: RewardTrigger,
-    default: RewardTrigger.LEVEL_UP,
-  })
-  trigger: RewardTrigger;
+  @Column({ type: 'int', nullable: true })
+  pointsCost?: number;
 
-  @Column('jsonb', { nullable: true })
-  conditions?: Array<{
-    type: string;
-    value: number;
-    description: string;
-  }>;
-
-  @Column('jsonb', { nullable: true })
-  rewardValue?: {
-    type: string;
-    value: number;
-  };
-
-  @Column({ default: false })
-  isActive: boolean;
-
-  @Column({ default: false })
-  isLimited: boolean;
-
-  @Column({ default: false })
-  isSecret: boolean;
-
-  @Column({ default: 0 })
-  timesAwarded: number;
-
-  @Column({ default: 0 })
-  pointsCost: number;
-
-  @Column({ default: 0 })
-  points: number;
-
-  @ManyToOne(() => User, { nullable: true })
-  user?: User;
-
-  @OneToMany(() => UserReward, (userReward) => userReward.reward)
-  userRewards: UserReward[];
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column({ type: 'text', nullable: true })
+  imageUrl?: string;
 }
 
-export { RewardType, RewardTrigger } from '../../../common/enums/reward.enum';
+export enum RewardType {
+  POINTS = 'POINTS',
+  BADGE = 'BADGE',
+  VIRTUAL_ITEM = 'VIRTUAL_ITEM',
+}

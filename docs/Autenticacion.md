@@ -101,6 +101,7 @@ POST /api/auth/signup
   - `/entry/:id`
   - `/variations`
   - `/gamification`
+  - `/profile`
 - Ejemplo de uso en `App.tsx`:
   ```tsx
   <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
@@ -136,6 +137,7 @@ POST /api/auth/signup
 - Código tipado con TypeScript.
 - Centralización de la lógica de autenticación.
 - Uso de hooks y contextos para acceso global al estado de autenticación.
+- **Licencia:** MIT License
 
 ---
 

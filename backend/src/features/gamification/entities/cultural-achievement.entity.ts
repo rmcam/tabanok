@@ -64,19 +64,6 @@ export class CulturalAchievement extends BaseAchievement {
     @Column({ default: 0 })
     points: number;
 
-    @ManyToMany(() => User)
-    @JoinTable({
-        name: 'user_achievements',
-        joinColumn: {
-            name: 'achievementId',
-            referencedColumnName: 'id'
-        },
-        inverseJoinColumn: {
-            name: 'userId',
-            referencedColumnName: 'id'
-        }
-    })
-    users: User[];
 
     @CreateDateColumn()
     createdAt: Date;

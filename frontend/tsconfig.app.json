@@ -2,8 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler"
   },
-  "include": ["src"]
+  "include": ["src", "src/features/auth/api.tsx"]
 }

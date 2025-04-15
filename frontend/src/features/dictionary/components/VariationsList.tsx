@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useRequireAuth } from '../../auth/hooks/useRequireAuth';
+import { useRequireAuth } from '../../auth/useRequireAuth';
 import { useVariations } from '../hooks/useVariations';
 
 export function VariationsList() {

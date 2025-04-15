@@ -11,25 +11,17 @@ import { UserAchievement } from '../../features/gamification/entities/user-achie
 import { UserReward } from '../../features/gamification/entities/user-reward.entity'; // Ruta corregida
 import { Progress } from '../../features/progress/entities/progress.entity'; // Ruta corregida
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
+import { UserRole, UserStatus } from '@/auth/enums/auth.enum';
 
-export enum UserRole {
-  USER = 'user',
-  MODERATOR = 'moderator',
-  ADMIN = 'admin',
-  ELDER = 'elder',
-  TEACHER = 'teacher',
-}
-
-export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  BANNED = 'banned',
-}
+export { UserRole };
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ unique: true })
+  username: string;
 
   @Column({ unique: true })
   email: string;

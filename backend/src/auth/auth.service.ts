@@ -1,19 +1,19 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { HttpService } from '@nestjs/axios';
 
-import * as bcrypt from 'bcryptjs';
+import * as argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
-import { User, UserStatus } from './entities/user.entity'; // <-- Ruta corregida
 import { UserService } from '../features/user/user.service';
 import { MailService } from '../lib/mail.service'; // Importar MailService
-import {
-  ChangePasswordDto,
-  LoginDto,
-  RegisterDto,
-  UpdateProfileDto,
-} from './dto/auth.dto';
+import { ChangePasswordDto, LoginDto, RegisterDto, UpdateProfileDto } from './dto/auth.dto';
+import { User } from './entities/user.entity'; // <-- Ruta corregida
 
 /**
  * @description Servicio de autenticación para la aplicación.
@@ -26,7 +26,7 @@ export class AuthService {
     private configService: ConfigService,
     private readonly userService: UserService, // <-- UserService se mantiene
     private readonly mailService: MailService, // Inyectar MailService
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
   ) {}
 
   /**
@@ -35,10 +35,14 @@ export class AuthService {
    * @returns Nuevos tokens si el refresh token es válido.
    * @throws {UnauthorizedException} Si el refresh token es inválido o expiró.
    */
-  async refreshTokens(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+  async refreshTokens(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET') || this.configService.get<string>('JWT_SECRET'),
+        secret:
+          this.configService.get<string>('JWT_REFRESH_SECRET') ||
+          this.configService.get<string>('JWT_SECRET'),
       });
 
       // Opcional: verificar en base de datos si el refresh token está activo
@@ -60,18 +64,37 @@ export class AuthService {
    * @throws {BadRequestException} Si el correo electrónico ya está registrado.
    */
   async register(registerDto: RegisterDto): Promise<any> {
-    const { email, password, firstName, secondName, firstLastName, secondLastName, languages, preferences, role } = registerDto;
+    const {
+      username,
+      email,
+      password,
+      firstName,
+      secondName,
+      firstLastName,
+      secondLastName,
+      languages,
+      preferences,
+      role,
+    } = registerDto;
 
-    const existing = await this.userService.findByEmailOptional(email);
-    if (existing) {
+    const existingEmail = await this.userService.findByEmailOptional(email);
+    if (existingEmail) {
       throw new BadRequestException('El correo electrónico ya está registrado');
     }
+    // Validar username único
+    try {
+      await this.userService.findByUsername(username);
+      throw new BadRequestException('El nombre de usuario ya está registrado');
+    } catch (e) {
+      // Si lanza NotFound, está disponible
+    }
 
-    const lastName = `${firstLastName ?? ""} ${secondLastName ?? ""}`.trim();
+    const lastName = `${firstLastName ?? ''} ${secondLastName ?? ''}`.trim();
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await argon2.hash(password);
 
     const user = await this.userService.create({
+      username,
       email,
       password: hashedPassword,
       firstName,
@@ -97,11 +120,17 @@ export class AuthService {
    * @throws {UnauthorizedException} Si las credenciales son inválidas o la cuenta no está activa.
    */
   async login(loginDto: LoginDto): Promise<any> {
-    const { email, password } = loginDto;
+    const { identifier, password } = loginDto;
 
-    const user = await this.userService.findByEmail(email);
+    // Permitir login por email o username
+    let user = null;
+    if (identifier.includes('@')) {
+      user = await this.userService.findByEmail(identifier);
+    } else {
+      user = await this.userService.findByUsername(identifier);
+    }
 
-    const passwordValid = await bcrypt.compare(password, user.password);
+    const passwordValid = await argon2.verify(user.password, password);
     if (!passwordValid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
@@ -140,13 +169,13 @@ export class AuthService {
     const user = await this.userService.findOne(userId);
 
     // Verificar contraseña actual
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    const isPasswordValid = await argon2.verify(user.password, currentPassword);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Contraseña actual incorrecta');
     }
 
     // Actualizar contraseña (usando UserService)
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await argon2.hash(newPassword);
     await this.userService.updatePassword(userId, hashedPassword);
   }
 
@@ -208,7 +237,7 @@ export class AuthService {
       throw new UnauthorizedException('Token inválido o expirado');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await argon2.hash(newPassword);
     // Actualizar contraseña y limpiar token (usando UserService)
     await this.userService.updatePasswordAndClearResetToken(user.id, hashedPassword);
   }
@@ -232,7 +261,9 @@ export class AuthService {
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET') || this.configService.get<string>('JWT_SECRET'),
+      secret:
+        this.configService.get<string>('JWT_REFRESH_SECRET') ||
+        this.configService.get<string>('JWT_SECRET'),
       expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '7d',
     });
 
