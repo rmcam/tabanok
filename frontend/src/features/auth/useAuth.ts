@@ -7,5 +7,5 @@ export function useAuth() {
   if (!ctx) {
     throw new Error("useAuth debe usarse dentro de <AuthProvider>");
   }
-  return ctx;
+  return { ...ctx, token: ctx.user?.token }; // Include token in the returned context
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { axios as axiosInstance } from "../../config/api";
+import { useEffect, useState } from 'react';
+import api from '../../lib/api';
 
 export interface Unit {
   id: string;
@@ -9,7 +9,7 @@ export interface Unit {
   // Otros campos relevantes
 }
 
-export function useUnits() {
+export function useUnits(token?: string) {
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,8 +17,11 @@ export function useUnits() {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    axiosInstance
-      .get<Unit[]>("/api/unity", { withCredentials: true })
+    api
+      .get<Unit[]>('/unity', {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
+      }) // Include headers in API call
       .then((res) => {
         if (isMounted) {
           setUnits(res.data);
@@ -27,7 +30,7 @@ export function useUnits() {
       })
       .catch(() => {
         if (isMounted) {
-          setError("Error al cargar las unidades");
+          setError('Error al cargar las unidades');
         }
       })
       .finally(() => {
@@ -36,7 +39,7 @@ export function useUnits() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [token]);
 
   return { units, loading, error };
 }

@@ -43,6 +43,8 @@ export class AuthController {
     }
 
     @Get('validate')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Validar token', description: 'Valida un token de acceso JWT' })
     async validateToken(@Headers('Authorization') authorization: string) {
         const token = authorization?.split(' ')[1];

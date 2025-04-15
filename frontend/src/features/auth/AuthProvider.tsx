@@ -1,6 +1,7 @@
-import { useState, useEffect, ReactNode } from "react";
-import { AuthContext, AuthUser, AuthContextProps, RegisterData } from "./AuthContext";
-import * as authApi from "./api";
+import { ReactNode, useEffect, useState, useMemo, useCallback } from 'react'; // Añadir useMemo y useCallback
+import { AuthContext, AuthContextProps, AuthUser, RegisterData } from './AuthContext';
+import * as authApi from './api';
+import { isTokenExpired } from '../../lib/api';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -8,27 +9,41 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Cargar usuario desde localStorage al montar
   useEffect(() => {
-    const storedUser = localStorage.getItem("authUser");
+    const storedUser = sessionStorage.getItem('authUser');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const user = JSON.parse(storedUser);
+        if (user.token && isTokenExpired(user.token)) {
+          sessionStorage.removeItem('authUser');
+          setUser(null);
+        } else {
+          setUser(user);
+        }
+      } catch {
+        sessionStorage.removeItem('authUser');
+        setUser(null);
+      }
     }
+    setLoading(false);
   }, []);
 
   // Guardar usuario en localStorage cuando cambie
   useEffect(() => {
     if (user) {
-      localStorage.setItem("authUser", JSON.stringify(user));
+      console.log('Guardando usuario en sessionStorage:', user);
+      sessionStorage.setItem('authUser', JSON.stringify(user));
     } else {
-      localStorage.removeItem("authUser");
+      sessionStorage.removeItem('authUser');
     }
   }, [user]);
 
-  const login = async (email: string, password: string) => {
+  // Memorizar funciones con useCallback
+  const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -38,15 +53,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Error al iniciar sesión");
+        setError('Error al iniciar sesión');
       }
       setUser(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Dependencias vacías porque setLoading/setError/setUser son estables y authApi es un módulo importado
 
-  const register = async (data: RegisterData) => {
+  const register = useCallback(async (data: RegisterData) => {
     setLoading(true);
     setError(null);
     try {
@@ -56,30 +71,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Error al registrarse");
+        setError('Error al registrarse');
       }
       setUser(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Dependencias vacías
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     authApi.logout();
-  };
+  }, []); // Dependencias vacías
 
-  const isAuthenticated = !!user;
-
-  const value: AuthContextProps = {
+  // Memorizar el valor del contexto con useMemo
+  const value: AuthContextProps = useMemo(() => ({
     user,
-    isAuthenticated,
-    login,
+    isAuthenticated: !!user, // Calcular isAuthenticated aquí
+    login, // Funciones memorizadas
     register,
     logout,
     loading,
     error,
-  };
+  }), [user, loading, error, login, register, logout]); // Dependencias del useMemo
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

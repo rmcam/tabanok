@@ -1,10 +1,11 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export interface AuthUser {
   id: string;
   username: string;
   email: string;
   roles?: string[];
+  token?: string; // Add token property to AuthUser interface
 }
 
 export interface AuthContextProps {

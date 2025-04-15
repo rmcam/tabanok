@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 import api from '../lib/api';
 
 interface Unity {
@@ -17,7 +17,7 @@ function useUnits() {
   useEffect(() => {
     async function fetchUnits() {
       try {
-        const response = await api.get<Unity[]>('/unity');
+        const response = await api.get<Unity[]>('unity');
         setUnits(response.data);
         setLoading(false);
       } catch (error: unknown) {

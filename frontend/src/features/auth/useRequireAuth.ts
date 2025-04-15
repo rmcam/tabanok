@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { useAuth } from "./useAuth";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './useAuth';
 
 /**
  * Hook que redirige al login si el usuario no está autenticado
@@ -13,9 +13,12 @@ export function useRequireAuth(requiredRoles: string[] = []) {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
-    } else if (requiredRoles.length > 0 && !user?.roles?.some(role => requiredRoles.includes(role))) {
-      navigate("/unauthorized");
+      navigate('/login');
+    } else if (
+      requiredRoles.length > 0 &&
+      !user?.roles?.some((role) => requiredRoles.includes(role))
+    ) {
+      navigate('/unauthorized');
     }
   }, [isAuthenticated, user, navigate, requiredRoles]);
 }

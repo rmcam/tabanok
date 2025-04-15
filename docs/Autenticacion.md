@@ -39,9 +39,9 @@ POST /api/auth/signin
     "firstName": "Nombre",
     "firstLastName": "Apellido",
     "email": "correo@ejemplo.com",
-    "roles": ["user"]
-  },
-  "accessToken": "jwt_token"
+    "roles": ["user"],
+    "accessToken": "jwt_token"
+  }
 }
 ```
 
@@ -80,8 +80,8 @@ POST /api/auth/signup
 1. El usuario se registra enviando los campos requeridos al endpoint `/api/auth/signup`.
 2. El usuario inicia sesión enviando `identifier` (usuario o email) y `password` a `/api/auth/signin`.
 3. El backend responde con el usuario y un JWT (`accessToken`).
-4. El frontend almacena el JWT (por ejemplo, en localStorage).
-5. Para acceder a rutas protegidas, el frontend envía el JWT en el header `Authorization: Bearer <token>`.
+4. El frontend almacena el usuario completo (incluyendo el JWT) en sessionStorage con la clave 'authUser'.
+5. Para acceder a rutas protegidas, el frontend envía el JWT en el header `Authorization: Bearer <token>`, obteniéndolo del usuario almacenado en sessionStorage.
 6. El backend valida el token y autoriza el acceso.
 
 ---
@@ -118,12 +118,15 @@ POST /api/auth/signup
 
 ## Estructura del Frontend de Autenticación
 
-- `api.ts`: Centraliza las llamadas a la API de autenticación (`signin`, `signup`, `logout`).
+- `lib/api.ts`: Centraliza la configuración de axios para las llamadas a la API, incluyendo la URL base y los interceptores.
+- `api.ts`: Centraliza las llamadas a la API de autenticación (`signin`, `signup`, `logout`), utilizando el cliente axios configurado en `lib/api.ts`.
 - `AuthContext.tsx`: Contexto global de autenticación (usuario, loading, error, métodos).
-- `AuthProvider.tsx`: Provider que gestiona el estado de autenticación y expone el contexto.
-- `useAuth.ts`: Hook para acceder al contexto de autenticación.
+- `AuthProvider.tsx`: Provider que gestiona el estado de autenticación y expone el contexto. **Utiliza `useMemo` y `useCallback` para optimizar el rendimiento y evitar re-renderizados innecesarios de los componentes que consumen el contexto.**
+- `useAuth.ts`: Hook para acceder al contexto de autenticación. **Es normal que este hook se llame varias veces durante la carga inicial de la aplicación, ya que varios componentes (como `PrivateRoute`) lo utilizan y el estado de autenticación puede cambiar durante este proceso. En desarrollo, React StrictMode puede causar que los efectos se ejecuten dos veces.**
 - `LoginForm.tsx`, `SignupForm.tsx`: Formularios desacoplados de la lógica de red.
 - `PrivateRoute.tsx`: Componente para proteger rutas.
+
+**Nota:** En el `AuthProvider.tsx`, el `useEffect` que guarda el usuario en `sessionStorage` puede ejecutarse dos veces en desarrollo debido a React StrictMode. Esto es normal y no indica un problema en el código.
 
 ---
 

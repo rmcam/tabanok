@@ -10,7 +10,7 @@ export default registerAs('app', () => ({
     jwtSecret: process.env.JWT_SECRET,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 10,
-    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || ['*'],
+    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') ? [...process.env.ALLOWED_ORIGINS.split(','), 'http://localhost:3000'] : ['http://localhost:3000', '*'],
     rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100,
 
     // Configuración de base de datos centralizada en TypeOrmConfigService (typeorm.config.ts)
@@ -55,4 +55,4 @@ export default registerAs('app', () => ({
         analyticsApi: process.env.ANALYTICS_API_URL,
         analyticsApiKey: process.env.ANALYTICS_API_KEY,
     },
-})); 
+}));

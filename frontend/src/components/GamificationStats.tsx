@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface GamificationStatsProps {
   userId: string;
@@ -36,7 +36,7 @@ const GamificationStats: React.FC<GamificationStatsProps> = ({ userId }) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch(`/api/v1/gamification/stats/${userId}`);
+        const response = await fetch(`/gamification/stats/${userId}`);
         if (!response.ok) {
           throw new Error(`Error fetching stats: ${response.status}`);
         }
@@ -49,7 +49,7 @@ const GamificationStats: React.FC<GamificationStatsProps> = ({ userId }) => {
 
     const fetchRewards = async () => {
       try {
-        const response = await fetch(`/api/v1/gamification/rewards/user/${userId}`);
+        const response = await fetch(`/gamification/rewards/user/${userId}`);
         if (!response.ok) {
           throw new Error(`Error fetching rewards: ${response.status}`);
         }
@@ -95,9 +95,7 @@ const GamificationStats: React.FC<GamificationStatsProps> = ({ userId }) => {
             {reward.consumedAt && (
               <> | Consumida: {new Date(reward.consumedAt).toLocaleDateString()}</>
             )}
-            {reward.expiresAt && (
-              <> | Expira: {new Date(reward.expiresAt).toLocaleDateString()}</>
-            )}
+            {reward.expiresAt && <> | Expira: {new Date(reward.expiresAt).toLocaleDateString()}</>}
           </li>
         ))}
       </ul>

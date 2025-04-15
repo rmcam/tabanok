@@ -81,12 +81,18 @@ export class AuthService {
     if (existingEmail) {
       throw new BadRequestException('El correo electrónico ya está registrado');
     }
+
     // Validar username único
     try {
       await this.userService.findByUsername(username);
+      // Si findByUsername tuvo éxito, el username ya existe
       throw new BadRequestException('El nombre de usuario ya está registrado');
-    } catch (e) {
-      // Si lanza NotFound, está disponible
+    } catch (error) {
+      // Si el error es NotFoundException, el username está disponible. Continuar.
+      // Si es otro tipo de error, relanzarlo.
+      if (!(error instanceof NotFoundException)) {
+        throw error;
+      }
     }
 
     const lastName = `${firstLastName ?? ''} ${secondLastName ?? ''}`.trim();

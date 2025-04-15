@@ -79,15 +79,15 @@ El frontend consume el backend mediante un **cliente Axios centralizado** ubicad
 
 Este cliente:
 
-- Usa la URL base configurada en `VITE_API_URL`
-- Añade automáticamente el token JWT a las peticiones
-- Permite interceptar y manejar errores globales
+- Usa la URL base configurada en `VITE_API_URL`. Se modificó la variable de entorno `VITE_API_URL` en el archivo `frontend/vite.config.ts` para incluir el prefijo `api/v1`.
+- Añade automáticamente el token JWT a las peticiones, obteniéndolo del usuario almacenado en sessionStorage.
+- Permite interceptar y manejar errores globales. Se eliminó la configuración del proxy en el archivo `frontend/vite.config.ts`.
 
 ### Hooks para consumir el backend
 
 Se han implementado hooks específicos para interactuar con los endpoints del backend, ubicados en:
 
-- `src/features/auth/hooks/useAuth.ts` — login, logout, estado autenticado
+- `src/features/auth/useAuth.ts` — signin, logout, estado autenticado
 - `src/features/dictionary/hooks/useSearch.ts` — búsqueda de términos
 - `src/features/dictionary/hooks/useEntry.ts` — detalle de una entrada
 - `src/features/dictionary/hooks/useCategories.ts` — categorías

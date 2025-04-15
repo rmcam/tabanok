@@ -23,10 +23,10 @@
 - Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios.
 - **Rutas protegidas y autenticación robusta:** El componente `PrivateRoute` ahora implementa correctamente la protección de rutas, solo permitiendo acceso a usuarios autenticados y con el rol adecuado. El flujo de autenticación y autorización es consistente y seguro.
   - **Endpoints actuales:**
-    - Login: `POST /api/auth/signin`
-    - Registro: `POST /api/auth/signup`
-  - **Campos requeridos para registro:** `username`, `firstName`, `firstLastName`, `email`, `password`
-  - **Campos requeridos para login:** `identifier` (usuario o email), `password`
+    - Iniciar sesión: `POST /api/auth/signin`
+    - Registrarse: `POST /api/auth/signup`
+  - **Campos requeridos para registrarse:** `username`, `firstName`, `firstLastName`, `email`, `password`
+  - **Campos requeridos para iniciar sesión:** `identifier` (usuario o email), `password`
   - Ver detalles y ejemplos de payloads en [`docs/Autenticacion.md`](./Autenticacion.md)
 - **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas.
 - **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend.
@@ -54,6 +54,13 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - ~~Documentar y testear flujos de error y protección de rutas.~~ (completado diciembre 2025)
 - **Agregar pruebas automáticas para rutas privadas y manejo de tokens expirados.**
 - **Revisar y documentar la integración de hooks personalizados (`useUnits`, `useAuth`).**
+- **Resolver errores de TypeScript y ESLint en el frontend:**
+  - Errores de tipo en `frontend/src/App.tsx` relacionados con las props `units`, `unitsLoading`, `unitsError` que no se encuentran definidas en el scope actual.
+  - Errores de tipo en `frontend/src/App.tsx` indicando que `PrivateRoute` y `Dashboard` reciben props inesperadas o les faltan props requeridas (`units`, `loading`, `error`).
+  - Error de importación del módulo `./components/VariationsList` en `frontend/src/App.tsx`.
+  - Imports y variables no utilizadas (`SearchView`, `useUnits`, `error`) en `frontend/src/App.tsx`.
+  - Error de tipo en `frontend/src/components/PrivateRoute.tsx` al usar `React.cloneElement` con props no esperadas por el componente hijo.
+  - Error de ESLint en `frontend/src/components/PrivateRoute.tsx` por usar `any` en la prop `units` y por variables no utilizadas (`units`, `loading`, `error`).
 
 ---
 

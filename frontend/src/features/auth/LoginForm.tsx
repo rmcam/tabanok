@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "./useAuth";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './useAuth';
 
 export default function LoginForm() {
   const { login, loading, error, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
 
@@ -21,8 +21,13 @@ export default function LoginForm() {
     try {
       await login(identifier, password);
       setSuccess(true);
-    } catch {
+    } catch (error: unknown) {
       setSuccess(false);
+      if (error instanceof Error) {
+        console.error('Login failed:', error.message);
+      } else {
+        console.error('Login failed: An unexpected error occurred');
+      }
     }
   };
 
@@ -36,7 +41,7 @@ export default function LoginForm() {
         <input
           type="text"
           value={identifier}
-          onChange={e => setIdentifier(e.target.value)}
+          onChange={(e) => setIdentifier(e.target.value)}
           required
           className="w-full border p-2 rounded"
         />
@@ -46,7 +51,7 @@ export default function LoginForm() {
         <input
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           required
           className="w-full border p-2 rounded"
         />
@@ -56,7 +61,7 @@ export default function LoginForm() {
         className="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700"
         disabled={loading}
       >
-        {loading ? "Ingresando..." : "Ingresar"}
+        {loading ? 'Ingresando...' : 'Ingresar'}
       </button>
     </form>
   );
