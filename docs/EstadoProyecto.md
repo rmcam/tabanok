@@ -18,6 +18,40 @@
 - Integración del diccionario Kamëntsá finalizada y verificada.
 - **Cobertura de tests alta (200 tests exitosos, incluyendo autenticación).**
 - **Integración backend-frontend verificada y estable.**
+- **Solucionado problema de conexión a la base de datos:** Se resolvieron errores relacionados con TypeORM y ciclos de dependencia en las migraciones (Abril 2025).
+- Accesibilidad mejorada: navegación completa por teclado implementada, foco visible asegurado, orden lógico verificado.
+- **Cumple WCAG 2.1 en navegación, menús y menús desplegables (ARIA labels, landmarks, foco).**
+- Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios. Se ha eliminado la columna `points` de la entidad `User`.
+- **Rutas protegidas y autenticación robusta:** El componente `PrivateRoute` ahora implementa correctamente la protección de rutas, solo permitiendo acceso a usuarios autenticados y con el rol adecuado. Se han implementado roles y permisos más granulares en el componente `PrivateRoute`. El flujo de autenticación y autorización es consistente y seguro.
+  - **Endpoints actuales:**
+    - Iniciar sesión: `POST /api/auth/signin`
+    - Registrarse: `POST /api/auth/signup`
+  - **Campos requeridos para registrarse:** `username`, `firstName`, `firstLastName`, `email`, `password`
+  - **Campos requeridos para iniciar sesión:** `identifier` (usuario o email), `password`
+  - Ver detalles y ejemplos de payloads en [`docs/Autenticacion.md`](./Autenticacion.md)
+- **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas.
+- **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend.
+# Estado Actual del Proyecto Tabanok
+
+---
+
+## Estado general
+
+- Monorepo optimizado con pnpm workspaces y lockfile único.
+- **Licencia MIT implementada:** Se añadió la licencia MIT a todos los archivos de documentación durante la actualización de abril de 2025.  Esta licencia fue elegida por su permisividad y compatibilidad con proyectos de código abierto.
+- Backend funcional con NestJS, conectado a PostgreSQL.
+- Frontend funcional con React + Vite, autenticación y consumo de API.
+- Dependencias y configuración centralizadas.
+- Paquete común creado para tipos y utilidades compartidas.
+- Docker Compose unificado para base de datos, backend y frontend.
+- Configuración base de TypeScript unificada.
+- Documentación centralizada y actualizada.
+- CI/CD implementado para lint, tests y builds automáticos.
+- Integración avanzada de validación lingüística con LanguageTool.
+- Integración del diccionario Kamëntsá finalizada y verificada.
+- **Cobertura de tests alta (200 tests exitosos, incluyendo autenticación).**
+- **Integración backend-frontend verificada y estable.**
+- **Solucionado problema de conexión a la base de datos:** Se resolvieron errores relacionados con TypeORM y ciclos de dependencia en las migraciones (Abril 2025).
 - Accesibilidad mejorada: navegación completa por teclado implementada, foco visible asegurado, orden lógico verificado.
 - **Cumple WCAG 2.1 en navegación, menús y menús desplegables (ARIA labels, landmarks, foco).**
 - Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios.
@@ -29,7 +63,7 @@
   - **Campos requeridos para iniciar sesión:** `identifier` (usuario o email), `password`
   - Ver detalles y ejemplos de payloads en [`docs/Autenticacion.md`](./Autenticacion.md)
 - **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas.
-- **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend.
+- **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha agregado la columna `level` a la tabla `users`. Se han solucionado errores relacionados con la entidad `User` en el módulo de gamificación.
 - **Licencia:** MIT License
 
 ---
@@ -54,13 +88,8 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - ~~Documentar y testear flujos de error y protección de rutas.~~ (completado diciembre 2025)
 - **Agregar pruebas automáticas para rutas privadas y manejo de tokens expirados.**
 - **Revisar y documentar la integración de hooks personalizados (`useUnits`, `useAuth`).**
-- **Resolver errores de TypeScript y ESLint en el frontend:**
-  - Errores de tipo en `frontend/src/App.tsx` relacionados con las props `units`, `unitsLoading`, `unitsError` que no se encuentran definidas en el scope actual.
-  - Errores de tipo en `frontend/src/App.tsx` indicando que `PrivateRoute` y `Dashboard` reciben props inesperadas o les faltan props requeridas (`units`, `loading`, `error`).
-  - Error de importación del módulo `./components/VariationsList` en `frontend/src/App.tsx`.
-  - Imports y variables no utilizadas (`SearchView`, `useUnits`, `error`) en `frontend/src/App.tsx`.
-  - Error de tipo en `frontend/src/components/PrivateRoute.tsx` al usar `React.cloneElement` con props no esperadas por el componente hijo.
-  - Error de ESLint en `frontend/src/components/PrivateRoute.tsx` por usar `any` en la prop `units` y por variables no utilizadas (`units`, `loading`, `error`).
+- **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
+- **Se ha implementado el Panel Estudiante en el frontend, creando un nuevo componente llamado `StudentDashboard.tsx` que muestra el progreso, los logros, las actividades sugeridas y la biblioteca multimedia del estudiante.**
 
 ---
 
@@ -152,63 +181,3 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 ## Histórico de funcionalidades eliminadas
 
 - **Chat**: Se eliminó el módulo de chat para simplificar el backend y frontend, ya que no era una funcionalidad prioritaria en la revitalización lingüística ni en la hoja de ruta actual. Si se requiere en el futuro, se planificará e implementará nuevamente con la comunidad.
-
-</final_file_content>
-
-IMPORTANT: For any future changes to this file, use the final_file_content shown above as your reference. This content reflects the current state of the file, including any auto-formatting (e.g., if you used single quotes but the formatter converted them to double quotes). Always base your SEARCH/REPLACE operations on this final version to ensure accuracy.
-
-<environment_details>
-# VSCode Visible Files
-docs/EstadoProyecto.md
-
-# VSCode Open Tabs
-backend/src/features/gamification/dto/update-points.dto.ts
-backend/src/features/gamification/controllers/cultural-achievement.controller.ts
-backend/src/features/gamification/controllers/cultural-achievement.controller.spec.ts
-backend/src/features/gamification/controllers/leaderboard.controller.ts
-backend/src/features/gamification/controllers/leaderboard.controller.spec.ts
-backend/src/features/gamification/controllers/mentor.controller.ts
-backend/src/features/gamification/dto/mentor.dto.ts
-backend/src/features/gamification/controllers/mentor.controller.spec.ts
-backend/src/features/gamification/dto/mission-template.dto.ts
-backend/src/features/gamification/controllers/mission-template.controller.ts
-backend/src/features/gamification/controllers/mission-template.controller.spec.ts
-README.md
-docs/Accesibilidad.md
-docs/Autenticacion.md
-docs/EstructuraDiccionario.md
-docs/Flujos.md
-docs/Frontend-Arquitectura.md
-backend/src/features/gamification/entities/reward.entity.ts
-backend/src/features/gamification/dto/reward.dto.ts
-backend/src/features/gamification/controllers/gamification.controller.ts
-backend/src/features/gamification/controllers/gamification.controller.spec.ts
-backend/src/features/gamification/gamification.module.ts
-frontend/src/features/gamification/components/ProgressPanel.tsx
-frontend/src/features/gamification/hooks/useGamification.ts
-backend/src/features/gamification/services/gamification.service.ts
-backend/src/features/gamification/services/special-event.service.ts
-backend/src/features/gamification/services/streak.service.ts
-backend/src/features/statistics/statistics.service.ts
-docs/Gamificacion.md
-docs/InstruccionesDesarrollo.md
-docs/DocumentationUpdateChecklist.md
-frontend/src/features/dashboard/Dashboard.tsx
-
-# Actively Running Terminals
-## Original command: `pnpm --filter backend start:dev`
-## Original command: `pnpm --filter frontend run dev`
-
-# Recently Modified Files
-These files have been modified since you last accessed them (file was just edited so you may need to re-read it before editing):
-docs/EstadoProyecto.md
-
-# Current Time
-14/4/2025, 7:26:45 p. m. (America/Bogota, UTC-5:00)
-
-# Context Window Usage
-314.990 / 1048,576K tokens used (30%)
-
-# Current Mode
-ACT MODE
-</environment_details>

@@ -63,10 +63,17 @@ async function refreshToken() {
 api.interceptors.request.use(
   async (config) => {
     const storedUser = sessionStorage.getItem('authUser');
-    if (!storedUser) return config;
+    if (!storedUser) {
+      console.log('No se encontró usuario en sessionStorage');
+      return config;
+    }
 
     let user = JSON.parse(storedUser);
-    if (!user.token) return config;
+    console.log('Usuario recuperado de sessionStorage:', user);
+    if (!user.token) {
+      console.log('El usuario no tiene token');
+      return config;
+    }
 
     if (isTokenExpired(user.token)) {
       await refreshToken();
@@ -74,14 +81,17 @@ api.interceptors.request.use(
       if (updatedUser) {
         user = JSON.parse(updatedUser);
       } else {
+        console.log('No se pudo refrescar el token');
         return config;
       }
     }
 
     config.headers.Authorization = `Bearer ${user.token}`;
+    console.log('Token enviado:', user.token, 'URL:', config.url);
     return config;
   },
   (error) => {
+    console.error('Error en el interceptor:', error);
     if (error.response && error.response.status === 401) {
       refreshToken();
     }

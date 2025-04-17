@@ -18,7 +18,7 @@ export function useUnits(token?: string) {
     let isMounted = true;
     setLoading(true);
     api
-      .get<Unit[]>('/unity', {
+      .get<Unit[]>('/api/unity', {
         withCredentials: true,
         headers: { Authorization: `Bearer ${token}` },
       }) // Include headers in API call

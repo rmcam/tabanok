@@ -35,9 +35,25 @@ AppDataSource.initialize()
   .then(async () => {
     console.log('Database connection initialized');
 
+    const userRepository = AppDataSource.getRepository(User);
     const unityRepository = AppDataSource.getRepository(Unity);
     const topicRepository = AppDataSource.getRepository(Topic);
     const vocabularyRepository = AppDataSource.getRepository(Vocabulary);
+
+    // Crear usuario base
+    const user = await userRepository.save({
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'password',
+      firstName: 'Test',
+      lastName: 'User',
+      languages: [],
+      preferences: {
+        notifications: true,
+        language: 'es',
+        theme: 'light',
+      },
+    });
 
     // Crear unidad base
     const unity = await unityRepository.save({
@@ -47,6 +63,8 @@ AppDataSource.initialize()
       isLocked: false,
       requiredPoints: 0,
       isActive: true,
+      user: user,
+      userId: user.id,
     });
 
     // Crear tema Familia

@@ -5,6 +5,8 @@ import { MissionDto } from '../dto/mission.dto';
 import { Badge } from '../entities/badge.entity';
 import { Gamification } from '../entities/gamification.entity';
 import { Mission, MissionEntityFrequency as MissionFrequency, MissionType } from '../entities';
+import { CreateMissionDto } from '../dto/create-mission.dto';
+import { UpdateMissionDto } from '../dto/update-mission.dto';
 
 @Injectable()
 export class MissionService {
@@ -194,5 +196,26 @@ export class MissionService {
         );
 
         return missions;
+    }
+
+    async findOne(id: string): Promise<Mission> {
+        return this.missionRepository.findOne({ where: { id } });
+    }
+
+    async update(id: string, updateMissionDto: UpdateMissionDto): Promise<Mission> {
+        const mission = await this.missionRepository.findOne({ where: { id } });
+        if (!mission) {
+            throw new NotFoundException(`Mission with id ${id} not found`);
+        }
+        Object.assign(mission, updateMissionDto);
+        return this.missionRepository.save(mission);
+    }
+
+    async remove(id: string): Promise<void> {
+        const mission = await this.missionRepository.findOne({ where: { id } });
+        if (!mission) {
+            throw new NotFoundException(`Mission with id ${id} not found`);
+        }
+        await this.missionRepository.remove(mission);
     }
 }

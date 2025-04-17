@@ -7,18 +7,23 @@ import { useAuth } from './useAuth';
  * o no tiene los roles requeridos.
  * Útil para proteger componentes o páginas.
  */
-export function useRequireAuth(requiredRoles: string[] = []) {
+export const useRequireAuth = (requiredRoles: string[] = []) => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
+      console.log('Redirigiendo a /login porque el usuario no está autenticado');
       navigate('/login');
-    } else if (
-      requiredRoles.length > 0 &&
-      !user?.roles?.some((role) => requiredRoles.includes(role))
-    ) {
-      navigate('/unauthorized');
+      return;
+    }
+
+    if (requiredRoles.length > 0) {
+      const hasRequiredRole = user?.roles?.some((role) => requiredRoles.includes(role));
+      if (!hasRequiredRole) {
+        console.log('Redirigiendo a /unauthorized porque el usuario no tiene los roles requeridos');
+        navigate('/unauthorized');
+      }
     }
   }, [isAuthenticated, user, navigate, requiredRoles]);
-}
+};

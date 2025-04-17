@@ -1,13 +1,12 @@
-import { useRequireAuth } from '../features/auth/useRequireAuth';
+import React, { ReactNode } from 'react';
 import { useAuth } from '../features/auth/useAuth';
-import React from 'react';
+import { useRequireAuth } from '../features/auth/useRequireAuth';
 
 interface PrivateRouteProps {
-  children: React.ReactNode;
+  children: ReactNode;
   requiredRoles?: string[];
 }
 
-// Remover units, loading, error si no se usan en este componente
 function PrivateRoute({ children, requiredRoles }: PrivateRouteProps) {
   useRequireAuth(requiredRoles);
   const { loading: authLoading } = useAuth();
@@ -16,7 +15,7 @@ function PrivateRoute({ children, requiredRoles }: PrivateRouteProps) {
     return <div>Cargando...</div>;
   }
 
-  return children;
+  return <>{children}</>;
 }
 
 export default PrivateRoute;

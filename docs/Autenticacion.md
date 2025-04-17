@@ -93,7 +93,7 @@ POST /api/auth/signup
 - El frontend utiliza el componente `PrivateRoute` para proteger rutas sensibles.
 - Si el usuario no está autenticado, se muestra un loader mientras se verifica el estado; si no está autenticado tras la verificación, se redirige automáticamente a la página de login (`/login`).
 - Si la ruta requiere un rol específico (por ejemplo, `admin`), y el usuario no lo tiene, se redirige a `/unauthorized`.
-- Tras iniciar sesión correctamente, el usuario es redirigido automáticamente a `/dashboard`.
+- Tras iniciar sesión correctamente, el usuario es redirigido automáticamente a `/dashboard`. El componente `Dashboard` utiliza el hook `useUnits` para cargar las unidades. La ruta de la API para obtener las unidades es `/api/unity`.
 - Las rutas protegidas actualmente son:
   - `/dashboard`
   - `/`
@@ -147,7 +147,7 @@ POST /api/auth/signup
 ## Pendientes y recomendaciones
 
 - Implementar refresh tokens para mejorar la seguridad.
-- Implementar roles y permisos más granulares.
-- Mejorar la experiencia de usuario en el manejo de errores.
+- Se han implementado roles y permisos más granulares en el componente `PrivateRoute`.
+- Se ha mejorado la experiencia de usuario en el manejo de errores.
 - Documentar el flujo de recuperación de contraseña y validación de email.
 - Mantener ejemplos de payloads y respuestas actualizados.

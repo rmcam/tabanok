@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import api from '@/lib/api';
+import { useEffect, useState } from 'react';
 
 interface Variation {
   id: string;
@@ -16,7 +16,7 @@ export function useVariations() {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<Variation[]>('/api/variations');
+      const response = await api.get<Variation[]>('variations');
       setVariations(response.data);
     } catch (err) {
       console.error(err);

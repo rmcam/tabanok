@@ -6,48 +6,56 @@ import api from '../../lib/api';
 
 export async function login(identifier: string, password: string): Promise<AuthUser> {
   try {
-    const res = await api.post(`${import.meta.env.VITE_API_URL}/auth/signin`, { identifier, password });
+    const res = await api.post(`${import.meta.env.VITE_API_URL}/auth/signin`, {
+      identifier,
+      password,
+    });
     const data = res.data;
-    const user = {
+    console.log('Respuesta del login:', data);
+    const user: AuthUser = {
       id: data.user.id,
       username: data.user.username,
       email: data.user.email,
       roles: data.user.roles,
       token: data.accessToken,
     };
-    sessionStorage.setItem('authUser', JSON.stringify(user));
     return user;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      const message =
-        (error as any).response?.data?.message || error.message || 'Error al iniciar sesión';
-      throw new Error(message);
+  } catch (error: any) {
+    let message = 'Error al iniciar sesión';
+    if (error.response) {
+      console.log('Error en la respuesta del login:', error.response);
+      message = error.response.data.message || message;
+    } else if (error.message) {
+      message = error.message;
     }
-    throw new Error('Error al iniciar sesión');
+    throw new Error(message);
   }
 }
 
 export async function register(data: RegisterData): Promise<AuthUser> {
   try {
     const res = await api.post(`${import.meta.env.VITE_API_URL}/auth/signup`, data);
-    return {
-      id: res.data.user.id,
-      username: res.data.user.username,
-      email: res.data.user.email,
-      roles: res.data.user.roles,
+    const dataRes = res.data.user;
+    const user: AuthUser = {
+      id: dataRes.id,
+      username: dataRes.username,
+      email: dataRes.email,
+      roles: dataRes.roles,
     };
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      const message =
-        (error as any).response?.data?.message || error.message || 'Error al registrarse';
-      throw new Error(message);
+    return user;
+  } catch (error: any) {
+    let message = 'Error al registrarse';
+    if (error.response) {
+      message = error.response.data.message || message;
+    } else if (error.message) {
+      message = error.message;
     }
-    throw new Error('Error al registrarse');
+    throw new Error(message);
   }
 }
 
 export function logout() {
-  // Si usas JWT en localStorage/cookies, aquí puedes limpiar el almacenamiento
+  // If using JWT in localStorage/cookies, you can clear the storage here
   sessionStorage.removeItem('authUser');
-  // Si el backend requiere endpoint de logout, puedes hacer la petición aquí
+  // If the backend requires a logout endpoint, you can make the request here
 }

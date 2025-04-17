@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const loggedUser = await authApi.login(email, password);
       setUser(loggedUser);
+      console.log('Usuario guardado en el contexto:', loggedUser);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

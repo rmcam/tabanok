@@ -57,8 +57,8 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       SpecialEvent,
       Badge,
     ],
-    migrations: ['src/migrations/*.ts'],
-    synchronize: false,
+    migrations: [],
+    synchronize: true,
     logging: configService.get('NODE_ENV') === 'development',
     logger: 'advanced-console',
     cache: {

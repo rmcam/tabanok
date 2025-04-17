@@ -1,52 +1,44 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import useUnits from './useUnits';
 import { vi } from 'vitest';
+import api from '../lib/api';
 
-vi.mock('../lib/api', () => {
-  const mockUnits = [
-    { id: '1', name: 'Unidad 1', description: 'Descripción 1' },
-    { id: '2', name: 'Unidad 2', description: 'Descripción 2' },
-  ];
-  return {
-    default: {
-      get: vi.fn().mockResolvedValue({ data: mockUnits }),
-    },
-  };
-});
+const mockUnits = [
+  { id: '1', name: 'Unit 1', description: 'Description 1' },
+  { id: '2', name: 'Unit 2', description: 'Description 2' },
+];
 
 describe('useUnits', () => {
-  it('debe retornar un array de unidades y un estado de carga', async () => {
+  it('should return an array of units and a loading state', async () => {
+    const mockGet = vi.spyOn(api, 'get').mockResolvedValue({ data: mockUnits });
+
     const { result } = renderHook(() => useUnits());
 
-    // Estado inicial
-    expect(result.current.units).toEqual([]);
     expect(result.current.loading).toBe(true);
 
-    // Esperar a que se resuelva la solicitud API y se actualice el estado
-    await waitFor(() => expect(result.current.units).toEqual([
-      { id: '1', name: 'Unidad 1', description: 'Descripción 1' },
-      { id: '2', name: 'Unidad 2', description: 'Descripción 2' },
-    ]));
-    expect(result.current.loading).toBe(false);
-  });
-
-  it('debe manejar errores de fetch', async () => {
-    vi.mock('../lib/api', () => {
-      return {
-        default: {
-          get: vi.fn().mockRejectedValue(new Error('Fetch error')),
-        },
-      };
+    await waitFor(() => {
+      expect(result.current.units).toEqual(mockUnits);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeNull();
     });
 
+    expect(mockGet).toHaveBeenCalledWith('unity', { headers: {} });
+  });
+
+  it('should handle API errors and update the state', async () => {
+    const mockError = new Error('API Error');
+    const mockGet = vi.spyOn(api, 'get').mockRejectedValue(mockError);
+
     const { result } = renderHook(() => useUnits());
 
-    // Estado inicial
-    expect(result.current.units).toEqual([]);
     expect(result.current.loading).toBe(true);
 
-    // Esperar a que se resuelva la solicitud API y se actualice el estado
-    await waitFor(() => expect(result.current.units).toEqual([]));
-    expect(result.current.loading).toBe(false);
+    await waitFor(() => {
+      expect(result.current.units).toEqual([]);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBe(mockError.message);
+    });
+
+    expect(mockGet).toHaveBeenCalledWith('unity', { headers: {} });
   });
 });

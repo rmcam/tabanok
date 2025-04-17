@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import api from '@/lib/api';
+import { useState } from 'react';
 
 interface SearchResult {
   id: string;
@@ -17,7 +17,7 @@ export function useSearch() {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<SearchResult[]>('/api/search', {
+      const response = await api.get<SearchResult[]>('/search', {
         params: { q: term },
       });
       setResults(response.data);

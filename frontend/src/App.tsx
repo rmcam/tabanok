@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { BrowserRouter, Link, Route, Routes, useParams } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
@@ -16,36 +16,10 @@ import EntryDetail from './features/dictionary/components/EntryDetail';
 import SearchView from './features/dictionary/components/SearchView';
 // import { useUnits } from './features/dashboard/useUnits'; // Eliminado: No usado (por ahora)
 import VariationsList from './features/dictionary/components/VariationsList';
-import api from './lib/api'; // Añadido: Importar api
-
+import Missions from './components/Missions'; // Importa el componente Missions
+import StudentDashboard from './components/StudentDashboard';
 function App() {
-  const { isAuthenticated, loading, logout, user } = useContext(AuthContext);
-  const [units, setUnits] = useState([]);
-  const [unitsLoading, setUnitsLoading] = useState(true);
-  const [unitsError, setUnitsError] = useState(null);
-
-  useEffect(() => {
-    if (isAuthenticated && user?.token) {
-      setUnitsLoading(true);
-      api
-        .get('/unity', {
-          headers: { Authorization: `Bearer ${user.token}` },
-        })
-        .then((response) => {
-          setUnits(response.data);
-          setUnitsError(null);
-        })
-        .catch(() => { // Restaurar la variable error para loguear
-          setUnitsError('Error al cargar las unidades');
-        })
-        .finally(() => {
-          setUnitsLoading(false);
-        });
-    } else {
-      setUnits([]);
-      setUnitsLoading(false);
-    }
-  }, [isAuthenticated, user?.token]);
+  const { isAuthenticated, loading, logout } = useContext(AuthContext);
 
   const handleLogout = () => {
     logout();
@@ -78,6 +52,18 @@ function App() {
             className="transition-colors hover:bg-gray-100 rounded-md px 2 py-1"
           >
             Variaciones
+          </Link>
+          <Link
+            to="/missions"
+            className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
+          >
+            Misiones
+          </Link>
+          <Link
+            to="/student/dashboard"
+            className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
+          >
+            Panel Estudiante
           </Link>
           {!isAuthenticated ? (
             <>
@@ -119,7 +105,7 @@ function App() {
                 // Eliminado: PrivateRoute ya no acepta estas props
                 <PrivateRoute>
                   {/* Pasando las props requeridas a Dashboard */}
-                  <Dashboard units={units} loading={unitsLoading} error={unitsError} />
+                  <Dashboard />
                 </PrivateRoute>
               }
             />
@@ -160,6 +146,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <ProfilePage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/missions"
+              element={
+                <PrivateRoute>
+                  <Missions />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/student/dashboard"
+              element={
+                <PrivateRoute requiredRoles={['student']}>
+                  <StudentDashboard />
                 </PrivateRoute>
               }
             />

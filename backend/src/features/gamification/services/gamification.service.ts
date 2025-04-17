@@ -3,6 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reward } from '../entities/reward.entity';
 import { User } from '../../../auth/entities/user.entity';
+import { calculateLevel } from '../../../lib/gamification';
+import { Achievement } from '../entities/achievement.entity';
+import { UserAchievement } from '../entities/user-achievement.entity';
+import { Inject } from '@nestjs/common';
+import { Mission } from '../entities/mission.entity';
+import { UserMission } from '../entities/user-mission.entity';
 
 @Injectable()
 export class GamificationService {
@@ -11,6 +17,14 @@ export class GamificationService {
     private rewardRepository: Repository<Reward>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Achievement)
+    private achievementRepository: Repository<Achievement>,
+    @InjectRepository(UserAchievement)
+    private userAchievementRepository: Repository<UserAchievement>,
+    @InjectRepository(Mission)
+    private missionRepository: Repository<Mission>,
+    @InjectRepository(UserMission)
+    private userMissionRepository: Repository<UserMission>,
   ) {}
 
   async getRewards(): Promise<Reward[]> {
@@ -22,7 +36,6 @@ export class GamificationService {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    user.points = (user.points || 0) + points;
     return this.userRepository.save(user);
   }
 
@@ -35,7 +48,6 @@ export class GamificationService {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    user.points = (user.points || 0) + points;
     return this.userRepository.save(user);
   }
 
@@ -54,8 +66,62 @@ export class GamificationService {
       throw new Error(`User with ID ${userId} not found`);
     }
     return {
-      points: user.points || 0,
-      level: 1, // Replace with actual level calculation
+      level: calculateLevel(0),
     };
+  }
+
+  async grantAchievement(userId: number, achievementId: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
+    const achievement = await this.achievementRepository.findOne({ where: { id: achievementId.toString() } });
+    if (!achievement) {
+      throw new Error(`Achievement with ID ${achievementId} not found`);
+    }
+
+    const userAchievement = await this.userAchievementRepository.findOne({
+      where: {
+        user: { id: userId.toString() },
+        achievement: { id: achievementId.toString() },
+      },
+    });
+
+    if (userAchievement) {
+      // The user already has the achievement
+      return user;
+    }
+
+    // Grant the achievement to the user
+    const newUserAchievement = this.userAchievementRepository.create({
+      user: user,
+      achievement: achievement,
+    });
+
+    await this.userAchievementRepository.save(newUserAchievement);
+
+    return this.userRepository.save(user);
+  }
+
+  async assignMission(userId: number, missionId: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
+    const mission = await this.missionRepository.findOne({ where: { id: missionId.toString() } });
+    if (!mission) {
+      throw new Error(`Mission with ID ${missionId} not found`);
+    }
+
+    const newUserMission = this.userMissionRepository.create({
+      user: user,
+      mission: mission,
+    });
+
+    await this.userMissionRepository.save(newUserMission);
+
+    return this.userRepository.save(user);
   }
 }

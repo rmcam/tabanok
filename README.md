@@ -136,7 +136,7 @@ Revisa la carpeta `docs/` para:
 - **Dockerfile Path:** `backend/Dockerfile`
 - **Docker Command:** *(vacío, usa el del Dockerfile)*
 - **Secret Files:** sube tu `.env` si quieres
-- **Health Check Path:** `/api/v1/health` (o el que uses)
+- **Health Check Path:** `/api/health` (o el que uses)
 - **Auto-Deploy:** activado
 
 Render usará todo el monorepo como contexto, permitiendo que el Dockerfile copie cualquier archivo necesario.

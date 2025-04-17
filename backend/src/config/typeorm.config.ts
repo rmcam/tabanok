@@ -76,7 +76,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       ],
       synchronize: false,
       logging: true,
-      migrations: ['dist/migrations/*.js'],
+      migrations: ['src/migrations/*.ts'],
       migrationsRun: true,
       ssl: this.configService.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
     };

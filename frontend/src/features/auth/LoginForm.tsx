@@ -54,6 +54,7 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           className="w-full border p-2 rounded"
+          autoComplete="current-password"
         />
       </div>
       <button

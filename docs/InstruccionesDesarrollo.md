@@ -33,7 +33,7 @@ pnpm install
   ```
   (Acceder en http://localhost:3000)
 
-  **Nota:** Si estás ejecutando el frontend localmente, asegúrate de que la variable `VITE_API_URL` en el archivo `.env` esté configurada como `http://localhost:8000`.
+  **Nota:** Si estás ejecutando el frontend localmente, asegúrate de que la variable `VITE_API_URL` en el archivo `.env` esté configurada como `http://localhost:8000/api/v1`.
 
 - **Base de datos, backend y frontend con Docker Compose:**
 

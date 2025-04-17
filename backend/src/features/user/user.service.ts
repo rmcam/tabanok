@@ -5,7 +5,7 @@ import { Account } from '../account/entities/account.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '../../auth/entities/user.entity';
-import { UserRole, UserStatus } from '@/auth/enums/auth.enum';
+import { UserRole, UserStatus } from '../../auth/enums/auth.enum';
 
 @Injectable()
 export class UserService {

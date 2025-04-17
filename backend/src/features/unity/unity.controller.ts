@@ -1,13 +1,24 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Request,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/entities/user.entity';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
+import { LoggingInterceptor } from '../../common/LogginInterceptor';
 import { CreateUnityDto } from './dto/create-unity.dto';
 import { UpdateUnityDto } from './dto/update-unity.dto';
 import { UnityService } from './unity.service';
-import { LoggingInterceptor } from '@/common/LogginInterceptor';
 
 @ApiTags('units')
 @Controller('unity')
@@ -57,8 +68,8 @@ export class UnityController {
     status: 401,
     description: 'No autorizado',
   })
-  findAll() {
-    return this.unityService.findAll();
+  findAll(@Request() req) {
+    return this.unityService.findAll(req.user);
   }
 
   @Get(':id')

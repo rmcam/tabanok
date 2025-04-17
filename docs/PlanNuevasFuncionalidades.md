@@ -69,8 +69,9 @@
 
 ## 5. Siguientes pasos
 
+- ~~Crear los componentes base y rutas protegidas para el Panel Estudiante.~~ (completado)
 - Definir los modelos de datos para panel docente y multimedia.
-- Crear los componentes base y rutas protegidas.
+- Crear los componentes base y rutas protegidas para el Panel Docente.
 - Implementar endpoints REST para multimedia.
 - Prototipar la UI de los paneles en Figma antes de codificar.
 - Documentar cada avance y mantener este plan actualizado.

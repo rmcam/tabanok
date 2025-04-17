@@ -147,7 +147,7 @@ git push origin feature/nueva-funcionalidad
 
 ### Obtener palabras del diccionario por tema
 
-- **Endpoint:** `/vocabulary/topic/{topicId}`
+- **Endpoint:** `/api/vocabulary/topic/{topicId}`
 - **Método:** GET
 - **Descripción:** Devuelve todas las palabras asociadas al tema especificado, incluyendo las del diccionario Kamëntsá si se usa el `topicId` correspondiente.
 - **Parámetros:**

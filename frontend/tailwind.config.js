@@ -7,7 +7,23 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#007bff",
+        secondary: "#6c757d",
+        accent: "#ffc107",
+        success: "#28a745",
+        error: "#dc3545",
+        info: "#17a2b8",
+        warning: "#ffc107",
+        light: "#f8f9fa",
+        dark: "#343a40",
+      },
+      fontFamily: {
+        sans: ['Arial', 'sans-serif'],
+        serif: ['Times New Roman', 'serif'],
+      },
+    },
   },
   plugins: [require("tailwindcss-animate")],
 }

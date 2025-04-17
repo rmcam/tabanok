@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Validate } from 'class-validator';
-import { UserRole } from '@/auth/enums/auth.enum';
+import { UserRole } from '../enums/auth.enum';
 import { IsPasswordStrong } from '../../common/validators/password.validator';
 
 export class LoginDto {

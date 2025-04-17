@@ -96,6 +96,7 @@ export default function RegisterForm() {
           onChange={handleChange}
           required
           className="w-full border p-2 rounded"
+          autoComplete="new-password"
         />
       </div>
       <div className="mb-4">
@@ -107,6 +108,7 @@ export default function RegisterForm() {
           onChange={handleChange}
           required
           className="w-full border p-2 rounded"
+          autoComplete="new-password"
         />
       </div>
       <button

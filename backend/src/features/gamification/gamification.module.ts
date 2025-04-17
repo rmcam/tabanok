@@ -40,8 +40,12 @@ import { UserLevelService } from './services/user-level.service';
 import { AchievementService } from './services/achievement.service';
 import { MissionTemplateService } from './services/mission-template.service';
 
+import { UserMission } from './entities/user-mission.entity';
+import { UserMissionRepository } from './repositories/user-mission.repository';
 import { MissionTemplate } from './entities/mission-template.entity';
 import { MissionTemplateController } from './controllers/mission-template.controller';
+import { MissionTemplateRepository } from './repositories/mission-template.repository';
+import { AuthModule } from '../../auth/auth.module';
 
 const ENTITIES = [
     User,
@@ -59,7 +63,8 @@ const ENTITIES = [
     Gamification,
     Mission,
     Leaderboard,
-    MissionTemplate
+    MissionTemplate,
+    UserMission
 ];
 
 const CONTROLLERS = [
@@ -83,13 +88,16 @@ const SERVICES = [
     MissionService,
     LeaderboardService,
     LeaderboardRepository,
-    MissionTemplateService
+    MissionTemplateService,
+    UserMissionRepository,
+    MissionTemplateRepository
 ];
 
 @Module({
     imports: [
         TypeOrmModule.forFeature(ENTITIES),
-        NotificationsModule
+        NotificationsModule,
+        AuthModule
     ],
     controllers: CONTROLLERS,
     providers: SERVICES,
