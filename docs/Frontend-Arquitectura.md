@@ -91,7 +91,7 @@ Se han implementado hooks específicos para interactuar con los endpoints del ba
 - `src/features/dictionary/hooks/useSearch.ts` — búsqueda de términos
 - `src/features/dictionary/hooks/useEntry.ts` — detalle de una entrada
 - `src/features/dictionary/hooks/useCategories.ts` — categorías
-- `src/features/dictionary/hooks/useVariations.ts` — variaciones dialectales
+- `src/features/dictionary/hooks/useVariations.ts` — variaciones dialectales (ahora usa la ruta `/vocabulary`)
 - `src/features/gamification/hooks/useGamification.ts` - Gamificación
 
 ### Componentes que usan estos hooks
@@ -104,7 +104,7 @@ Se han implementado hooks específicos para interactuar con los endpoints del ba
 - `src/features/gamification/components/Leaderboard.tsx` - Leaderboard
 - `src/features/gamification/components/CulturalAchievement.tsx` - Cultural Achievement
 - `src/features/gamification/components/Mentor.tsx` - Mentor
-- `src/features/gamification/components/MissionTemplate.tsx` - Mission Template
+- `src/features/gamification/components/MissionTemplate.tsx` - Mission Template (Funcionalidad de misiones eliminada)
 
 
 ### Flujo general

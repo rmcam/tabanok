@@ -7,7 +7,7 @@ import { Vocabulary } from './entities/vocabulary.entity';
 import { VocabularyService } from './vocabulary.service';
 
 @ApiTags('vocabulary')
-@Controller('vocabulary')
+@Controller('api/v1/search')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class VocabularyController {
@@ -107,7 +107,6 @@ export class VocabularyController {
     return this.vocabularyService.findByTopic(topicId);
   }
 
-  @Get('search')
   @ApiOperation({
     summary: 'Buscar en el diccionario Kamëntsá',
     description: 'Busca palabras en el diccionario Kamëntsá con filtros y paginación'
@@ -121,14 +120,15 @@ export class VocabularyController {
     status: 401,
     description: 'No autorizado'
   })
+  @Get()
   search(
-    @Param('term') term: string,
+    @Param('q') q: string,
     @Param('page') page = 1,
     @Param('limit') limit = 20,
     @Param('tipo') tipo?: string,
     @Param('topicId') topicId?: string
   ) {
-    return this.vocabularyService.search(term, page, limit, tipo, topicId);
+    return this.vocabularyService.search(q, page, limit, tipo, topicId);
   }
 
   @Patch(':id')

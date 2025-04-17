@@ -16,7 +16,7 @@ export function useVariations() {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<Variation[]>('variations');
+      const response = await api.get<Variation[]>('vocabulary');
       setVariations(response.data);
     } catch (err) {
       console.error(err);

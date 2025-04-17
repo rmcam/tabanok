@@ -1,43 +1,31 @@
-import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
-import api from '../lib/api';
-import { useAuth } from '../features/auth/useAuth';
+// import { useState, useEffect } from 'react';
+// import api from '@/lib/api';
 
-export interface Mission {
-  id: string;
-  name: string;
-  description: string;
-  // Agrega aquí otros campos de la entidad Mission
-}
+// interface Mission {
+//   id: number;
+//   name: string;
+//   description: string;
+// }
 
-function useMissions() {
-  const [missions, setMissions] = useState<Mission[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+// export const useMissions = () => {
+//   const [missions, setMissions] = useState<Mission[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchMissions() {
-      try {
-        const response = await api.get<Mission[]>('/gamification/missions');
-        setMissions(response.data);
-      } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-          setError(error.message);
-        } else {
-          setError('An unexpected error occurred.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
+//   useEffect(() => {
+//     const fetchMissions = async () => {
+//       try {
+//         const response = await api.get<Mission[]>('/gamification/missions');
+//         setMissions(response.data);
+//       } catch (error: any) {
+//         setError(error.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
 
-    if (isAuthenticated) {
-      fetchMissions();
-    }
-  }, [isAuthenticated]);
+//     fetchMissions();
+//   }, []);
 
-  return { missions, loading, error };
-}
-
-export default useMissions;
+//   return { missions, loading, error };
+// }

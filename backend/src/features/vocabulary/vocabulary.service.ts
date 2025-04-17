@@ -17,16 +17,16 @@ export class VocabularyService {
         return await this.vocabularyRepository.save(vocabulary);
     }
 
-    async search(term: string, page = 1, limit = 20, tipo?: string, topicId?: string): Promise<Vocabulary[]> {
+    async search(q: string, page = 1, limit = 20, tipo?: string, topicId?: string): Promise<Vocabulary[]> {
         const query = this.vocabularyRepository
             .createQueryBuilder('vocabulary')
             .leftJoinAndSelect('vocabulary.topic', 'topic')
             .where('vocabulary.isActive = true');
 
-        if (term) {
+        if (q) {
             query.andWhere(
-                '(vocabulary.word ILIKE :term OR vocabulary.translation ILIKE :term)',
-                { term: `%${term}%` }
+                '(vocabulary.word ILIKE :q OR vocabulary.translation ILIKE :q)',
+                { q: `%${q}%` }
             );
         }
 

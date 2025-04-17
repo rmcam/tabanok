@@ -16,7 +16,6 @@ import EntryDetail from './features/dictionary/components/EntryDetail';
 import SearchView from './features/dictionary/components/SearchView';
 // import { useUnits } from './features/dashboard/useUnits'; // Eliminado: No usado (por ahora)
 import VariationsList from './features/dictionary/components/VariationsList';
-import Missions from './components/Missions'; // Importa el componente Missions
 import StudentDashboard from './components/StudentDashboard';
 function App() {
   const { isAuthenticated, loading, logout } = useContext(AuthContext);
@@ -52,12 +51,6 @@ function App() {
             className="transition-colors hover:bg-gray-100 rounded-md px 2 py-1"
           >
             Variaciones
-          </Link>
-          <Link
-            to="/missions"
-            className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
-          >
-            Misiones
           </Link>
           <Link
             to="/student/dashboard"
@@ -146,14 +139,6 @@ function App() {
               element={
                 <PrivateRoute>
                   <ProfilePage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/missions"
-              element={
-                <PrivateRoute>
-                  <Missions />
                 </PrivateRoute>
               }
             />
