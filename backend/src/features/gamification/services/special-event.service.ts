@@ -137,35 +137,57 @@ export class SpecialEventService {
       [SeasonType.BETSCNATE]: [
         {
           name: 'Gran Celebración del Bëtscnaté',
-          description: 'Participa en la celebración principal del Carnaval del Perdón',
+          description: 'Participa en la celebración principal del Carnaval del Perdón y gana recompensas exclusivas.',
           type: EventType.FESTIVAL,
           rewards: {
-            points: 500,
-            culturalValue: 300,
+            points: 700,
+            culturalValue: 500,
             specialBadge: {
-              id: 'betscnate-master',
-              name: 'Maestro del Bëtscnaté',
+              id: 'betscnate-grand-master',
+              name: 'Gran Maestro del Bëtscnaté',
               icon: '🎭'
+            }
+          },
+          requirements: {
+            minLevel: 7
+          },
+          culturalElements: {
+            traditions: ['Danza del Carnaval', 'Ritual del Perdón', 'Elaboración de máscaras'],
+            vocabulary: ['Bëtscnaté', 'Perdón', 'Celebración', 'Máscara', 'Renovación'],
+            activities: ['Danza grupal', 'Ceremonia de perdón', 'Taller de máscaras']
+          }
+        },
+        {
+          name: 'Concurso de disfraces del Bëtscnaté',
+          description: 'Crea el disfraz más original y gana puntos extra.',
+          type: EventType.COMPETITION,
+          rewards: {
+            points: 600,
+            culturalValue: 400,
+            specialBadge: {
+              id: 'betscnate-costume-master',
+              name: 'Maestro del Disfraz',
+              icon: '🎉'
             }
           },
           requirements: {
             minLevel: 5
           },
           culturalElements: {
-            traditions: ['Danza del Carnaval', 'Ritual del Perdón'],
-            vocabulary: ['Bëtscnaté', 'Perdón', 'Celebración'],
-            activities: ['Danza grupal', 'Ceremonia de perdón']
+            traditions: ['Concurso de disfraces', 'Desfile de máscaras'],
+            vocabulary: ['Disfraz', 'Máscara', 'Creatividad', 'Originalidad'],
+            activities: ['Diseño de disfraces', 'Elaboración de máscaras', 'Desfile']
           }
         }
       ],
       [SeasonType.JAJAN]: [
         {
           name: 'Festival de la Siembra',
-          description: 'Participa en el ritual tradicional de siembra',
+          description: 'Participa en el ritual tradicional de siembra y recibe la bendición de la Madre Tierra.',
           type: EventType.CEREMONIA,
           rewards: {
-            points: 400,
-            culturalValue: 250,
+            points: 600,
+            culturalValue: 400,
             specialBadge: {
               id: 'jajan-guardian',
               name: 'Guardián de la Siembra',
@@ -173,12 +195,34 @@ export class SpecialEventService {
             }
           },
           requirements: {
+            minLevel: 5
+          },
+          culturalElements: {
+            traditions: ['Ritual de siembra', 'Bendición de semillas', 'Ofrenda a la Pachamama'],
+            vocabulary: ['Jajañ', 'Siembra', 'Tierra', 'Pachamama', 'Fertilidad'],
+            activities: ['Siembra ceremonial', 'Preparación de la tierra', 'Ofrenda a la tierra']
+          }
+        },
+        {
+          name: 'Concurso de Canto a la Tierra',
+          description: 'Participa en el concurso de canto a la tierra y celebra la fertilidad de la Pachamama.',
+          type: EventType.COMPETITION,
+          rewards: {
+            points: 500,
+            culturalValue: 300,
+            specialBadge: {
+              id: 'jajan-singer',
+              name: 'Cantor de la Tierra',
+              icon: '🎤'
+            }
+          },
+          requirements: {
             minLevel: 3
           },
           culturalElements: {
-            traditions: ['Ritual de siembra', 'Bendición de semillas'],
-            vocabulary: ['Jajañ', 'Siembra', 'Tierra'],
-            activities: ['Siembra ceremonial', 'Preparación de la tierra']
+            traditions: ['Canto a la tierra', 'Música andina'],
+            vocabulary: ['Canto', 'Música', 'Tierra', 'Pachamama', 'Fertilidad'],
+            activities: ['Interpretación musical', 'Composición de canciones', 'Celebración musical']
           }
         }
       ]
@@ -186,16 +230,16 @@ export class SpecialEventService {
 
     const templates = eventTemplates[season.type] || [];
     for (const template of templates) {
-      const specialEvent = new SpecialEvent()
-      specialEvent.name = template.name
-      specialEvent.description = template.description
-      specialEvent.type = template.type
-      specialEvent.rewards = template.rewards
-      specialEvent.requirements = template.requirements
-      specialEvent.culturalElements = template.culturalElements
-      specialEvent.startDate = season.startDate
-      specialEvent.endDate = new Date(season.startDate.getTime() + 7 * 24 * 60 * 60 * 1000)
-      specialEvent.isActive = true
+      const specialEvent = new SpecialEvent();
+      specialEvent.name = template.name;
+      specialEvent.description = template.description;
+      specialEvent.type = template.type;
+      specialEvent.rewards = template.rewards;
+      specialEvent.requirements = template.requirements;
+      specialEvent.culturalElements = template.culturalElements;
+      specialEvent.startDate = season.startDate;
+      specialEvent.endDate = new Date(season.startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+      specialEvent.isActive = true;
       await this.createSpecialEvent(season.id, specialEvent);
     }
   }

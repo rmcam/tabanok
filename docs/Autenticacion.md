@@ -128,7 +128,7 @@ POST /api/auth/signup
 
 ## Flujo de Autenticación
 
-**Nota:** Al crear un nuevo usuario, se crea automáticamente una entrada en la tabla `statistics` para almacenar su información de progreso y logros.
+**Nota:** Al crear un nuevo usuario, se crea automáticamente una entrada en la tabla `statistics` para almacenar su información de progreso y logros. La generación de reportes de estadísticas se ha refactorizado para mejorar su estructura y mantenibilidad.
 
 1. El usuario se registra enviando los campos requeridos al endpoint `/api/auth/signup`.
 2. El usuario inicia sesión enviando `identifier` (usuario o email) y `password` a `/api/auth/signin`.

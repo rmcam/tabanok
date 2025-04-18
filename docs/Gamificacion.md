@@ -14,11 +14,17 @@ El flujo de logros culturales se gestiona principalmente en `CulturalAchievement
 
     - Un administrador llama al método `createAchievement` con los datos del nuevo logro (nombre, descripción, categoría, nivel, requisitos, recompensas, etc.).
     - El método crea una nueva entidad `CulturalAchievement` y la guarda en la base de datos.
+    - Los tipos de logros culturales son:
+        *   `PARTICIPACION_EVENTO`: Logro por participar en un evento cultural.
+        *   `CREACION_CONTENIDO`: Logro por crear contenido cultural.
+        *   `CONTRIBUCION_CULTURAL`: Logro por realizar una contribución cultural.
+        *   `APRENDIZAJE_LENGUA`: Logro por aprender la lengua.
+        *   `DOMINIO_CULTURAL`: Logro por demostrar dominio cultural.
 
 2.  **Obtención de logros culturales:**
 
     - Se llama al método `getAchievements` para obtener una lista de logros culturales.
-    - Opcionalmente, se puede filtrar por categoría.
+    - Opcionalmente, se puede filtrar por categoría y tipo.
     - El método devuelve una lista de entidades `CulturalAchievement` activas.
 
 3.  **Inicialización del progreso del usuario:**
@@ -55,9 +61,17 @@ El flujo de recompensas por colaboración se gestiona principalmente en `Collabo
     - Se registra la colaboración en la tabla `CollaborationReward`.
     - Se actualiza el perfil de gamificación del usuario con los puntos otorgados.
     - Si el usuario cumple con los requisitos para obtener una insignia especial, se le otorga la insignia.
+    - Los tipos de colaboración son:
+        *   `CONTENIDO_CREACION`: Creación de contenido.
+        *   `CONTENIDO_REVISION`: Revisión de contenido.
+        *   `CONTRIBUCION_CULTURAL`: Contribución cultural.
+        *   `CONTENIDO_TRADUCCION`: Traducción de contenido.
+        *   `AYUDA_COMUNITARIA`: Ayuda comunitaria.
+        *   `REPORTE_ERRORES`: Reporte de errores.
 
 2.  **Obtención de estadísticas de colaboración:**
     - Se llama al método `getCollaborationStats` para obtener estadísticas sobre las colaboraciones de un usuario.
+    - Opcionalmente, se puede filtrar por tipo de colaboración.
     - El método devuelve información como el número total de contribuciones, el número de contribuciones excelentes, la racha actual y las insignias obtenidas.
 
 ### Mentoría
@@ -116,6 +130,9 @@ El flujo de mentoría se gestiona principalmente en `MentorService`.
 
 11. **Actualización de la disponibilidad del mentor:**
     - Se llama al método `updateMentorAvailability` para actualizar la disponibilidad horaria de un mentor.
+    - Los tipos de mentoría son:
+        *   `ESTUDIANTE_ESTUDIANTE`: Mentoría entre estudiantes.
+        *   `DOCENTE_ESTUDIANTE`: Mentoría entre docentes y estudiantes.
 
 ### Misiones
 
@@ -150,11 +167,46 @@ El flujo de misiones se gestiona principalmente en `MissionService`.
 
 6.  **Generación de misiones semanales:**
     - Se llama al método `generateWeeklyMissions` para generar misiones semanales.
-    - Se crean misiones para completar lecciones y realizar contribuciones culturales.
+    - Se crean misiones para completar lecciones, realizar contribuciones culturales y mantener una racha semanal.
 
-### Temporadas
+### Misiones
 
-El flujo de temporadas se gestiona principalmente en `SeasonService`.
+El flujo de misiones se gestiona principalmente en `MissionService`.
+
+1.  **Creación de una misión:**
+
+    - Se llama al método `createMission` para crear una nueva misión.
+    - El método recibe los datos de la misión (título, descripción, tipo, frecuencia, valor objetivo, puntos de recompensa, etc.).
+    - Se crea una nueva entidad `Mission` y se guarda en la base de datos.
+
+2.  **Obtención de misiones activas:**
+
+    - Se llama al método `getActiveMissions` para obtener una lista de misiones activas para un usuario.
+    - Se filtran las misiones por fecha de inicio y fin.
+
+3.  **Actualización del progreso de la misión:**
+
+    - Se llama al método `updateMissionProgress` para actualizar el progreso de un usuario en una misión.
+    - Se actualiza el progreso del usuario en la tabla `Mission`.
+    - Si el usuario completa la misión, se otorgan las recompensas.
+
+4.  **Otorgamiento de recompensas de la misión:**
+
+    - Se llama al método `awardMissionRewards` para otorgar las recompensas a un usuario por completar una misión.
+    - Se otorgan puntos y una insignia (si corresponde).
+
+5.  **Generación de misiones diarias:**
+
+    - Se llama al método `generateDailyMissions` para generar misiones diarias.
+    - Se crean misiones para completar lecciones, practicar ejercicios y explorar contenido cultural.
+
+6.  **Generación de misiones semanales:**
+    - Se llama al método `generateWeeklyMissions` para generar misiones semanales.
+    - Se crean misiones para completar lecciones, realizar contribuciones culturales y mantener una racha semanal.
+
+### Eventos especiales
+
+El flujo de eventos especiales se gestiona principalmente en `SpecialEventService`.
 
 1.  **Creación de una temporada:**
 
@@ -182,96 +234,18 @@ El flujo de temporadas se gestiona principalmente en `SeasonService`.
     - Se llama al método `getSeasonProgress` para obtener el progreso de un usuario en una temporada.
     - Se calcula el número de misiones completadas, los puntos ganados y el rango del usuario.
 
-6.  **Inicio de una nueva temporada:**
-    - Se llama al método `startNewSeason` para iniciar una nueva temporada.
-    - Se genera la temporada, se generan las misiones estáticas y se generan las misiones dinámicas.
-
-### Eventos especiales
-
-El flujo de eventos especiales se gestiona principalmente en `SpecialEventService`.
-
-1.  **Creación de un evento especial:**
-
-    - Se llama al método `createSpecialEvent` para crear un nuevo evento especial.
-    - El método recibe los datos del evento (nombre, descripción, tipo, fechas, recompensas, requisitos, elementos culturales, etc.).
-    - Se crea una nueva entidad `SpecialEvent` y se guarda en la base de datos.
-
-2.  **Obtención de eventos activos:**
-
-    - Se llama al método `getActiveEvents` para obtener una lista de eventos especiales activos.
-    - Se filtran los eventos por fecha de inicio y fin.
-
-3.  **Unión a un evento:**
-
-    - Se llama al método `joinEvent` para que un usuario se una a un evento especial.
-    - Se verifica si el usuario cumple con los requisitos del evento.
-    - Se agrega el usuario a la lista de participantes del evento.
-
-4.  **Actualización del progreso del evento:**
-
-    - Se llama al método `updateEventProgress` para actualizar el progreso de un usuario en un evento especial.
-    - Se actualiza el progreso del usuario en la tabla `SpecialEvent`.
-    - Si el usuario completa el evento, se otorgan las recompensas.
-
-5.  **Otorgamiento de recompensas del evento:**
-
-    - Se llama al método `awardEventRewards` para otorgar las recompensas a un usuario por completar un evento especial.
-    - Se otorgan puntos y se actualizan los logros culturales.
-
-6.  **Generación de eventos de temporada:**
-    - Se llama al método `generateSeasonEvents` para generar eventos especiales para una temporada.
-    - Se crean eventos basados en el tipo de temporada.
-
-### Niveles de usuario
-
-El flujo de niveles de usuario se gestiona principalmente en `UserLevelService`.
-
-1.  **Creación del nivel de usuario:**
-
-    - Al crear un nuevo usuario, se llama al método `createUserLevel` en `GamificationService` para crear un nuevo `UserLevel` para el usuario.
-    - El método recibe el objeto `User` como parámetro.
-    - El método crea una nueva entidad `UserLevel` y la guarda en la base de datos, estableciendo la relación con el usuario.
-
-2.  **Obtención del nivel de usuario:**
-
-### Rachas
-
-El flujo de rachas se gestiona principalmente en `StreakService`.
-
-1.  **Actualización de la racha:**
-
-    - Se llama al método `updateStreak` cuando un usuario realiza una actividad.
-    - Se actualiza la racha del usuario en la tabla `Streak`.
-    - Se calcula el multiplicador de puntos en función de la racha.
-    - Se otorgan puntos de bonificación al usuario.
-
-2.  **Obtención de información de la racha:**
-    - Se llama al método `getStreakInfo` para obtener información sobre la racha de un usuario.
-    - Se devuelve la racha actual, la racha más larga y el multiplicador actual.
-
-### Recomendaciones
-
-El flujo de recomendaciones se gestiona principalmente en `RecommendationsService`.
-
-1.  **Obtención de recomendaciones:**
-
-    - Se llama a la API en `/recommendations/:userId` para obtener las recomendaciones para un usuario.
-    - El método recibe el ID del usuario como parámetro.
-    - El método devuelve una lista de recomendaciones.
-
-### Tabla de clasificación
-
-El flujo de la tabla de clasificación se gestiona principalmente en `LeaderboardService`.
-
-1.  **Obtención de la tabla de clasificación:**
-
-    - Se llama a la API en `/gamification/leaderboard` para obtener la tabla de clasificación.
-    - Se ha solucionado un error que impedía la obtención de la tabla de clasificación debido a la falta de metadata para la entidad `UserMission`. Se añadió la entidad `UserMission` a la lista de entidades en el archivo `backend/src/config/typeorm.config.ts`.
-
-2.  **Obtención del rango del usuario:**
-    - Actualmente no implementado.
-
 ---
+
+## Refactorización del servicio StatisticsReportService
+
+El servicio `StatisticsReportService` ha sido refactorizado para mejorar su estructura y facilitar su mantenimiento. Se han realizado los siguientes cambios:
+
+*   Se ha creado una interfaz `ReportGenerator` que define el método `generateReport`.
+*   Se han creado clases separadas para cada tipo de reporte (`LearningProgressReportGenerator`, `AchievementsReportGenerator`, `PerformanceReportGenerator`, `ComprehensiveReportGenerator`) que implementan la interfaz `ReportGenerator`.
+*   Se han inyectado las clases de reporte como dependencias en `StatisticsReportService`.
+*   Se ha modificado el método `generateReport` en `StatisticsReportService` para utilizar las clases de reporte inyectadas.
+
+Estos cambios promueven el principio de responsabilidad única, facilitan las pruebas unitarias y mejoran la flexibilidad del código.
 
 ## Dependencia circular entre AuthModule y GamificationModule
 
@@ -288,12 +262,54 @@ import { Module, forwardRef } from '@nestjs/common';
     ],
     controllers: CONTROLLERS,
     providers: SERVICES,
-    exports: SERVICES
+    exports: SERVICES,
 })
 export class GamificationModule {}
+
+Además, para resolver la dependencia circular, se importó `TypeOrmModule.forFeature([Gamification])` y se exportó `GamificationRepository`.
 
 ---
 
 ## Relación entre Usuarios y Estadísticas
 
 Cada usuario tiene una entrada en la tabla `statistics` que contiene información sobre su progreso y logros en la plataforma. Esta información se utiliza para personalizar la experiencia del usuario y proporcionar recomendaciones relevantes.
+
+---
+
+## Pruebas Unitarias
+
+El módulo de gamificación cuenta con pruebas unitarias para verificar el correcto funcionamiento de sus servicios. Las pruebas se encuentran en el directorio `backend/src/features/gamification/services/__tests__/`.
+
+### `GamificationService`
+
+El archivo `backend/src/features/gamification/services/__tests__/gamification.service.spec.ts` contiene pruebas unitarias para el servicio `GamificationService`.
+
+#### Pruebas
+
+-   **`addPoints`:**
+
+    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra la gamificación.
+    -   Verifica que se agreguen puntos y actividad reciente, y que se llame a `checkCompletedMissions`.
+    -   Verifica que solo se mantengan las últimas 50 actividades.
+
+-   **`getUserStats`:**
+
+    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
+    -   Verifica que se devuelvan las estadísticas si el usuario existe.
+
+-   **`updateUserPoints`:**
+
+    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
+    -   Verifica que se actualicen los puntos si el usuario existe.
+
+-   **`updateUserLevel`:**
+
+    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
+
+-   **`awardAchievement`:**
+
+    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
+
+-   **`awardReward`:**
+
+    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.

@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GamificationService } from '../gamification/services/gamification.service';
 import { CreateStatisticsDto } from './dto/create-statistics.dto';
 import { AreaDto } from './dto/statistics-area.dto';
 import { GenerateReportDto, ReportType, TimeFrame } from './dto/statistics-report.dto';
@@ -10,6 +9,7 @@ import { Area } from './interfaces/area.interface';
 import { Category } from './interfaces/category.interface';
 import { BaseProgress, MonthlyProgress, PeriodicProgress, WeeklyProgress } from './interfaces/periodic-progress.interface';
 import { CategoryDifficulty, CategoryStatus, CategoryType, TrendType } from './types/category.enum';
+import { UserLevel } from '../gamification/entities/user-level.entity';
 
 interface UserStatistics {
     gamification: {
@@ -33,7 +33,8 @@ export class StatisticsService {
     constructor(
         @InjectRepository(Statistics)
         private readonly statisticsRepository: Repository<Statistics>,
-        private readonly gamificationService: GamificationService
+        @InjectRepository(UserLevel)
+        private readonly userLevelRepository: Repository<UserLevel>
     ) { }
 
     async create(createStatisticsDto: CreateStatisticsDto): Promise<Statistics> {
@@ -137,6 +138,26 @@ export class StatisticsService {
                     requiredCategories: [CategoryType.VOCABULARY, CategoryType.GRAMMAR, CategoryType.COMPREHENSION]
                 },
                 subCategories: ['oraciones', 'parrafos']
+            },
+            [CategoryType.SPEAKING]: {
+                type: CategoryType.SPEAKING,
+                difficulty: CategoryDifficulty.ADVANCED,
+                status: CategoryStatus.LOCKED,
+                progress: {
+                    totalExercises: 0,
+                    completedExercises: 0,
+                    averageScore: 0,
+                    timeSpentMinutes: 0,
+                    lastPracticed: null,
+                    masteryLevel: 0,
+                    streak: 0
+                },
+                prerequisites: [CategoryType.VOCABULARY, CategoryType.GRAMMAR, CategoryType.COMPREHENSION],
+                unlockRequirements: {
+                    requiredScore: 80,
+                    requiredCategories: [CategoryType.VOCABULARY, CategoryType.GRAMMAR, CategoryType.COMPREHENSION]
+                },
+                subCategories: ['dialogos', 'presentaciones']
             }
         };
 
@@ -145,7 +166,8 @@ export class StatisticsService {
             [CategoryType.GRAMMAR]: 0,
             [CategoryType.PRONUNCIATION]: 0,
             [CategoryType.COMPREHENSION]: 0,
-            [CategoryType.WRITING]: 0
+            [CategoryType.WRITING]: 0,
+            [CategoryType.SPEAKING]: 0
         };
 
         const defaultStats: Partial<Statistics> = {
@@ -1328,13 +1350,23 @@ export class StatisticsService {
     }
 
     async getUserStatistics(userId: string): Promise<UserStatistics> {
-        const gamificationStats = await this.gamificationService.getUserStats(Number(userId));
+        const userLevel = await this.userLevelRepository.findOne({
+            where: { userId }
+        });
+
         const userStats = await this.statisticsRepository.findOne({
             where: { userId }
         });
 
         return {
-            gamification: gamificationStats,
+            gamification: {
+                points: userLevel?.points || 0,
+                level: userLevel?.currentLevel || 1,
+                gameStats: {}, // No hay gameStats en UserLevel
+                achievements: [], // No hay achievements en UserLevel
+                rewards: [], // No hay rewards en UserLevel
+                culturalPoints: 0 // No hay culturalPoints en UserLevel
+            },
             learning: {
                 completedLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,
                 totalLessons: userStats?.learningMetrics.totalLessonsCompleted || 0,

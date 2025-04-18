@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Badge } from '../entities/badge.entity';
@@ -21,6 +21,10 @@ export class CollaborationRewardService {
         quality: 'excellent' | 'good' | 'average',
         reviewerId?: string
     ): Promise<void> {
+        if (!Object.values(CollaborationType).includes(type)) {
+            throw new BadRequestException(`Invalid collaboration type: ${type}`);
+        }
+
         const reward = await this.collaborationRewardRepository.findOne({
             where: { type }
         });
@@ -158,7 +162,7 @@ export class CollaborationRewardService {
         return applicableBonus ? applicableBonus.multiplier : 0;
     }
 
-    async getCollaborationStats(userId: string): Promise<{
+    async getCollaborationStats(userId: string, type?: CollaborationType): Promise<{
         totalContributions: number;
         excellentContributions: number;
         currentStreak: number;
@@ -173,7 +177,10 @@ export class CollaborationRewardService {
             iconUrl: string;
         }>;
     }> {
-        const rewards = await this.collaborationRewardRepository.find();
+        let rewards = await this.collaborationRewardRepository.find();
+        if (type) {
+            rewards = rewards.filter(r => r.type === type);
+        }
         const userContributions = rewards.flatMap(r =>
             r.history.filter(h => h.userId === userId)
         );
@@ -202,4 +209,4 @@ export class CollaborationRewardService {
                 }))
         };
     }
-} 
+}

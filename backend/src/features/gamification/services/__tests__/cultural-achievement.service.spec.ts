@@ -1,306 +1,401 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../../../../auth/entities/user.entity';
-import { UserRole } from '@/auth/enums/auth.enum';
-import { NotificationService } from '../../../notifications/services/notification.service';
-import { AchievementProgress } from '../../entities/achievement-progress.entity';
-import { AchievementCategory, AchievementTier, CulturalAchievement } from '../../entities/cultural-achievement.entity';
 import { CulturalAchievementService } from '../cultural-achievement.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { CulturalAchievement } from '../../entities/cultural-achievement.entity';
+import { AchievementProgress } from '../../entities/achievement-progress.entity';
+import { User } from '../../../../auth/entities/user.entity';
+import { NotificationService } from '../../../notifications/services/notification.service';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { AchievementCategory, AchievementType, AchievementTier } from '../../entities/cultural-achievement.entity';
 
 describe('CulturalAchievementService', () => {
-    let service: CulturalAchievementService;
-    let achievementRepository: Repository<CulturalAchievement>;
-    let progressRepository: Repository<AchievementProgress>;
-    let userRepository: Repository<User>;
-    let notificationService: NotificationService;
+  let service: CulturalAchievementService;
+  const mockCulturalAchievementRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+    createQueryBuilder: jest.fn().mockReturnValue({
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getMany: jest.fn(),
+    }),
+  };
+  const mockAchievementProgressRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+  const mockUserRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+  const mockNotificationService = {
+    createNotification: jest.fn(),
+    notifyAchievementUnlocked: jest.fn(),
+  };
 
-    const mockUser = {
-        id: '1',
-        email: 'test@example.com',
-        password: 'hashedPassword123',
-        firstName: 'Juan',
-        lastName: 'Pérez',
-        role: UserRole.USER,
-        culturalPoints: 0,
-        achievements: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        isActive: true,
-        lastLoginAt: new Date()
-    } as unknown as User;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        CulturalAchievementService,
+        {
+          provide: getRepositoryToken(CulturalAchievement),
+          useValue: mockCulturalAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(AchievementProgress),
+          useValue: mockAchievementProgressRepository,
+        },
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository,
+        },
+        {
+          provide: NotificationService,
+          useValue: mockNotificationService,
+        },
+      ],
+    }).compile();
 
-    const mockAchievement = {
-        id: '1',
-        name: 'Danzador Experto',
-        description: 'Domina las danzas tradicionales',
-        category: AchievementCategory.DANZA,
-        tier: AchievementTier.ORO,
-        requirements: [
-            {
-                type: 'danza_sessions',
-                value: 10,
-                description: 'Completa 10 sesiones de danza'
-            }
-        ],
+    service = module.get<CulturalAchievementService>(CulturalAchievementService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('createAchievement', () => {
+    it('should create a new achievement', async () => {
+      const achievementData = {
+        name: 'Test Achievement',
+        description: 'Test Description',
+        category: AchievementCategory.LENGUA,
+        type: AchievementType.CONTRIBUCION_CULTURAL,
+        tier: AchievementTier.BRONCE,
+        requirements: [],
         pointsReward: 100,
-        isActive: true,
-        isSecret: false,
-        users: [],
-        createdAt: new Date(),
-        updatedAt: new Date()
-    } as unknown as CulturalAchievement;
+      };
+      mockCulturalAchievementRepository.create.mockReturnValue(achievementData);
+      mockCulturalAchievementRepository.save.mockResolvedValue(achievementData);
 
-    const mockProgress = {
-        id: '1',
-        user: mockUser,
-        achievement: mockAchievement,
-        progress: [
-            {
-                requirementType: 'danza_sessions',
-                currentValue: 0,
-                targetValue: 10,
-                lastUpdated: new Date()
-            }
-        ],
-        milestones: [
-            {
-                description: 'Alcanzar nivel principiante en danza',
-                value: 25,
-                isAchieved: false
-            },
-            {
-                description: 'Alcanzar nivel intermedio en danza',
-                value: 50,
-                isAchieved: false
-            },
-            {
-                description: 'Alcanzar nivel avanzado en danza',
-                value: 75,
-                isAchieved: false
-            }
-        ],
+      const result = await service.createAchievement(achievementData);
+
+      expect(mockCulturalAchievementRepository.create).toHaveBeenCalledWith(achievementData);
+      expect(mockCulturalAchievementRepository.save).toHaveBeenCalledWith(achievementData);
+      expect(result).toEqual(achievementData);
+    });
+
+    it('should throw BadRequestException if achievement type is invalid', async () => {
+      const achievementData = {
+        name: 'Test Achievement',
+        description: 'Test Description',
+        category: AchievementCategory.LENGUA,
+        type: 'invalid_type' as AchievementType,
+        tier: AchievementTier.BRONCE,
+        requirements: [],
+        pointsReward: 100,
+      };
+
+      await expect(service.createAchievement(achievementData as any)).rejects.toThrowError(BadRequestException);
+    });
+  });
+
+  describe('getAchievements', () => {
+    it('should return all achievements', async () => {
+      const achievements = [
+        {
+          name: 'Test Achievement 1',
+          description: 'Test Description 1',
+          category: AchievementCategory.LENGUA,
+          type: AchievementType.CONTRIBUCION_CULTURAL,
+          tier: AchievementTier.BRONCE,
+          requirements: [],
+          pointsReward: 100,
+        },
+        {
+          name: 'Test Achievement 2',
+          description: 'Test Description 2',
+          category: AchievementCategory.DANZA,
+          type: AchievementType.PARTICIPACION_EVENTO,
+          tier: AchievementTier.PLATA,
+          requirements: [],
+          pointsReward: 200,
+        },
+      ];
+      mockCulturalAchievementRepository.createQueryBuilder().getMany.mockResolvedValue(achievements);
+
+      const result = await service.getAchievements();
+
+      expect(result).toEqual(achievements);
+    });
+
+    it('should return achievements filtered by category', async () => {
+      const achievements = [
+        {
+          name: 'Test Achievement 1',
+          description: 'Test Description 1',
+          category: AchievementCategory.LENGUA,
+          type: AchievementType.CONTRIBUCION_CULTURAL,
+          tier: AchievementTier.BRONCE,
+          requirements: [],
+          pointsReward: 100,
+        },
+      ];
+      mockCulturalAchievementRepository.createQueryBuilder().getMany.mockResolvedValue(achievements);
+
+      const result = await service.getAchievements(AchievementCategory.LENGUA);
+
+      expect(result).toEqual(achievements);
+    });
+
+    it('should return achievements filtered by type', async () => {
+      const achievements = [
+        {
+          name: 'Test Achievement 1',
+          description: 'Test Description 1',
+          category: AchievementCategory.LENGUA,
+          type: AchievementType.CONTRIBUCION_CULTURAL,
+          tier: AchievementTier.BRONCE,
+          requirements: [],
+          pointsReward: 100,
+        },
+      ];
+      mockCulturalAchievementRepository.createQueryBuilder().getMany.mockResolvedValue(achievements);
+
+      const result = await service.getAchievements(undefined, AchievementType.CONTRIBUCION_CULTURAL);
+
+      expect(result).toEqual(achievements);
+    });
+  });
+
+  describe('initializeUserProgress', () => {
+    it('should initialize user progress for an achievement', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
+      const user = { id: userId };
+      const achievement = {
+        id: achievementId,
+        requirements: [{ type: 'test', value: 10, description: 'Test Requirement' }],
+      };
+      const progress = {
+        user,
+        achievement,
+        progress: [{ requirementType: 'test', currentValue: 0, targetValue: 10, lastUpdated: new Date() }],
         percentageCompleted: 0,
         isCompleted: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    } as unknown as AchievementProgress;
+        milestones: [],
+      };
 
-    beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                CulturalAchievementService,
-                {
-                    provide: getRepositoryToken(CulturalAchievement),
-                    useValue: {
-                        create: jest.fn().mockReturnValue(mockAchievement),
-                        save: jest.fn().mockResolvedValue(mockAchievement),
-                        findOne: jest.fn().mockResolvedValue(mockAchievement),
-                        createQueryBuilder: jest.fn(() => ({
-                            where: jest.fn().mockReturnThis(),
-                            andWhere: jest.fn().mockReturnThis(),
-                            getMany: jest.fn().mockResolvedValue([mockAchievement])
-                        }))
-                    }
-                },
-                {
-                    provide: getRepositoryToken(AchievementProgress),
-                    useValue: {
-                        create: jest.fn().mockReturnValue(mockProgress),
-                        save: jest.fn().mockResolvedValue(mockProgress),
-                        findOne: jest.fn().mockResolvedValue(mockProgress),
-                        find: jest.fn().mockResolvedValue([mockProgress])
-                    }
-                },
-                {
-                    provide: getRepositoryToken(User),
-                    useValue: {
-                        findOne: jest.fn().mockResolvedValue(mockUser),
-                        save: jest.fn().mockResolvedValue(mockUser)
-                    }
-                },
-                {
-                    provide: NotificationService,
-                    useValue: {
-                        createNotification: jest.fn().mockResolvedValue(undefined),
-                        notifyAchievementUnlocked: jest.fn().mockResolvedValue(undefined)
-                    }
-                }
-            ]
-        }).compile();
+      mockUserRepository.findOne.mockResolvedValue(user);
+      mockCulturalAchievementRepository.findOne.mockResolvedValue(achievement);
+      mockAchievementProgressRepository.findOne.mockResolvedValue(null);
+      mockAchievementProgressRepository.create.mockReturnValue(progress);
+      mockAchievementProgressRepository.save.mockResolvedValue(progress);
 
-        service = module.get<CulturalAchievementService>(CulturalAchievementService);
-        achievementRepository = module.get<Repository<CulturalAchievement>>(getRepositoryToken(CulturalAchievement));
-        progressRepository = module.get<Repository<AchievementProgress>>(getRepositoryToken(AchievementProgress));
-        userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-        notificationService = module.get<NotificationService>(NotificationService);
+      const result = await service.initializeUserProgress(userId, achievementId);
+
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(mockCulturalAchievementRepository.findOne).toHaveBeenCalledWith({ where: { id: achievementId } });
+      expect(mockAchievementProgressRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+          achievement: { id: achievementId },
+        },
+      });
+      expect(mockAchievementProgressRepository.create).toHaveBeenCalledWith({
+        user,
+        achievement,
+        progress: expect.any(Array),
+        percentageCompleted: 0,
+        isCompleted: false,
+        milestones: [],
+      });
+      expect(mockAchievementProgressRepository.save).toHaveBeenCalledWith(progress);
+      expect(result).toEqual(progress);
     });
 
-    it('should be defined', () => {
-        expect(service).toBeDefined();
+    it('should throw NotFoundException if user is not found', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
+
+      mockUserRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.initializeUserProgress(userId, achievementId)).rejects.toThrowError(NotFoundException);
     });
 
-    describe('createAchievement', () => {
-        it('should create a new achievement', async () => {
-            const achievementData = {
-                name: 'Danzador Experto',
-                description: 'Domina las danzas tradicionales',
-                category: AchievementCategory.DANZA,
-                tier: AchievementTier.ORO,
-                requirements: [
-                    {
-                        type: 'danza_sessions',
-                        value: 10,
-                        description: 'Completa 10 sesiones de danza'
-                    }
-                ],
-                pointsReward: 100
-            };
+    it('should throw NotFoundException if achievement is not found', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
 
-            const result = await service.createAchievement(achievementData);
-            expect(result).toEqual(mockAchievement);
-            expect(achievementRepository.create).toHaveBeenCalledWith(achievementData);
-            expect(achievementRepository.save).toHaveBeenCalled();
-        });
+      mockUserRepository.findOne.mockResolvedValue({ id: userId });
+      mockCulturalAchievementRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.initializeUserProgress(userId, achievementId)).rejects.toThrowError(NotFoundException);
     });
 
-    describe('getAchievements', () => {
-        it('should return all active achievements when no category is provided', async () => {
-            const result = await service.getAchievements();
-            expect(result).toEqual([mockAchievement]);
-        });
+    it('should throw BadRequestException if progress is already initialized', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
 
-        it('should return achievements filtered by category', async () => {
-            const result = await service.getAchievements(AchievementCategory.DANZA);
-            expect(result).toEqual([mockAchievement]);
-        });
+      mockUserRepository.findOne.mockResolvedValue({ id: userId });
+      mockCulturalAchievementRepository.findOne.mockResolvedValue({ id: achievementId });
+      mockAchievementProgressRepository.findOne.mockResolvedValue({});
+
+      await expect(service.initializeUserProgress(userId, achievementId)).rejects.toThrowError(BadRequestException);
+    });
+  });
+
+  describe('updateProgress', () => {
+    it('should update progress for an achievement', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
+      const updates = [{ type: 'test', value: 5 }];
+      const achievement = {
+        id: achievementId,
+        type: AchievementType.CONTRIBUCION_CULTURAL,
+      };
+      const progress = {
+        user: { id: userId },
+        achievement,
+        progress: [{ requirementType: 'test', currentValue: 0, targetValue: 10, lastUpdated: new Date() }],
+        percentageCompleted: 0,
+        isCompleted: false,
+        milestones: [],
+      };
+
+      mockAchievementProgressRepository.findOne.mockResolvedValue(progress);
+      mockAchievementProgressRepository.save.mockResolvedValue(progress);
+
+      const result = await service.updateProgress(userId, achievementId, updates);
+
+      expect(mockAchievementProgressRepository.findOne).toHaveBeenCalledWith({
+        where: { user: { id: userId }, achievement: { id: achievementId } },
+        relations: ['achievement', 'user'],
+      });
+      expect(mockAchievementProgressRepository.save).toHaveBeenCalledWith(progress);
+      expect(result).toEqual(progress);
     });
 
-    describe('initializeUserProgress', () => {
-        it('should initialize progress for a user and achievement', async () => {
-            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(null);
-            jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser);
-            jest.spyOn(achievementRepository, 'findOne').mockResolvedValue(mockAchievement);
+    it('should throw NotFoundException if progress is not found', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
+      const updates = [{ type: 'test', value: 5 }];
 
-            const result = await service.initializeUserProgress('1', '1');
-            expect(result).toEqual(mockProgress);
-            expect(progressRepository.create).toHaveBeenCalled();
-            expect(progressRepository.save).toHaveBeenCalled();
-        });
+      mockAchievementProgressRepository.findOne.mockResolvedValue(null);
 
-        it('should throw NotFoundException when user is not found', async () => {
-            jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
-            await expect(service.initializeUserProgress('999', '1')).rejects.toThrow(NotFoundException);
-        });
-
-        it('should throw BadRequestException when progress already exists', async () => {
-            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(mockProgress);
-            await expect(service.initializeUserProgress('1', '1')).rejects.toThrow(BadRequestException);
-        });
+      await expect(service.updateProgress(userId, achievementId, updates)).rejects.toThrowError(NotFoundException);
     });
 
-    describe('updateProgress', () => {
-        it('should update progress without completing achievement', async () => {
-            const userId = '1';
-            const achievementId = '1';
-            const updates = [{ type: 'danza_sessions', value: 5 }];
+    it('should throw BadRequestException if achievement is already completed', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
+      const updates = [{ type: 'test', value: 5 }];
+      const achievement = {
+        id: achievementId,
+        type: AchievementType.CONTRIBUCION_CULTURAL,
+      };
+      const progress = {
+        user: { id: userId },
+        achievement,
+        progress: [{ requirementType: 'test', currentValue: 0, targetValue: 10, lastUpdated: new Date() }],
+        percentageCompleted: 0,
+        isCompleted: true,
+        milestones: [],
+      };
 
-            const partialProgress = {
-                ...mockProgress,
-                progress: [{
-                    requirementType: 'danza_sessions',
-                    currentValue: 5,
-                    targetValue: 10,
-                    lastUpdated: new Date()
-                }],
-                percentageCompleted: 50,
-                isCompleted: false
-            };
+      mockAchievementProgressRepository.findOne.mockResolvedValue(progress);
 
-            jest.spyOn(progressRepository, 'save')
-                .mockResolvedValue(partialProgress);
+      await expect(service.updateProgress(userId, achievementId, updates)).rejects.toThrowError(BadRequestException);
+    });
+  });
 
-            const result = await service.updateProgress(userId, achievementId, updates);
+  describe('getUserAchievements', () => {
+    it('should return user achievements', async () => {
+      const userId = 'user-id';
+      const achievements = [
+        {
+          name: 'Test Achievement 1',
+          description: 'Test Description 1',
+          category: AchievementCategory.LENGUA,
+          type: AchievementType.CONTRIBUCION_CULTURAL,
+          tier: AchievementTier.BRONCE,
+          requirements: [],
+          pointsReward: 100,
+        },
+        {
+          name: 'Test Achievement 2',
+          description: 'Test Description 2',
+          category: AchievementCategory.DANZA,
+          type: AchievementType.PARTICIPACION_EVENTO,
+          tier: AchievementTier.PLATA,
+          requirements: [],
+          pointsReward: 200,
+        },
+      ];
+      const progresses = [
+        {
+          achievement: achievements[0],
+          isCompleted: true,
+        },
+        {
+          achievement: achievements[1],
+          isCompleted: false,
+        },
+      ];
 
-            expect(result.percentageCompleted).toBe(50);
-            expect(result.isCompleted).toBe(false);
-            expect(notificationService.notifyAchievementUnlocked).not.toHaveBeenCalled();
-        });
+      mockAchievementProgressRepository.find.mockResolvedValue(progresses);
 
-        it('should complete achievement when all requirements are met', async () => {
-            const userId = '1';
-            const achievementId = '1';
-            const updates = [{ type: 'danza_sessions', value: 10 }];
+      const result = await service.getUserAchievements(userId);
 
-            const completedProgress = {
-                ...mockProgress,
-                progress: [{
-                    requirementType: 'danza_sessions',
-                    currentValue: 10,
-                    targetValue: 10,
-                    lastUpdated: new Date()
-                }],
-                percentageCompleted: 100,
-                isCompleted: true,
-                completedAt: new Date()
-            };
+      expect(mockAchievementProgressRepository.find).toHaveBeenCalledWith({
+        where: { user: { id: userId } },
+        relations: ['achievement'],
+      });
+      expect(result).toEqual({
+        completed: [achievements[0]],
+        inProgress: [{ achievement: achievements[1], progress: progresses[1] }],
+      });
+    });
+  });
 
-            jest.spyOn(progressRepository, 'findOne')
-                .mockResolvedValue({
-                    ...mockProgress,
-                    isCompleted: false
-                });
+  describe('getAchievementProgress', () => {
+    it('should return achievement progress', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
+      const progress = {
+        user: { id: userId },
+        achievement: { id: achievementId },
+        progress: [{ requirementType: 'test', currentValue: 0, targetValue: 10, lastUpdated: new Date() }],
+        percentageCompleted: 0,
+        isCompleted: false,
+        milestones: [],
+      };
 
-            jest.spyOn(progressRepository, 'save')
-                .mockResolvedValue(completedProgress);
+      mockAchievementProgressRepository.findOne.mockResolvedValue(progress);
 
-            const result = await service.updateProgress(userId, achievementId, updates);
+      const result = await service.getAchievementProgress(userId, achievementId);
 
-            expect(result.percentageCompleted).toBe(100);
-            expect(result.isCompleted).toBe(true);
-            expect(notificationService.notifyAchievementUnlocked).toHaveBeenCalledWith(
-                userId,
-                mockAchievement.name,
-                achievementId
-            );
-        });
-
-        it('should throw NotFoundException when progress not found', async () => {
-            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(null);
-
-            await expect(service.updateProgress('999', '1', []))
-                .rejects
-                .toThrow(NotFoundException);
-        });
-
-        it('should throw BadRequestException when achievement already completed', async () => {
-            const completedProgress = { ...mockProgress, isCompleted: true };
-            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(completedProgress);
-
-            await expect(service.updateProgress('1', '1', []))
-                .rejects
-                .toThrow(BadRequestException);
-        });
+      expect(mockAchievementProgressRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+          achievement: { id: achievementId },
+        },
+        relations: ['achievement'],
+      });
+      expect(result).toEqual(progress);
     });
 
-    describe('getUserAchievements', () => {
-        it('should return user achievements separated by completion status', async () => {
-            const result = await service.getUserAchievements('1');
-            expect(result).toHaveProperty('completed');
-            expect(result).toHaveProperty('inProgress');
-        });
-    });
+    it('should throw NotFoundException if progress is not found', async () => {
+      const userId = 'user-id';
+      const achievementId = 'achievement-id';
 
-    describe('getAchievementProgress', () => {
-        it('should return progress for specific achievement', async () => {
-            const result = await service.getAchievementProgress('1', '1');
-            expect(result).toEqual(mockProgress);
-        });
+      mockAchievementProgressRepository.findOne.mockResolvedValue(null);
 
-        it('should throw NotFoundException when progress is not found', async () => {
-            jest.spyOn(progressRepository, 'findOne').mockResolvedValue(null);
-            await expect(service.getAchievementProgress('1', '1')).rejects.toThrow(NotFoundException);
-        });
+      await expect(service.getAchievementProgress(userId, achievementId)).rejects.toThrowError(NotFoundException);
     });
+  });
 });

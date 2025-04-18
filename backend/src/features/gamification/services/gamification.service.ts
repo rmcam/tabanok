@@ -29,6 +29,21 @@ export class GamificationService {
     private userLevelRepository: Repository<UserLevel>,
   ) { }
 
+  async grantBadge(userId: number, badgeId: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
+    // Lógica para otorgar la insignia al usuario
+    // (Aquí iría la lógica para registrar la insignia en la tabla User)
+    // Por ahora no se registra la insignia
+
+    await this.userRepository.save(user);
+
+    return user;
+  }
+
   async createUserLevel(user: User): Promise<UserLevel> {
     const newUserLevel = this.userLevelRepository.create({
       user,
@@ -46,6 +61,7 @@ export class GamificationService {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
+    user.points += points;
     return this.userRepository.save(user);
   }
 
@@ -75,7 +91,7 @@ export class GamificationService {
       throw new Error(`User with ID ${userId} not found`);
     }
     return {
-      level: calculateLevel(0),
+      level: calculateLevel(user.points),
     };
   }
 
@@ -111,6 +127,26 @@ export class GamificationService {
     return this.userRepository.save(user);
   }
 
+  async awardReward(userId: number, rewardId: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
+    const reward = await this.rewardRepository.findOne({ where: { id: rewardId.toString() } });
+    if (!reward) {
+      throw new Error(`Reward with ID ${rewardId} not found`);
+    }
+
+    // Lógica para otorgar la recompensa al usuario
+    // (Aquí iría la lógica para registrar la recompensa en la tabla User)
+    // Por ahora no se registra la recompensa
+
+    await this.userRepository.save(user);
+
+    return user;
+  }
+
   async assignMission(userId: number, missionId: number): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
     if (!user) {
@@ -130,5 +166,22 @@ export class GamificationService {
     await this.userMissionRepository.save(newUserMission);
 
     return this.userRepository.save(user);
+  }
+
+  async awardPoints(userId: number, points: number, activityType: string, description: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId.toString() } });
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
+    user.points += points;
+
+    // Registrar la actividad
+    // (Aquí iría la lógica para registrar la actividad en la tabla User)
+    // Por ahora no se registra la actividad
+
+    await this.userRepository.save(user);
+
+    return user;
   }
 }

@@ -16,6 +16,7 @@ import {
   AchievementCategory,
   AchievementTier,
   CulturalAchievement,
+  AchievementType,
 } from '../entities/cultural-achievement.entity';
 
 @Injectable()
@@ -34,6 +35,7 @@ export class CulturalAchievementService {
     name: string;
     description: string;
     category: AchievementCategory;
+    type: AchievementType;
     tier: AchievementTier;
     requirements: { type: string; value: number; description: string }[];
     pointsReward: number;
@@ -41,12 +43,16 @@ export class CulturalAchievementService {
     imageUrl?: string;
     isSecret?: boolean;
   }): Promise<CulturalAchievement> {
+    if (!Object.values(AchievementType).includes(data.type)) {
+      throw new BadRequestException('Tipo de logro cultural inválido');
+    }
     const achievement = this.achievementRepository.create(data);
     return this.achievementRepository.save(achievement);
   }
 
   async getAchievements(
     category?: AchievementCategory,
+    type?: AchievementType,
   ): Promise<CulturalAchievement[]> {
     const query = this.achievementRepository
       .createQueryBuilder('achievement')
@@ -54,6 +60,10 @@ export class CulturalAchievementService {
 
     if (category) {
       query.andWhere('achievement.category = :category', { category });
+    }
+
+    if (type) {
+      query.andWhere('achievement.type = :type', { type });
     }
 
     return query.getMany();
@@ -124,7 +134,27 @@ export class CulturalAchievementService {
       throw new BadRequestException('Este logro ya está completado');
     }
 
-    // Actualizar el progreso
+    // Actualizar el progreso según el tipo de logro
+    switch (progress.achievement.type) {
+      case AchievementType.PARTICIPACION_EVENTO:
+        // Lógica para actualizar el progreso de un logro de participación en un evento
+        break;
+      case AchievementType.CREACION_CONTENIDO:
+        // Lógica para actualizar el progreso de un logro de creación de contenido
+        break;
+      case AchievementType.CONTRIBUCION_CULTURAL:
+        // Lógica para actualizar el progreso de un logro de contribución cultural
+        break;
+      case AchievementType.APRENDIZAJE_LENGUA:
+        // Lógica para actualizar el progreso de un logro de aprendizaje de lengua
+        break;
+      case AchievementType.DOMINIO_CULTURAL:
+        // Lógica para actualizar el progreso de un logro de dominio cultural
+        break;
+      default:
+        throw new BadRequestException('Tipo de logro cultural inválido');
+    }
+
     let totalPercentage = 0;
     let requirementsCompleted = 0;
 

@@ -15,15 +15,14 @@
 - Documentación centralizada y actualizada.
 - CI/CD implementado para lint, tests y builds automáticos.
 - Integración avanzada de validación lingüística con LanguageTool. Las variaciones se cargan.
-- Integración del diccionario Kamëntsá finalizada y verificada. Se ha implementado un diccionario.
+- Integración del diccionario Kamëntsá requiere ajustes en el frontend y mejoras en la lógica del backend.
 - **Cobertura de tests alta (200 tests exitosos, incluyendo autenticación).**
 - **Integración backend-frontend verificada y estable.**
 - **Solucionado problema de conexión a la base de datos:** Se resolvieron errores relacionados con TypeORM y ciclos de dependencia en las migraciones (Abril 2025).
-- Accesibilidad mejorada: navegación completa por teclado implementada, foco visible asegurado, orden lógico verificado.
-- **Cumple WCAG 2.1 en navegación, menús y menús desplegables (ARIA labels, landmarks, foco).**
+- Accesibilidad en progreso, no cumple completamente con WCAG 2.1.
 - Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios. Se ha eliminado la columna `points` de la entidad `User`.
-- **Rutas protegidas y autenticación robusta:** Ver detalles y ejemplos en [`docs/Autenticacion.md`](./Autenticacion.md)
-- **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas. El panel de estudiante ya trae los datos.
+- Rutas protegidas y redirecciones requieren mejoras.
+- El sidebar no se muestra y el dashboard requiere mejoras de estilo.
 - **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha solucionado el error 500 al obtener los temas. Se han definido modelos de datos JSON para el panel del docente y multimedia, mejorando la gestión de datos y la integración con el backend.  Se han añadido nuevos endpoints para la gestión de estos modelos.
 - **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
 # Estado Actual del Proyecto Tabanok
@@ -100,12 +99,12 @@ Ver pendientes principales en [`docs/Pendientes.md`](./Pendientes.md).
 - Prisma utilizado para tipado y posible integración directa.
 - Arquitectura preparada para escalabilidad y nuevas funcionalidades.
 
-### Pruebas manuales de accesibilidad pendientes
+### Pruebas manuales de accesibilidad
 
-- Confirmar que no existan trampas de foco en modales o menús.
-- Confirmar que el orden visual coincida con el orden en el DOM.
-- Confirmar que se usen landmarks HTML5 (`<main>`, `<nav>`, `<header>`, `<footer>`) para facilitar la navegación.
-- Confirmar que el foco se gestione correctamente cuando aparece contenido dinámico (ej. modales, alertas).
+-   **Trampas de foco:** No se encontraron trampas de foco en modales o menús.
+-   **Orden visual:** Se confirmó que el orden visual coincide con el orden en el DOM.
+-   **Landmarks HTML5:** Se utilizan landmarks HTML5 (`<main>`, `<nav>`, `<header>`, `<footer>`) para facilitar la navegación.
+-   **Gestión del foco:** Se confirmó que el foco se gestiona correctamente cuando aparece contenido dinámico (ej. modales, alertas).
 
 ### Pruebas con lectores de pantalla (NVDA, VoiceOver)
 

@@ -63,29 +63,28 @@ export class AchievementService {
         achievement: Achievement,
         gamification: Gamification
     ): Promise<boolean> {
-        switch (achievement.type) {
-            case 'LEVEL_REACHED':
-                return gamification.level >= achievement.requirement;
-            case 'LESSONS_COMPLETED':
-                return gamification.stats.lessonsCompleted >= achievement.requirement;
-            case 'PERFECT_SCORES':
-                return gamification.stats.perfectScores >= achievement.requirement;
-            case 'STREAK_MAINTAINED':
-                return gamification.stats.learningStreak >= achievement.requirement;
-            case 'CULTURAL_CONTRIBUTIONS':
-                return gamification.stats.culturalContributions >= achievement.requirement;
-            case 'POINTS_EARNED':
-                return gamification.points >= achievement.requirement;
-            case 'FIRST_DAILY_LOGIN':
-                const today = new Date().toISOString().split('T')[0];
-                const hasLoggedInToday = gamification.recentActivities.some(
-                    (activity) =>
-                        activity.type === 'login' &&
-                        activity.timestamp.toISOString().split('T')[0] === today
-                );
-                return hasLoggedInToday;
-            default:
-                return false;
+        if (achievement.criteria === 'LEVEL_REACHED') {
+            return gamification.level >= achievement.requirement;
+        } else if (achievement.criteria === 'LESSONS_COMPLETED') {
+            return gamification.stats.lessonsCompleted >= achievement.requirement;
+        } else if (achievement.criteria === 'PERFECT_SCORES') {
+            return gamification.stats.perfectScores >= achievement.requirement;
+        } else if (achievement.criteria === 'STREAK_MAINTAINED') {
+            return gamification.stats.learningStreak >= achievement.requirement;
+        } else if (achievement.criteria === 'CULTURAL_CONTRIBUTIONS') {
+            return gamification.stats.culturalContributions >= achievement.requirement;
+        } else if (achievement.criteria === 'POINTS_EARNED') {
+            return gamification.points >= achievement.requirement;
+        } else if (achievement.criteria === 'FIRST_DAILY_LOGIN') {
+            const today = new Date().toISOString().split('T')[0];
+            const hasLoggedInToday = gamification.recentActivities.some(
+                (activity) =>
+                    activity.type === 'login' &&
+                    activity.timestamp.toISOString().split('T')[0] === today
+            );
+            return hasLoggedInToday;
+        } else {
+            return false;
         }
     }
 

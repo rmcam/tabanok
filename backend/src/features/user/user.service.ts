@@ -7,8 +7,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '../../auth/entities/user.entity';
 import { UserRole, UserStatus } from '../../auth/enums/auth.enum';
 import { UserLevel } from '../gamification/entities/user-level.entity';
+import { UserLevelRepository } from '../gamification/repositories/user-level.repository';
 import { Inject } from '@nestjs/common';
-import { GamificationService } from '../gamification/services/gamification.service';
 
 @Injectable()
 export class UserService {
@@ -17,8 +17,7 @@ export class UserService {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Account)
         private readonly accountRepository: Repository<Account>,
-        @Inject(GamificationService)
-        private readonly gamificationService: GamificationService,
+        private readonly userLevelRepository: UserLevelRepository,
     ) { }
 
     async findByUsername(username: string): Promise<User> {
@@ -67,9 +66,11 @@ export class UserService {
             );
         }
 
-        if (process.env.NODE_ENV !== 'test') {
-            await this.gamificationService.createUserLevel(user);
-        }
+        const newUserLevel = this.userLevelRepository.repository.create({
+            user,
+            userId: user.id,
+        });
+        await this.userLevelRepository.repository.save(newUserLevel);
 
         return user;
     }

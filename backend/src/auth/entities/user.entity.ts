@@ -68,6 +68,9 @@ export class User {
   level: number;
 
   @Column({ default: 0 })
+  points: number;
+
+  @Column({ default: 0 })
   culturalPoints: number;
 
   @Column('json', {

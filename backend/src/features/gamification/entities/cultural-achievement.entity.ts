@@ -13,6 +13,14 @@ export enum AchievementCategory {
     MEDICINA = 'medicina'
 }
 
+export enum AchievementType {
+    PARTICIPACION_EVENTO = 'participacion_evento', // Logro por participar en un evento cultural.
+    CREACION_CONTENIDO = 'creacion_contenido', // Logro por crear contenido cultural.
+    CONTRIBUCION_CULTURAL = 'contribucion_cultural', // Logro por realizar una contribución cultural.
+    APRENDIZAJE_LENGUA = 'aprendizaje_lengua', // Logro por aprender la lengua.
+    DOMINIO_CULTURAL = 'dominio_cultural' // Logro por demostrar dominio cultural.
+}
+
 export enum AchievementTier {
     BRONCE = 'bronce',
     PLATA = 'plata',
@@ -28,6 +36,13 @@ export class CulturalAchievement extends BaseAchievement {
         enum: AchievementCategory
     })
     category: AchievementCategory;
+
+    @Column({
+        type: 'enum',
+        enum: AchievementType,
+        default: AchievementType.CONTRIBUCION_CULTURAL
+    })
+    type: AchievementType;
 
     @Column({
         type: 'enum',

@@ -21,11 +21,17 @@ export class UserLevel {
   @JoinColumn({ name: 'userId' })
   user: User;
 
+  @Column({ default: 0 })
+  points: number;
+
   @Column({ default: 1 })
   currentLevel: number;
 
   @Column({ default: 0 })
   experiencePoints: number;
+
+  @Column({ default: 100 })
+  experienceToNextLevel: number;
 
   @Column('jsonb', { default: { current: 0, longest: 0, lastActivityDate: new Date() } })
   consistencyStreak: {
@@ -53,9 +59,6 @@ export class UserLevel {
     reward: string;
     isAchieved: boolean;
   }>;
-
-  @Column({ default: 100 })
-  experienceToNextLevel: number;
 
   @Column('jsonb', { default: [] })
   levelHistory: Array<{

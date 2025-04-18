@@ -51,6 +51,8 @@ import { MissionTemplate } from './entities/mission-template.entity';
 import { MissionTemplateController } from './controllers/mission-template.controller';
 import { MissionTemplateRepository } from './repositories/mission-template.repository';
 import { AuthModule } from '../../auth/auth.module';
+import { UserLevelRepository } from './repositories/user-level.repository';
+import { GamificationRepository } from './repositories/gamification.repository';
 
 const ENTITIES = [
     User,
@@ -65,7 +67,6 @@ const ENTITIES = [
     UserLevel,
     UserReward,
     UserAchievement,
-    Gamification,
     Mission,
     Leaderboard,
     MissionTemplate,
@@ -100,17 +101,20 @@ const SERVICES = [
     UserMissionRepository,
     MissionTemplateRepository,
     BadgeService,
-    RecommendationService
+    RecommendationService,
+    UserLevelRepository,
+    GamificationRepository
 ];
 
 @Module({
     imports: [
         TypeOrmModule.forFeature(ENTITIES),
+        TypeOrmModule.forFeature([Gamification]),
         NotificationsModule,
         forwardRef(() => AuthModule)
     ],
     controllers: CONTROLLERS,
     providers: SERVICES,
-    exports: SERVICES
+    exports: [...SERVICES, TypeOrmModule.forFeature([Gamification]), GamificationRepository]
 })
 export class GamificationModule {}
