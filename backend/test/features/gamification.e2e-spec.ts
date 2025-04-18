@@ -28,38 +28,22 @@ describe('GamificationController (e2e)', () => {
     await app.close();
   });
 
-  describe('/api/v1/gamification/stats/:userId (GET)', () => {
-    it('debería devolver 200 y las estadísticas del usuario', async () => {
-      const userId = 'test-user-id';
-
+  describe('/gamification/leaderboard (GET)', () => {
+    it('debería devolver 200 y la tabla de clasificación', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/v1/gamification/stats/${userId}`)
+        .get(`/gamification/leaderboard`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('points');
-      expect(response.body).toHaveProperty('level');
+      expect(response.body).toBeInstanceOf(Array);
     });
 
     it('debería devolver 401 si no se envía token', async () => {
-      const userId = 'test-user-id';
-
       const response = await request(app.getHttpServer())
-        .get(`/api/v1/gamification/stats/${userId}`)
+        .get(`/gamification/leaderboard`)
         .expect(401);
 
       expect(response.body.message || response.body.error || '').toMatch(/no autorizado/i);
-    });
-
-    it('debería devolver 404 si el usuario no existe', async () => {
-      const nonExistentUserId = 'non-existent-user';
-
-      const response = await request(app.getHttpServer())
-        .get(`/api/v1/gamification/stats/${nonExistentUserId}`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .expect(404);
-
-      expect(response.body.message || response.body.error || '').toMatch(/no encontrado/i);
     });
   });
 

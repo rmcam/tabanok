@@ -1,9 +1,4 @@
-import * as crypto from 'crypto';
-if (!globalThis.crypto) {
-  (globalThis as any).crypto = crypto;
-}
-
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -14,16 +9,18 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import favicon from 'serve-favicon';
 import { join } from 'path';
+import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
-    cors: {
-      origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-      credentials: true,
-    },
+  });
+
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
   });
 
   // Middleware para imprimir el cuerpo crudo recibido
@@ -56,7 +53,7 @@ async function bootstrap() {
 
   // Configurar validación global
   app.useGlobalPipes(
-    new ValidationPipe({
+    new CustomValidationPipe({
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
@@ -67,7 +64,7 @@ async function bootstrap() {
   );
 
   // Configurar prefijo global para la API
-  app.setGlobalPrefix('api/v1');
+  // app.setGlobalPrefix('api/v1');
 
   // Configurar Swagger
   const config = new DocumentBuilder()
@@ -86,7 +83,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/v1/docs', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   // Configurar puerto y host
   const port = process.env.PORT || 8000; // Puerto por defecto para local y Docker
@@ -103,7 +100,7 @@ async function bootstrap() {
 
   // Iniciar la aplicación
   await app.listen(port, host);
-  logger.log(`API documentation available at: http://localhost:${port}/api/v1/docs`);
+  logger.log(`API documentation available at: http://localhost:${port}/docs`);
   logger.log(`Backend running at: http://localhost:${port}`);
 
   // Manejar señales de terminación

@@ -7,6 +7,3 @@ psql "postgres://postgres:Rm88cam88@localhost:5432/tabanok_db" -f backend/src/mi
 ```
 
 ## Variables de Entorno
-
-```
-VITE_API_URL=http://localhost:8000/api/v1

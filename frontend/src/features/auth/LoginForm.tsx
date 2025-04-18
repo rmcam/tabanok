@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
 
 export default function LoginForm() {
+  console.log('LoginForm rendered');
   const { login, loading, error, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState('');
@@ -44,6 +45,7 @@ export default function LoginForm() {
           onChange={(e) => setIdentifier(e.target.value)}
           required
           className="w-full border p-2 rounded"
+          autoComplete="username"
         />
       </div>
       <div className="mb-4">

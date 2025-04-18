@@ -7,7 +7,7 @@ import { Vocabulary } from './entities/vocabulary.entity';
 import { VocabularyService } from './vocabulary.service';
 
 @ApiTags('vocabulary')
-@Controller('api/v1/search')
+@Controller('search')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class VocabularyController {

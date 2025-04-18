@@ -14,18 +14,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Cargar usuario desde localStorage al montar
   useEffect(() => {
-    const storedUser = sessionStorage.getItem('authUser');
+    const storedUser = localStorage.getItem('authUser');
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
         if (user.token && isTokenExpired(user.token)) {
-          sessionStorage.removeItem('authUser');
+          localStorage.removeItem('authUser');
           setUser(null);
         } else {
           setUser(user);
         }
       } catch {
-        sessionStorage.removeItem('authUser');
+        localStorage.removeItem('authUser');
         setUser(null);
       }
     }
@@ -35,10 +35,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Guardar usuario en localStorage cuando cambie
   useEffect(() => {
     if (user) {
-      console.log('Guardando usuario en sessionStorage:', user);
-      sessionStorage.setItem('authUser', JSON.stringify(user));
+      localStorage.setItem('authUser', JSON.stringify(user));
     } else {
-      sessionStorage.removeItem('authUser');
+      localStorage.removeItem('authUser');
     }
   }, [user]);
 
@@ -49,7 +48,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const loggedUser = await authApi.login(email, password);
       setUser(loggedUser);
-      console.log('Usuario guardado en el contexto:', loggedUser);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './useAuth';
 
 /**
@@ -10,9 +10,10 @@ import { useAuth } from './useAuth';
 export const useRequireAuth = (requiredRoles: string[] = []) => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && location.pathname !== '/login') {
       console.log('Redirigiendo a /login porque el usuario no está autenticado');
       navigate('/login');
       return;
@@ -25,5 +26,5 @@ export const useRequireAuth = (requiredRoles: string[] = []) => {
         navigate('/unauthorized');
       }
     }
-  }, [isAuthenticated, user, navigate, requiredRoles]);
+  }, [isAuthenticated, user, navigate, requiredRoles, location.pathname]);
 };

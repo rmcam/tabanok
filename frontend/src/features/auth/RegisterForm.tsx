@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "./useAuth";
 
 export default function RegisterForm() {
+  console.log("RegisterForm rendered");
   const { register, loading, error } = useAuth();
   const [form, setForm] = useState({
     username: "",

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { LeaderboardService } from '../services/leaderboard.service';
 
 @Controller('leaderboard')
@@ -11,7 +11,7 @@ export class LeaderboardController {
   }
 
   @Get(':userId')
-  async getUserRank(@Param('userId', ParseIntPipe) userId: number): Promise<any> {
+  async getUserRank(@Param('userId') userId: string): Promise<any> {
     return await this.leaderboardService.getUserRank(userId);
   }
 }

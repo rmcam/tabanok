@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Reward } from '../entities/reward.entity';
 import { User } from '../../../auth/entities/user.entity';
 import { calculateLevel } from '../../../lib/gamification';
 import { Achievement } from '../entities/achievement.entity';
-import { UserAchievement } from '../entities/user-achievement.entity';
-import { Inject } from '@nestjs/common';
 import { Mission } from '../entities/mission.entity';
+import { Reward } from '../entities/reward.entity';
+import { UserAchievement } from '../entities/user-achievement.entity';
+import { UserLevel } from '../entities/user-level.entity';
 import { UserMission } from '../entities/user-mission.entity';
 
 @Injectable()
@@ -25,7 +25,17 @@ export class GamificationService {
     private missionRepository: Repository<Mission>,
     @InjectRepository(UserMission)
     private userMissionRepository: Repository<UserMission>,
-  ) {}
+    @InjectRepository(UserLevel)
+    private userLevelRepository: Repository<UserLevel>,
+  ) { }
+
+  async createUserLevel(user: User): Promise<UserLevel> {
+    const newUserLevel = this.userLevelRepository.create({
+      user,
+      userId: user.id,
+    });
+    return this.userLevelRepository.save(newUserLevel);
+  }
 
   async getRewards(): Promise<Reward[]> {
     return this.rewardRepository.find();
@@ -56,7 +66,6 @@ export class GamificationService {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    // Update user stats here
     return this.userRepository.save(user);
   }
 
@@ -89,11 +98,9 @@ export class GamificationService {
     });
 
     if (userAchievement) {
-      // The user already has the achievement
       return user;
     }
 
-    // Grant the achievement to the user
     const newUserAchievement = this.userAchievementRepository.create({
       user: user,
       achievement: achievement,

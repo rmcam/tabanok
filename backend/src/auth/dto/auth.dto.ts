@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Validate } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Validate, ValidateIf } from 'class-validator';
 import { UserRole } from '../enums/auth.enum';
 import { IsPasswordStrong } from '../../common/validators/password.validator';
 
@@ -11,6 +11,7 @@ export class LoginDto {
 
     @ApiProperty({ description: 'Contraseña del usuario' })
     @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
+    @IsNotEmpty({ message: 'La contraseña no debe estar vacío.' })
     @Validate(IsPasswordStrong)
     password: string;
 }
@@ -29,7 +30,7 @@ export class RegisterDto {
     @ApiProperty({ description: 'Segundo Nombre del usuario', required: false })
     @IsString({ message: 'El nombre debe ser una cadena de texto.' })
     @IsOptional()
-    secondName?: string;
+    secondName: string = '';
 
     @ApiProperty({ description: 'Primer Apellido del usuario' })
     @IsString({ message: 'El apellido debe ser una cadena de texto.' })
@@ -39,7 +40,7 @@ export class RegisterDto {
     @ApiProperty({ description: 'Segundo Apellido del usuario', required: false })
     @IsString({ message: 'El apellido debe ser una cadena de texto.' })
     @IsOptional()
-    secondLastName?: string;
+    secondLastName: string = '';
 
     @ApiProperty({ description: 'Correo electrónico del usuario' })
     @IsEmail({}, { message: 'El correo electrónico debe ser válido.' })

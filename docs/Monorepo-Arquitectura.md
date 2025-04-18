@@ -51,10 +51,4 @@
 
 ---
 
-## Pendientes y mejoras futuras
-
-- Mejorar cobertura de tests.
-- Configurar CI/CD.
-- Integrar control ortográfico y gramatical avanzado.
-- Mejorar accesibilidad según WCAG 2.1.
-- Automatizar despliegues.
+Ver pendientes y mejoras futuras en [`docs/Pendientes.md`](./Pendientes.md).

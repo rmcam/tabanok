@@ -17,7 +17,10 @@ import { TopicModule } from './features/topic/topic.module';
 import { UnityModule } from './features/unity/unity.module';
 import { UserModule } from './features/user/user.module';
 import { VocabularyModule } from './features/vocabulary/vocabulary.module';
+import { RecommendationsModule } from './features/recommendations/recommendations.module';
 import { RootController } from './root.controller';
+import { AuthController } from './auth/auth.controller';
+import { DictionaryModule } from './features/dictionary/dictionary.module';
 
 @Module({
   imports: [
@@ -43,8 +46,10 @@ import { RootController } from './root.controller';
     TopicModule,
     UnityModule,
     VocabularyModule,
+    RecommendationsModule,
+    DictionaryModule,
   ],
-  controllers: [LanguageValidationController, RootController],
+  controllers: [LanguageValidationController, RootController, AuthController],
   providers: [KamentsaValidatorService],
 })
 export class AppModule {}

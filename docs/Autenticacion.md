@@ -4,16 +4,16 @@
 
 ## Resumen
 
+**Nota:** La autenticación está en proceso de revisión.
+
 Este documento describe la implementación actual de la autenticación en Tabanok, integrando **React (Vite + TypeScript)** en el frontend y **NestJS** en el backend.
 
 ---
 
 ## Endpoints de Autenticación
 
-- **Login:** `POST /api/auth/signin`
-- **Registro:** `POST /api/auth/signup`
-
-> El proxy de Vite reescribe `/api/auth/*` a `/api/v1/auth/*` en el backend.
+- **Login:** `POST /auth/signin`
+- **Registro:** `POST /auth/signup`
 
 ---
 
@@ -22,8 +22,9 @@ Este documento describe la implementación actual de la autenticación en Tabano
 ### Login
 
 **Request:**
+
 ```json
-POST /api/auth/signin
+POST /auth/signin
 {
   "identifier": "usuario_institucional_o_email",
   "password": "contraseña"
@@ -31,16 +32,40 @@ POST /api/auth/signin
 ```
 
 **Response:**
+
 ```json
 {
+  "statusCode": 201,
+  "accessToken": "...",
+  "refreshToken": "...",
   "user": {
     "id": "uuid",
     "username": "usuario",
     "firstName": "Nombre",
-    "firstLastName": "Apellido",
+    "lastName": "Apellido",
     "email": "correo@ejemplo.com",
-    "roles": ["user"],
-    "accessToken": "jwt_token"
+    "role": "user",
+    "status": "active",
+    "languages": [],
+    "preferences": {
+      "notifications": true,
+      "language": "es",
+      "theme": "light"
+    },
+    "level": 1,
+    "culturalPoints": 0,
+    "gameStats": {
+      "totalPoints": 0,
+      "level": 1,
+      "streak": 0,
+      "lastActivity": "2025-04-18T20:03:24.979Z"
+    },
+    "resetPasswordToken": null,
+    "resetPasswordExpires": null,
+    "lastLoginAt": null,
+    "isEmailVerified": false,
+    "createdAt": "2025-04-18T20:03:24.982Z",
+    "updatedAt": "2025-04-18T20:03:24.982Z"
   }
 }
 ```
@@ -48,6 +73,7 @@ POST /api/auth/signin
 ### Registro
 
 **Request:**
+
 ```json
 POST /api/auth/signup
 {
@@ -60,15 +86,40 @@ POST /api/auth/signup
 ```
 
 **Response:**
+
 ```json
 {
+  "statusCode": 201,
+  "accessToken": "...",
+  "refreshToken": "...",
   "user": {
     "id": "uuid",
     "username": "usuario",
     "firstName": "Nombre",
-    "firstLastName": "Apellido",
+    "lastName": "Apellido",
     "email": "correo@ejemplo.com",
-    "roles": ["user"]
+    "role": "user",
+    "status": "active",
+    "languages": [],
+    "preferences": {
+      "notifications": true,
+      "language": "es",
+      "theme": "light"
+    },
+    "level": 1,
+    "culturalPoints": 0,
+    "gameStats": {
+      "totalPoints": 0,
+      "level": 1,
+      "streak": 0,
+      "lastActivity": "2025-04-18T20:03:24.979Z"
+    },
+    "resetPasswordToken": null,
+    "resetPasswordExpires": null,
+    "lastLoginAt": null,
+    "isEmailVerified": false,
+    "createdAt": "2025-04-18T20:03:24.982Z",
+    "updatedAt": "2025-04-18T20:03:24.982Z"
   }
 }
 ```
@@ -76,6 +127,8 @@ POST /api/auth/signup
 ---
 
 ## Flujo de Autenticación
+
+**Nota:** Al crear un nuevo usuario, se crea automáticamente una entrada en la tabla `statistics` para almacenar su información de progreso y logros.
 
 1. El usuario se registra enviando los campos requeridos al endpoint `/api/auth/signup`.
 2. El usuario inicia sesión enviando `identifier` (usuario o email) y `password` a `/api/auth/signin`.
@@ -120,7 +173,7 @@ POST /api/auth/signup
 
 - `lib/api.ts`: Centraliza la configuración de axios para las llamadas a la API, incluyendo la URL base y los interceptores.
 - `api.ts`: Centraliza las llamadas a la API de autenticación (`signin`, `signup`, `logout`), utilizando el cliente axios configurado en `lib/api.ts`.
-- `AuthContext.tsx`: Contexto global de autenticación (usuario, loading, error, métodos).
+- `AuthContext.tsx`: Contexto global de autenticación (usuario, loading, error, métodos). Define la interfaz `AuthUser` con las propiedades `id`, `username`, `email`, `roles`, `token` y `refreshToken`.
 - `AuthProvider.tsx`: Provider que gestiona el estado de autenticación y expone el contexto. **Utiliza `useMemo` y `useCallback` para optimizar el rendimiento y evitar re-renderizados innecesarios de los componentes que consumen el contexto.**
 - `useAuth.ts`: Hook para acceder al contexto de autenticación. **Es normal que este hook se llame varias veces durante la carga inicial de la aplicación, ya que varios componentes (como `PrivateRoute`) lo utilizan y el estado de autenticación puede cambiar durante este proceso. En desarrollo, React StrictMode puede causar que los efectos se ejecuten dos veces.**
 - `LoginForm.tsx`, `SignupForm.tsx`: Formularios desacoplados de la lógica de red.
@@ -146,7 +199,7 @@ POST /api/auth/signup
 
 ## Pendientes y recomendaciones
 
-- Implementar refresh tokens para mejorar la seguridad.
+- Se han implementado refresh tokens para mejorar la seguridad.
 - Se han implementado roles y permisos más granulares en el componente `PrivateRoute`.
 - Se ha mejorado la experiencia de usuario en el manejo de errores.
 - Documentar el flujo de recuperación de contraseña y validación de email.

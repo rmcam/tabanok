@@ -42,9 +42,9 @@ describe('AppController (e2e)', () => {
 
   // Eliminada la prueba para /api/v1 porque no existe endpoint raíz
 
-    it('/api/v1/docs (GET)', () => {
+    it('/docs (GET)', () => {
         return request(app.getHttpServer())
-            .get('/api/v1/docs')
+            .get('/docs')
             .expect(200);
     });
 });

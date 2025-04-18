@@ -89,6 +89,12 @@ pnpm install
 - Sincronizar con el equipo antes de cambios mayores.
 - Usar el paquete común para tipos y utilidades compartidas.
 
+## Variables de Entorno
+
+```
+VITE_API_URL=http://localhost:8000/api/v1
+```
+
 ## Endpoints de Gamificación
 
 - **Otorgar puntos a un usuario:**

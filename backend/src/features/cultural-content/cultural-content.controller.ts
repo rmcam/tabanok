@@ -7,7 +7,7 @@ import { CreateCulturalContentDto } from './dto/create-cultural-content.dto';
 import { UpdateCulturalContentDto } from './dto/update-cultural-content.dto';
 
 @ApiTags('cultural-content')
-@Controller('api/v1/cultural-content')
+@Controller('cultural-content')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class CulturalContentController {

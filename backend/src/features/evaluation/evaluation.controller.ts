@@ -5,7 +5,7 @@ import { Evaluation } from './evaluation.entity';
 import { EvaluationService } from './evaluation.service';
 
 @ApiTags('evaluations')
-@Controller('api/v1/evaluations')
+@Controller('evaluations')
 export class EvaluationController {
     constructor(private readonly evaluationService: EvaluationService) { }
 
@@ -45,4 +45,4 @@ export class EvaluationController {
     getUserProgress(@Param('userId') userId: string): Promise<any> {
         return this.evaluationService.findUserProgress(userId);
     }
-} 
+}

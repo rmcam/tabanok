@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -10,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import * as argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
+import { StatisticsService } from '../features/statistics/statistics.service';
 import { UserService } from '../features/user/user.service';
 import { MailService } from '../lib/mail.service'; // Importar MailService
 import { ChangePasswordDto, LoginDto, RegisterDto, UpdateProfileDto } from './dto/auth.dto';
@@ -26,6 +28,7 @@ export class AuthService {
     private configService: ConfigService,
     private readonly userService: UserService, // <-- UserService se mantiene
     private readonly mailService: MailService, // Inyectar MailService
+    private readonly statisticsService: StatisticsService,
     private readonly httpService: HttpService,
   ) {}
 
@@ -79,40 +82,42 @@ export class AuthService {
 
     const existingEmail = await this.userService.findByEmailOptional(email);
     if (existingEmail) {
-      throw new BadRequestException('El correo electrónico ya está registrado');
+      throw new ConflictException('El correo electrónico ya está registrado');
     }
 
     // Validar username único
-    try {
-      await this.userService.findByUsername(username);
-      // Si findByUsername tuvo éxito, el username ya existe
+    const existingUsername = await this.userService.findByUsernameOptional(username);
+    if (existingUsername) {
       throw new BadRequestException('El nombre de usuario ya está registrado');
-    } catch (error) {
-      // Si el error es NotFoundException, el username está disponible. Continuar.
-      // Si es otro tipo de error, relanzarlo.
-      if (!(error instanceof NotFoundException)) {
-        throw error;
-      }
     }
 
     const lastName = `${firstLastName ?? ''} ${secondLastName ?? ''}`.trim();
 
     const hashedPassword = await argon2.hash(password);
 
-    const user = await this.userService.create({
-      username,
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      languages,
-      preferences,
-      role,
-    });
+    let user: User;
+    try {
+      user = await this.userService.create({
+        username,
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        languages,
+        preferences,
+        role,
+      });
+    } catch (error) {
+      throw new BadRequestException('Error al registrar el usuario');
+    }
+
+    // Crear estadísticas del usuario
+    await this.statisticsService.create({ userId: user.id });
 
     const tokens = await this.generateToken(user);
 
     return {
+      statusCode: 201,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       user,
@@ -130,10 +135,17 @@ export class AuthService {
 
     // Permitir login por email o username
     let user = null;
-    if (identifier.includes('@')) {
-      user = await this.userService.findByEmail(identifier);
-    } else {
-      user = await this.userService.findByUsername(identifier);
+    try {
+      if (identifier.includes('@')) {
+        user = await this.userService.findByEmail(identifier);
+      } else {
+        user = await this.userService.findByUsername(identifier);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new UnauthorizedException('Credenciales inválidas');
+      }
+      throw error;
     }
 
     const passwordValid = await argon2.verify(user.password, password);
@@ -141,9 +153,11 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
+
     const tokens = await this.generateToken(user);
 
     return {
+      statusCode: 201,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       user,

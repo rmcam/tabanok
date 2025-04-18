@@ -42,6 +42,7 @@
 **Notas:**
 - Acceso solo para usuarios con rol `student`.
 - Mostrar insignias, ranking y recomendaciones personalizadas.
+- Diseño del dashboard interactivo completado.
 
 ---
 
@@ -67,15 +68,4 @@
 
 ---
 
-## 5. Siguientes pasos
-
-- ~~Crear los componentes base y rutas protegidas para el Panel Estudiante.~~ (completado)
-- Definir los modelos de datos para panel docente y multimedia.
-- Crear los componentes base y rutas protegidas para el Panel Docente.
-- Implementar endpoints REST para multimedia.
-- Prototipar la UI de los paneles en Figma antes de codificar.
-- Documentar cada avance y mantener este plan actualizado.
-
----
-
-_Este documento sirve como hoja de ruta para las próximas funcionalidades clave del proyecto Tabanok._
+_Este documento sirve como hoja de ruta para las próximas funcionalidades clave del proyecto Tabanok. Ver siguientes pasos en [`docs/Pendientes.md`](./Pendientes.md)._

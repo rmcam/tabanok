@@ -4,9 +4,10 @@ import { Account } from '../account/entities/account.entity';
 import { User } from '../../auth/entities/user.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { GamificationModule } from '../gamification/gamification.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, Account])],
+    imports: [TypeOrmModule.forFeature([User, Account]), GamificationModule],
     controllers: [UserController],
     providers: [UserService],
     exports: [UserService],

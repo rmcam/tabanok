@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Achievement } from '../entities/achievement.entity';
 import { Badge } from '../entities/badge.entity';
 import { Gamification } from '../entities/gamification.entity';
+import { AchievementDto } from '../dto/achievement.dto';
 
 @Injectable()
 export class AchievementService {
@@ -15,6 +16,20 @@ export class AchievementService {
         @InjectRepository(Badge)
         private badgeRepository: Repository<Badge>
     ) { }
+
+    async createAchievement(achievementDto: AchievementDto): Promise<Achievement> {
+        const achievement = this.achievementRepository.create(achievementDto);
+        return this.achievementRepository.save(achievement);
+    }
+
+    async updateAchievement(id: string, achievementDto: AchievementDto): Promise<Achievement> {
+        const achievement = await this.achievementRepository.findOne({ where: { id } });
+        if (!achievement) {
+            throw new Error(`Achievement with id ${id} not found`);
+        }
+        Object.assign(achievement, achievementDto);
+        return this.achievementRepository.save(achievement);
+    }
 
     async checkAndAwardAchievements(userId: string): Promise<void> {
         const gamification = await this.gamificationRepository.findOne({

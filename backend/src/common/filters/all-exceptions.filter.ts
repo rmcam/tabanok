@@ -7,36 +7,29 @@ import {
   Logger,
 } from '@nestjs/common';
 
-@Catch()
+@Catch(HttpException)
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest();
     const response = ctx.getResponse();
 
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status = exception.getStatus();
 
     let message: string;
 
-    if (exception instanceof HttpException) {
-      const responseMessage = exception.getResponse();
-      if (typeof responseMessage === 'string') {
-        message = responseMessage;
-      } else if (
-        typeof responseMessage === 'object' &&
-        responseMessage !== null
-      ) {
-        message = JSON.stringify(responseMessage);
-      } else {
-        message = 'Unexpected error response';
-      }
+    const responseMessage = exception.getResponse();
+    if (typeof responseMessage === 'string') {
+      message = responseMessage;
+    } else if (
+      typeof responseMessage === 'object' &&
+      responseMessage !== null
+    ) {
+      message = JSON.stringify(responseMessage);
     } else {
-      message = 'Internal server error';
+      message = 'Unexpected error response';
     }
 
     const responseBody = {

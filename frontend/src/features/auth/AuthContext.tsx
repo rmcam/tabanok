@@ -5,7 +5,8 @@ export interface AuthUser {
   username: string;
   email: string;
   roles?: string[];
-  token?: string; // Add token property to AuthUser interface
+  token?: string;
+  refreshToken?: string;
 }
 
 export interface AuthContextProps {

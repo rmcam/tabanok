@@ -2,7 +2,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: (`${import.meta.env.VITE_API_URL}`),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -20,8 +20,11 @@ function isTokenExpired(token: string): boolean {
     const expirationDate = new Date(decodedToken.exp * 1000);
     const now = new Date();
     const timeLeft = (expirationDate.getTime() - now.getTime()) / 1000;
+    console.log("Token valido:", decodedToken);
+    console.log("Fecha de expiracion:", expirationDate);
     return timeLeft < TOKEN_EXPIRATION_THRESHOLD;
-  } catch {
+  } catch (error) {
+    console.error("Error al decodificar el token:", error);
     return true;
   }
 }
@@ -34,7 +37,7 @@ async function refreshToken() {
   if (refreshingToken) return;
   refreshingToken = true;
 
-  const storedUser = sessionStorage.getItem('authUser');
+  const storedUser = localStorage.getItem('authUser');
   if (!storedUser) return;
 
   const user = JSON.parse(storedUser);
@@ -49,11 +52,13 @@ async function refreshToken() {
       token: accessToken,
       refreshToken: newRefreshToken,
     };
-    sessionStorage.setItem('authUser', JSON.stringify(updatedUser));
+    localStorage.setItem('authUser', JSON.stringify(updatedUser));
   } catch (error) {
     console.error('Error refreshing token:', error);
-    sessionStorage.removeItem('authUser');
-    window.location.href = '/login'; // Redirigir al login
+    localStorage.removeItem('authUser');
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login'; // Redirigir al login
+    }
   } finally {
     refreshingToken = false;
   }
@@ -62,32 +67,27 @@ async function refreshToken() {
 // Añadir token JWT automáticamente si existe
 api.interceptors.request.use(
   async (config) => {
-    const storedUser = sessionStorage.getItem('authUser');
+    const storedUser = localStorage.getItem('authUser');
     if (!storedUser) {
-      console.log('No se encontró usuario en sessionStorage');
       return config;
     }
 
     let user = JSON.parse(storedUser);
-    console.log('Usuario recuperado de sessionStorage:', user);
     if (!user.token) {
-      console.log('El usuario no tiene token');
       return config;
     }
 
     if (isTokenExpired(user.token)) {
       await refreshToken();
-      const updatedUser = sessionStorage.getItem('authUser');
+      const updatedUser = localStorage.getItem('authUser');
       if (updatedUser) {
         user = JSON.parse(updatedUser);
       } else {
-        console.log('No se pudo refrescar el token');
         return config;
       }
     }
 
     config.headers.Authorization = `Bearer ${user.token}`;
-    console.log('Token enviado:', user.token, 'URL:', config.url);
     return config;
   },
   (error) => {

@@ -1,0 +1,11 @@
+{
+  "Multimedia": {
+    "id": "string",
+    "title": "string",
+    "description": "string",
+    "type": "enum",
+    "url": "string",
+    "lessonId": "string",
+    "metadata": "object"
+  }
+}

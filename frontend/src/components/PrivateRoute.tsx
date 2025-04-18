@@ -8,14 +8,19 @@ interface PrivateRouteProps {
 }
 
 function PrivateRoute({ children, requiredRoles }: PrivateRouteProps) {
+  console.log("PrivateRoute rendered");
   useRequireAuth(requiredRoles);
-  const { loading: authLoading } = useAuth();
+  const { loading: authLoading, isAuthenticated } = useAuth();
 
   if (authLoading) {
     return <div>Cargando...</div>;
   }
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return <>{children}</>;
 }
 
-export default PrivateRoute;
+export default React.memo(PrivateRoute);

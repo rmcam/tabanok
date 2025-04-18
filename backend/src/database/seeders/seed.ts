@@ -40,6 +40,22 @@ AppDataSource.initialize()
     const topicRepository = AppDataSource.getRepository(Topic);
     const vocabularyRepository = AppDataSource.getRepository(Vocabulary);
 
+    // Eliminar vocabulario existente
+    await vocabularyRepository.delete({});
+
+    // Eliminar temas existentes
+    await topicRepository.delete({});
+
+    // Eliminar unidades existentes
+    await unityRepository.delete({});
+
+    // Eliminar cuentas existentes
+    const accountRepository = AppDataSource.getRepository(Account);
+    await accountRepository.delete({});
+
+    // Eliminar usuarios existentes
+    await userRepository.delete({});
+
     // Crear usuario base
     const user = await userRepository.save({
       username: 'testuser',

@@ -53,6 +53,10 @@ Fortalecer la calidad del contenido textual mediante validaciones lingüísticas
 
 ---
 
+Ver próximos pasos en [`docs/Pendientes.md`](./Pendientes.md).
+
+---
+
 ## Última actualización
 
 Abril 2025

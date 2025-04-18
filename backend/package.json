@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "ts-node src/database/seeders/seed.ts",
     "seed:content": "ts-node src/database/seeders/seed.ts",
-    "typeorm": "typeorm-ts-node-commonjs",
+    "typeorm": "typeorm",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/data-source.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/data-source.ts",
@@ -62,6 +62,8 @@
     "rxjs": "^7.8.2",
     "serve-favicon": "^2.5.0",
     "supertest": "^7.1.0",
+    "swagger-ui-express": "^5.0.1",
+    "ts-node": "^10.9.1",
     "typeorm": "^0.3.22",
     "uuid": "^11.1.0"
   },

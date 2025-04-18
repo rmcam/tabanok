@@ -7,8 +7,8 @@ Este documento describe la estructura del diccionario bilingüe Kamëntsá-Espa�
 La sección de metadatos contiene información general sobre el diccionario:
 
 *   **Título:** Diccionario Bilingüe Kamëntsá-Español Consolidado
-*   **Versión:** 2.0
-*   **Fecha de procesamiento:** Abril 2025
+*   **Versión:** 2.1
+*   **Fecha de procesamiento:** Abril 2025 (Actualizado)
 *   **Fuentes:**
     *   diccionario\_processed.json
     *   kamëntsa\_processed.json

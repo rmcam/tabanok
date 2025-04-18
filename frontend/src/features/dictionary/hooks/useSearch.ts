@@ -1,11 +1,17 @@
 import api from '@/lib/api';
 import { useState } from 'react';
 
+interface DictionaryEntry {
+  entrada: string;
+  definicion: string;
+  ejemplos: string[];
+}
+
 interface SearchResult {
   id: string;
-  word: string;
-  definition: string;
-  // Agregar más campos según respuesta real del backend
+  entrada: string;
+  definicion: string;
+  ejemplos: string[];
 }
 
 export function useSearch() {
@@ -17,10 +23,21 @@ export function useSearch() {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<SearchResult[]>('search', {
+      const response = await api.get<{ entry: DictionaryEntry | null }>('/dictionary/search', {
         params: { q: term },
       });
-      setResults(response.data);
+
+      if (response.data.entry) {
+        const { entrada, definicion, ejemplos } = response.data.entry;
+        setResults([{
+          id: entrada,
+          entrada: entrada,
+          definicion: definicion,
+          ejemplos: ejemplos || []
+        }]);
+      } else {
+        setResults([]); // No results found
+      }
     } catch (err) {
       console.error(err);
       setError('Error al buscar');

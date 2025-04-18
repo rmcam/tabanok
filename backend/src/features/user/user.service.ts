@@ -6,6 +6,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '../../auth/entities/user.entity';
 import { UserRole, UserStatus } from '../../auth/enums/auth.enum';
+import { UserLevel } from '../gamification/entities/user-level.entity';
+import { Inject } from '@nestjs/common';
+import { GamificationService } from '../gamification/services/gamification.service';
 
 @Injectable()
 export class UserService {
@@ -14,6 +17,8 @@ export class UserService {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Account)
         private readonly accountRepository: Repository<Account>,
+        @Inject(GamificationService)
+        private readonly gamificationService: GamificationService,
     ) { }
 
     async findByUsername(username: string): Promise<User> {
@@ -22,6 +27,10 @@ export class UserService {
             throw new NotFoundException('Usuario no encontrado');
         }
         return user;
+    }
+
+    async findByUsernameOptional(username: string): Promise<User | null> {
+        return await this.userRepository.findOne({ where: { username } });
     }
 
     async create(createUserDto: CreateUserDto): Promise<User> {
@@ -56,6 +65,10 @@ export class UserService {
                     user
                 })
             );
+        }
+
+        if (process.env.NODE_ENV !== 'test') {
+            await this.gamificationService.createUserLevel(user);
         }
 
         return user;
@@ -123,7 +136,8 @@ export class UserService {
         });
     }
 
-    async updateLastLogin(userId: string): Promise<void> {
+    async updateLastLogin(userId: string): Promise<void>
+     {
         await this.userRepository.update(userId, { lastLoginAt: new Date() });
     }
 

@@ -14,23 +14,18 @@
 - Configuración base de TypeScript unificada.
 - Documentación centralizada y actualizada.
 - CI/CD implementado para lint, tests y builds automáticos.
-- Integración avanzada de validación lingüística con LanguageTool.
-- Integración del diccionario Kamëntsá finalizada y verificada.
+- Integración avanzada de validación lingüística con LanguageTool. Las variaciones se cargan.
+- Integración del diccionario Kamëntsá finalizada y verificada. Se ha implementado un diccionario.
 - **Cobertura de tests alta (200 tests exitosos, incluyendo autenticación).**
 - **Integración backend-frontend verificada y estable.**
 - **Solucionado problema de conexión a la base de datos:** Se resolvieron errores relacionados con TypeORM y ciclos de dependencia en las migraciones (Abril 2025).
 - Accesibilidad mejorada: navegación completa por teclado implementada, foco visible asegurado, orden lógico verificado.
 - **Cumple WCAG 2.1 en navegación, menús y menús desplegables (ARIA labels, landmarks, foco).**
 - Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios. Se ha eliminado la columna `points` de la entidad `User`.
-- **Rutas protegidas y autenticación robusta:** El componente `PrivateRoute` ahora implementa correctamente la protección de rutas, solo permitiendo acceso a usuarios autenticados y con el rol adecuado. Se han implementado roles y permisos más granulares en el componente `PrivateRoute`. El flujo de autenticación y autorización es consistente y seguro.
-  - **Endpoints actuales:**
-    - Iniciar sesión: `POST /api/auth/signin`
-    - Registrarse: `POST /api/auth/signup`
-  - **Campos requeridos para registrarse:** `username`, `firstName`, `firstLastName`, `email`, `password`
-  - **Campos requeridos para iniciar sesión:** `identifier` (usuario o email), `password`
-  - Ver detalles y ejemplos de payloads en [`docs/Autenticacion.md`](./Autenticacion.md)
-- **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas.
-- **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend.
+- **Rutas protegidas y autenticación robusta:** Ver detalles y ejemplos en [`docs/Autenticacion.md`](./Autenticacion.md)
+- **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas. El panel de estudiante ya trae los datos.
+- **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha solucionado el error 500 al obtener los temas. Se han definido modelos de datos JSON para el panel del docente y multimedia, mejorando la gestión de datos y la integración con el backend.  Se han añadido nuevos endpoints para la gestión de estos modelos.
+- **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
 # Estado Actual del Proyecto Tabanok
 
 ---
@@ -55,13 +50,7 @@
 - Accesibilidad mejorada: navegación completa por teclado implementada, foco visible asegurado, orden lógico verificado.
 - **Cumple WCAG 2.1 en navegación, menús y menús desplegables (ARIA labels, landmarks, foco).**
 - Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios.
-- **Rutas protegidas y autenticación robusta:** El componente `PrivateRoute` ahora implementa correctamente la protección de rutas, solo permitiendo acceso a usuarios autenticados y con el rol adecuado. El flujo de autenticación y autorización es consistente y seguro.
-  - **Endpoints actuales:**
-    - Iniciar sesión: `POST /api/auth/signin`
-    - Registrarse: `POST /api/auth/signup`
-  - **Campos requeridos para registrarse:** `username`, `firstName`, `firstLastName`, `email`, `password`
-  - **Campos requeridos para iniciar sesión:** `identifier` (usuario o email), `password`
-  - Ver detalles y ejemplos de payloads en [`docs/Autenticacion.md`](./Autenticacion.md)
+- **Rutas protegidas y autenticación robusta:** Ver detalles y ejemplos en [`docs/Autenticacion.md`](./Autenticacion.md)
 - **Sidebar y Dashboard funcionales:** El dashboard muestra correctamente los módulos/unidades del usuario autenticado, integrando el hook `useUnits` que ahora utiliza la instancia `api` para peticiones autenticadas.
 - **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha agregado la columna `level` a la tabla `users`. Se han solucionado errores relacionados con la entidad `User` en el módulo de gamificación.
 - **Licencia:** MIT License
@@ -75,21 +64,7 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 
 ---
 
-## Pendientes principales
-
-- Expandir la lógica de gamificación.
-- Activar despliegue automático a producción (el pipeline ya construye y sube imágenes, falta activar paso SSH).
-- Mejorar cobertura de tests en frontend (backend ya tiene alta cobertura).
-- ~~Integrar validación lingüística avanzada en frontend (LanguageTool o Grammarly).~~ (completado octubre 2025)
-- Finalizar auditorías manuales y con lectores de pantalla para accesibilidad.
-- ~~Revisar y actualizar dependencias obsoletas o con advertencias.~~ (completado noviembre 2025)
-- Planificar nuevas funcionalidades y mejoras.
-- ~~Servir el archivo `favicon.ico` desde el backend.~~ (completado)
-- ~~Documentar y testear flujos de error y protección de rutas.~~ (completado diciembre 2025)
-- **Agregar pruebas automáticas para rutas privadas y manejo de tokens expirados.**
-- **Revisar y documentar la integración de hooks personalizados (`useUnits`, `useAuth`).**
-- **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
-- **Se ha implementado el Panel Estudiante en el frontend, creando un nuevo componente llamado `StudentDashboard.tsx` que muestra el progreso, los logros, las actividades sugeridas y la biblioteca multimedia del estudiante.**
+Ver pendientes principales en [`docs/Pendientes.md`](./Pendientes.md).
 
 ---
 
@@ -108,7 +83,7 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 ## Estado del Frontend
 
 - Aplicación React + Vite con estructura modular.
-- Rutas públicas y privadas gestionadas con React Router y el componente `PrivateRoute` (actualizado).
+- Rutas públicas y privadas gestionadas con React Router y el componente `PrivateRoute` (actualizado). La autenticación por el momento funciona, hay que revisar a detalle.
 - Autenticación y manejo de roles implementados completamente.
 - La información del usuario, el token de autenticación y los roles se guardan en el almacenamiento local.
 - El componente `PrivateRoute` verifica si el usuario está autenticado y si tiene el rol necesario para acceder a la ruta, devolviendo solo los hijos autorizados.

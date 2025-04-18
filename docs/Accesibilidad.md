@@ -55,8 +55,8 @@ Cumplir con las pautas **WCAG 2.1** para garantizar una experiencia inclusiva y 
 
 - Implementar mejoras recomendadas.
 - Validar nuevamente con herramientas automáticas y manuales.
-- Documentar avances y marcar tareas completadas en `docs/Pendientes.md`.
 - Se han realizado mejoras en el manejo de errores y la accesibilidad en el formulario de inicio de sesión.
+- Ver pendientes y estado de cumplimiento en [`docs/Pendientes.md`](./Pendientes.md).
 
 ---
 

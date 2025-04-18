@@ -26,7 +26,7 @@ export class Unity {
     @Column({ default: true })
     isActive: boolean;
 
-    @ManyToOne(() => User, user => user.unities)
+    @ManyToOne('User', 'unities')
     user: User;
 
     @Column()

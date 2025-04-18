@@ -200,6 +200,10 @@ export class CulturalAchievementService {
       );
     }
 
+    if (progress.isCompleted) {
+      await this.awardAchievement(userId, progress.achievement);
+    }
+
     return this.progressRepository.save(progress);
   }
 
@@ -209,21 +213,13 @@ export class CulturalAchievementService {
   ): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['userAchievements'], // Corregido: usar la relación correcta
     });
 
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    // Agregar el logro al usuario
-    user.userAchievements = user.userAchievements || []; // Corregido
-    // Nota: La lógica aquí podría necesitar ajustes. ¿Realmente se añade el CulturalAchievement completo?
-    // O se debería crear una nueva entrada en UserAchievement? Revisar la relación ManyToMany.
-    // Por ahora, asumiré que se quiere añadir a la relación existente si TypeORM lo maneja.
-    // user.userAchievements.push(achievement); // Esto probablemente esté mal si es ManyToMany
-
-    // Otorgar puntos y recompensas adicionales
+    // Otorgar puntos
     user.culturalPoints = (user.culturalPoints || 0) + achievement.pointsReward;
 
     await this.userRepository.save(user);

@@ -27,6 +27,12 @@ src/
 │   ├── auth/       # Componentes relacionados con autenticación
 │   ├── gamification/   # Componentes de gamificación
 │   ├── profile/    # Perfil de usuario
+│   ├── dashboard/  # Componentes del dashboard
+│   │   ├── ProgressSection.tsx
+│   │   ├── RewardsSection.tsx
+│   │   ├── FeaturedContent.tsx
+│   │   ├── RecommendationsSection.tsx
+│   │   └── CommunitySection.tsx
 │   └── layout/     # Layouts, barras laterales, navegación
 ├── features/       # Funcionalidades específicas
 │   ├── auth/       # Autenticación
@@ -88,10 +94,10 @@ Este cliente:
 Se han implementado hooks específicos para interactuar con los endpoints del backend, ubicados en:
 
 - `src/features/auth/useAuth.ts` — signin, logout, estado autenticado
-- `src/features/dictionary/hooks/useSearch.ts` — búsqueda de términos
+- `src/features/dictionary/hooks/useSearch.ts` — búsqueda de términos (ahora usa la ruta `/api/v1/search`)
 - `src/features/dictionary/hooks/useEntry.ts` — detalle de una entrada
 - `src/features/dictionary/hooks/useCategories.ts` — categorías
-- `src/features/dictionary/hooks/useVariations.ts` — variaciones dialectales (ahora usa la ruta `/vocabulary`)
+- `src/features/dictionary/hooks/useVariations.ts` — variaciones dialectales (ahora usa la ruta `/api/v1/search`)
 - `src/features/gamification/hooks/useGamification.ts` - Gamificación
 
 ### Componentes que usan estos hooks
@@ -104,7 +110,6 @@ Se han implementado hooks específicos para interactuar con los endpoints del ba
 - `src/features/gamification/components/Leaderboard.tsx` - Leaderboard
 - `src/features/gamification/components/CulturalAchievement.tsx` - Cultural Achievement
 - `src/features/gamification/components/Mentor.tsx` - Mentor
-- `src/features/gamification/components/MissionTemplate.tsx` - Mission Template (Funcionalidad de misiones eliminada)
 
 
 ### Flujo general
@@ -126,3 +131,15 @@ Esto permite una integración **modular, escalable y segura**.
 ## Licencia
 
 MIT License
+
+## Modelos de Datos
+
+El frontend utiliza modelos de datos JSON para gestionar la información recibida del backend.  Estos modelos mejoran la organización y la eficiencia del código.
+
+### `teacher_dashboard_model.json`
+
+Este modelo define la estructura de datos para el panel del docente, incluyendo información del usuario, lecciones, actividades, unidades, progreso y evaluaciones.
+
+### `multimedia_model.json`
+
+Este modelo define la estructura de datos para la gestión de archivos multimedia, incluyendo información sobre el ID, título, descripción, tipo, URL, ID de la lección y metadatos.

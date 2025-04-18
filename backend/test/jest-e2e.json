@@ -6,7 +6,6 @@
     ],
     "rootDir": ".",
     "testEnvironment": "node",
-    "testRegex": ".*\\.e2e-spec\\.ts$",
     "transform": {
         "^.+\\.(t|j)s$": [
             "ts-jest",
@@ -23,9 +22,6 @@
     "moduleNameMapper": {
         "^src/(.*)$": "<rootDir>/../src/$1"
     },
-    "setupFilesAfterEnv": [
-        "./jest.setup.js"
-    ],
     "testTimeout": 30000,
     "verbose": true,
     "detectOpenHandles": true,
@@ -33,5 +29,7 @@
     "roots": [
         "<rootDir>"
     ],
-    "testMatch": null
+    "testMatch": [
+      "<rootDir>/**/*.e2e-spec.ts"
+    ]
 }

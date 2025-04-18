@@ -21,10 +21,12 @@ import { Season } from '../features/gamification/entities/season.entity';
 import { SpecialEvent } from '../features/gamification/entities/special-event.entity';
 import { UserAchievement } from '../features/gamification/entities/user-achievement.entity';
 import { UserLevel } from '../features/gamification/entities/user-level.entity';
+import { UserMission } from '../features/gamification/entities/user-mission.entity';
 import { UserReward } from '../features/gamification/entities/user-reward.entity';
 import { Lesson } from '../features/lesson/entities/lesson.entity';
 import { Progress } from '../features/progress/entities/progress.entity';
 import { Reward } from '../features/reward/entities/reward.entity';
+import { Statistics } from '../features/statistics/entities/statistics.entity';
 import { Topic } from '../features/topic/entities/topic.entity';
 import { Unity } from '../features/unity/entities/unity.entity';
 import { Vocabulary } from '../features/vocabulary/entities/vocabulary.entity';
@@ -73,12 +75,15 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         Mission,
         Season,
         SpecialEvent,
+        Statistics,
+        UserMission,
       ],
-      synchronize: false,
+      synchronize: true,
       logging: true,
       migrations: ['src/migrations/*.ts'],
-      migrationsRun: true,
-      ssl: this.configService.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+      migrationsRun: false,
+      ssl:
+        this.configService.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
     };
   }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../auth/entities/user.entity';
 import { Leaderboard } from './entities/leaderboard.entity';
@@ -12,6 +12,8 @@ import { CulturalAchievementController } from './controllers/cultural-achievemen
 import { MentorController } from './controllers/mentor.controller';
 import { RewardController } from './controllers/reward.controller';
 import { UserLevelController } from './controllers/user-level.controller';
+import { BadgeController } from './controllers/badge.controller';
+import { RecommendationController } from './controllers/recommendation.controller';
 
 // Entidades
 import { AchievementProgress } from './entities/achievement-progress.entity';
@@ -26,6 +28,7 @@ import { Mission } from './entities/mission.entity';
 import { UserAchievement } from './entities/user-achievement.entity';
 import { UserLevel } from './entities/user-level.entity';
 import { UserReward } from './entities/user-reward.entity';
+import { UserBadge } from './entities/user-badge.entity';
 
 // Servicios
 import { GamificationService } from './services/gamification.service';
@@ -39,6 +42,8 @@ import { LeaderboardService } from './services/leaderboard.service';
 import { UserLevelService } from './services/user-level.service';
 import { AchievementService } from './services/achievement.service';
 import { MissionTemplateService } from './services/mission-template.service';
+import { BadgeService } from './services/badge.service';
+import { RecommendationService } from './services/recommendation.service';
 
 import { UserMission } from './entities/user-mission.entity';
 import { UserMissionRepository } from './repositories/user-mission.repository';
@@ -64,7 +69,8 @@ const ENTITIES = [
     Mission,
     Leaderboard,
     MissionTemplate,
-    UserMission
+    UserMission,
+    UserBadge
 ];
 
 const CONTROLLERS = [
@@ -73,7 +79,9 @@ const CONTROLLERS = [
     MentorController,
     RewardController,
     UserLevelController,
-    MissionTemplateController
+    MissionTemplateController,
+    BadgeController,
+    RecommendationController
 ];
 
 const SERVICES = [
@@ -90,14 +98,16 @@ const SERVICES = [
     LeaderboardRepository,
     MissionTemplateService,
     UserMissionRepository,
-    MissionTemplateRepository
+    MissionTemplateRepository,
+    BadgeService,
+    RecommendationService
 ];
 
 @Module({
     imports: [
         TypeOrmModule.forFeature(ENTITIES),
         NotificationsModule,
-        AuthModule
+        forwardRef(() => AuthModule)
     ],
     controllers: CONTROLLERS,
     providers: SERVICES,

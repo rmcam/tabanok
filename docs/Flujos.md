@@ -54,4 +54,6 @@
 - Automatizar despliegues a producción.
 - Mejorar cobertura de tests en el frontend.
 - Documentar nuevas funcionalidades y mejoras.
+
+Ver próximos pasos en [`docs/Pendientes.md`](./Pendientes.md).
 - **Licencia:** MIT License

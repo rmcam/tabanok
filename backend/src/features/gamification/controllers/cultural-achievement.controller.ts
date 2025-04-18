@@ -9,7 +9,7 @@ import { CulturalAchievementService } from '../services/cultural-achievement.ser
 
 @ApiTags('Gamification - Cultural Achievements') // Mejorar Tag
 @ApiBearerAuth()
-@Controller('api/v1/cultural-achievements') // Añadir prefijo API
+@Controller('cultural-achievements') // Añadir prefijo API
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CulturalAchievementController {
     constructor(private readonly achievementService: CulturalAchievementService) { }

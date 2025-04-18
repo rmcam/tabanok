@@ -18,6 +18,7 @@ export async function login(identifier: string, password: string): Promise<AuthU
       email: data.user.email,
       roles: data.user.roles,
       token: data.accessToken,
+      refreshToken: data.refreshToken,
     };
     return user;
   } catch (error: any) {

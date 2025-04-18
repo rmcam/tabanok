@@ -1,10 +1,35 @@
-import { useState, useEffect } from 'react';
 import api from '@/lib/api';
+import { useEffect, useState } from 'react';
+
+type Lesson = object;
+
+type Topic = object;
 
 interface Category {
   id: string;
-  name: string;
-  // Agregar más campos según respuesta real del backend
+  title: string;
+  description: string;
+  order: number;
+  isLocked: boolean;
+  requiredPoints: number;
+  isActive: boolean;
+  unityId: string;
+  unity: {
+    id: string;
+    title: string;
+    description: string;
+    order: number;
+    isLocked: boolean;
+    requiredPoints: number;
+    isActive: boolean;
+    userId: string;
+    lessons: Lesson[];
+    topics: Topic[];
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export function useCategories() {
@@ -16,7 +41,7 @@ export function useCategories() {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get<Category[]>('/api/categories');
+      const response = await api.get<Category[]>('/topics');
       setCategories(response.data);
     } catch (err) {
       console.error(err);

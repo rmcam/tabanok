@@ -5,7 +5,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne
+  ManyToOne,
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
 import { Account } from '../../features/account/entities/account.entity'; // Ruta corregida
 import { UserAchievement } from '../../features/gamification/entities/user-achievement.entity'; // Ruta corregida
@@ -14,6 +16,7 @@ import { Progress } from '../../features/progress/entities/progress.entity'; // 
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
 import { UserRole, UserStatus } from '../enums/auth.enum';
 import { Unity } from '../../features/unity/entities/unity.entity';
+import { Statistics } from '../../features/statistics/entities/statistics.entity';
 
 export { UserRole };
 
@@ -111,8 +114,11 @@ export class User {
   @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user)
   leaderboards: Leaderboard[];
 
-  @OneToMany(() => Unity, (unity) => unity.user)
-  unities: Unity[];
+  @OneToOne(() => Statistics, (statistics) => statistics.user)
+  statistics: Statistics;
+
+@OneToMany('Unity', 'user')
+unities: Unity[];
 
   @CreateDateColumn()
   createdAt: Date;

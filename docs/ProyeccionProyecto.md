@@ -114,4 +114,3 @@ Desarrollar una **aplicación web educativa gamificada** para fortalecer y revit
 
 ---
 
-Este documento guía la planificación, diseño y desarrollo del sistema, alineado con la propuesta de grado, el contexto cultural Kamëntsá y las mejores prácticas pedagógicas y tecnológicas.

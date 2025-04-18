@@ -43,3 +43,10 @@ export function useUnits(token?: string) {
 
   return { units, loading, error };
 }
+
+/**
+ * Hook para obtener las unidades del usuario autenticado.
+ *
+ * @param {string} token - Token de autenticación del usuario.
+ * @returns {{ units: Unit[], loading: boolean, error: string | null }} - Objeto con las unidades, el estado de carga y el error (si existe).
+ */

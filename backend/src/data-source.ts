@@ -1,3 +1,4 @@
+import { User } from '@/auth/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
@@ -6,23 +7,24 @@ import { Content } from './features/content/entities/content.entity';
 import { CulturalContent } from './features/cultural-content/cultural-content.entity';
 import { Evaluation } from './features/evaluation/evaluation.entity';
 import { Exercise } from './features/exercises/entities/exercise.entity';
+import { Achievement } from './features/gamification/entities/achievement.entity';
+import { Badge } from './features/gamification/entities/badge.entity';
+import { CulturalAchievement } from './features/gamification/entities/cultural-achievement.entity';
 import { Gamification } from './features/gamification/entities/gamification.entity';
+import { Leaderboard } from './features/gamification/entities/leaderboard.entity';
 import { Mission } from './features/gamification/entities/mission.entity';
+import { Season } from './features/gamification/entities/season.entity';
+import { SpecialEvent } from './features/gamification/entities/special-event.entity';
+import { UserAchievement } from './features/gamification/entities/user-achievement.entity';
+import { UserLevel } from './features/gamification/entities/user-level.entity';
+import { UserMission } from './features/gamification/entities/user-mission.entity';
+import { UserReward } from './features/gamification/entities/user-reward.entity';
 import { Lesson } from './features/lesson/entities/lesson.entity';
 import { Progress } from './features/progress/entities/progress.entity';
 import { Reward } from './features/reward/entities/reward.entity';
 import { Topic } from './features/topic/entities/topic.entity';
 import { Unity } from './features/unity/entities/unity.entity';
-import { User } from './auth/entities/user.entity';
 import { Vocabulary } from './features/vocabulary/entities/vocabulary.entity';
-import { UserReward } from './features/gamification/entities/user-reward.entity';
-import { UserAchievement } from './features/gamification/entities/user-achievement.entity';
-import { Achievement } from './features/gamification/entities/achievement.entity';
-import { CulturalAchievement } from './features/gamification/entities/cultural-achievement.entity';
-import { Leaderboard } from './features/gamification/entities/leaderboard.entity';
-import { Season } from './features/gamification/entities/season.entity';
-import { SpecialEvent } from './features/gamification/entities/special-event.entity';
-import { Badge } from './features/gamification/entities/badge.entity';
 
 config();
 
@@ -45,6 +47,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       Topic,
       Unity,
       User,
+      // Removed duplicate Unity entry from previous comment
       Vocabulary,
       Gamification,
       Mission,
@@ -56,9 +59,10 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       Season,
       SpecialEvent,
       Badge,
+      UserLevel,
+      UserMission,
     ],
-    migrations: [],
-    synchronize: true,
+    synchronize: false,
     logging: configService.get('NODE_ENV') === 'development',
     logger: 'advanced-console',
     cache: {

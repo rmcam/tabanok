@@ -2,8 +2,11 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useRequireAuth } from '../../auth/useRequireAuth';
 import { useSearch } from '../hooks/useSearch';
+import { useAuth } from '../../auth/useAuth';
 
 export function SearchView() {
+  console.log("SearchView rendered");
+  const { isAuthenticated } = useAuth();
   useRequireAuth();
   const [term, setTerm] = useState('');
   const { results, loading, error, search } = useSearch();
@@ -11,7 +14,9 @@ export function SearchView() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (term.trim() === '') return;
-    await search(term);
+    if (isAuthenticated) {
+      await search(term);
+    }
   }
 
   return (
@@ -42,8 +47,18 @@ export function SearchView() {
       <ul className="space-y-2" aria-live="polite">
         {results.map((item) => (
           <li key={item.id} className="border p-2 rounded hover:bg-gray-100 transition-colors">
-            <h3 className="font-semibold">{item.word}</h3>
-            <p>{item.definition}</p>
+            <h3 className="font-semibold">{item.entrada}</h3>
+            <p>{item.definicion}</p>
+            {item.ejemplos && item.ejemplos.length > 0 && (
+              <div>
+                <h4 className="font-semibold">Ejemplos:</h4>
+                <ul>
+                  {item.ejemplos.map((ejemplo, index) => (
+                    <li key={index}>{ejemplo}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </li>
         ))}
       </ul>

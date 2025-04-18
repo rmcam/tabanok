@@ -16,9 +16,12 @@ import EntryDetail from './features/dictionary/components/EntryDetail';
 import SearchView from './features/dictionary/components/SearchView';
 // import { useUnits } from './features/dashboard/useUnits'; // Eliminado: No usado (por ahora)
 import VariationsList from './features/dictionary/components/VariationsList';
-import StudentDashboard from './components/StudentDashboard';
+import StudentDashboard from './features/student/StudentDashboard';
+
 function App() {
   const { isAuthenticated, loading, logout } = useContext(AuthContext);
+
+  console.log("App - isAuthenticated:", isAuthenticated);
 
   const handleLogout = () => {
     logout();
@@ -29,9 +32,9 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <Toaster />
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
+        <Toaster />
         <nav
           className="p-4 flex gap-4 bg-gray-100 mb-4"
           role="navigation"
@@ -52,10 +55,7 @@ function App() {
           >
             Variaciones
           </Link>
-          <Link
-            to="/student/dashboard"
-            className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
-          >
+          <Link to="/student" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">
             Panel Estudiante
           </Link>
           {!isAuthenticated ? (
@@ -95,9 +95,7 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                // Eliminado: PrivateRoute ya no acepta estas props
                 <PrivateRoute>
-                  {/* Pasando las props requeridas a Dashboard */}
                   <Dashboard />
                 </PrivateRoute>
               }
@@ -143,9 +141,9 @@ function App() {
               }
             />
             <Route
-              path="/student/dashboard"
+              path="/student"
               element={
-                <PrivateRoute requiredRoles={['student']}>
+                <PrivateRoute>
                   <StudentDashboard />
                 </PrivateRoute>
               }
@@ -153,8 +151,8 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
