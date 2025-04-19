@@ -1462,10 +1462,10 @@ export class StatisticsService {
         this.updateDateFields(statistics);
 
         if (updates.strengthAreas) {
-            statistics.strengthAreas = updates.strengthAreas.map(area => this.convertToArea(this.convertToAreaDto(area)));
+            statistics.strengthAreas = updates.strengthAreas.map(area => this.convertToAreaDto(area));
         }
         if (updates.improvementAreas) {
-            statistics.improvementAreas = updates.improvementAreas.map(area => this.convertToArea(this.convertToAreaDto(area)));
+            statistics.improvementAreas = updates.improvementAreas.map(area => this.convertToAreaDto(area));
         }
 
         return this.statisticsRepository.save({

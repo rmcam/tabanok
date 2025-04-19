@@ -1,9 +1,9 @@
-import { Level } from '../../features/gamification/entities/level.entity';
+import { UserLevel } from '../../features/gamification/entities/user-level.entity';
 import { DataSource } from 'typeorm';
 
 export const LevelSeeder = {
   async seed(dataSource: DataSource): Promise<void> {
-    const levelRepository = dataSource.getRepository(Level);
+    const levelRepository = dataSource.getRepository(UserLevel);
 
     // Check if levels already exist
     const existingLevels = await levelRepository.count();
@@ -13,11 +13,11 @@ export const LevelSeeder = {
     }
 
     const levels = [
-      { level: 1, requiredXp: 0 },
-      { level: 2, requiredXp: 100 },
-      { level: 3, requiredXp: 250 },
-      { level: 4, requiredXp: 500 },
-      { level: 5, requiredXp: 1000 },
+      { currentLevel: 1, experienceToNextLevel: 0 },
+      { currentLevel: 2, experienceToNextLevel: 100 },
+      { currentLevel: 3, experienceToNextLevel: 250 },
+      { currentLevel: 4, experienceToNextLevel: 500 },
+      { currentLevel: 5, experienceToNextLevel: 1000 },
     ];
 
     await levelRepository.insert(levels);

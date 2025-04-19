@@ -10,7 +10,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/entities/user.entity';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -34,6 +41,7 @@ export class UnityController {
     description:
       'Crea una nueva unidad de aprendizaje en el sistema con su contenido y configuración inicial',
   })
+  @ApiBody({ type: CreateUnityDto })
   @ApiResponse({
     status: 201,
     description: 'Unidad de aprendizaje creada exitosamente',
@@ -109,6 +117,7 @@ export class UnityController {
     description: 'Identificador único de la unidad de aprendizaje',
     type: 'string',
   })
+  @ApiBody({ type: UpdateUnityDto })
   @ApiResponse({
     status: 200,
     description: 'Unidad de aprendizaje actualizada exitosamente',
@@ -206,6 +215,14 @@ export class UnityController {
     name: 'id',
     description: 'Identificador único de la unidad de aprendizaje',
     type: 'string',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        points: { type: 'number', description: 'Puntos requeridos para la unidad', example: 100 },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
