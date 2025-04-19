@@ -108,7 +108,7 @@ El flujo de mentoría se gestiona principalmente en `MentorService`.
 
     - Un administrador llama al método `assignStudent` para asignar un estudiante a un mentor.
     - Se verifica la disponibilidad del mentor y que tenga la especialización requerida.
-    - Se crea una nueva relación de mentoría con estado "pendiente".
+    - Se crea una solicitud de mentoría con estado "pendiente".
 
 7.  **Actualización del estado de la mentoría:**
 
@@ -262,11 +262,17 @@ import { Module, forwardRef } from '@nestjs/common';
     ],
     controllers: CONTROLLERS,
     providers: SERVICES,
-    exports: SERVICES,
+exports: SERVICES,
 })
 export class GamificationModule {}
 
+/*
+**COMENTADO ABRIL 2025:** Se resolvió el error "Entity metadata for User#activities was not found" añadiendo el nombre de la tabla a la entidad `Activity` y añadiendo la entidad `Activity` a la lista de entidades en el archivo `backend/src/config/typeorm.config.ts`.
+*/
+
 Además, para resolver la dependencia circular, se importó `TypeOrmModule.forFeature([Gamification])` y se exportó `GamificationRepository`.
+
+Además, el `UserLevelRepository` ahora es una dependencia del `UserModule` y se ha importado `TypeOrmModule.forFeature([UserLevel])` en el `UserModule` para resolver un problema de dependencias.
 
 ---
 
@@ -280,36 +286,58 @@ Cada usuario tiene una entrada en la tabla `statistics` que contiene informació
 
 El módulo de gamificación cuenta con pruebas unitarias para verificar el correcto funcionamiento de sus servicios. Las pruebas se encuentran en el directorio `backend/src/features/gamification/services/__tests__/`.
 
-### `GamificationService`
+### Servicios con pruebas unitarias
 
-El archivo `backend/src/features/gamification/services/__tests__/gamification.service.spec.ts` contiene pruebas unitarias para el servicio `GamificationService`.
+*   `GamificationService`: El archivo `backend/src/features/gamification/services/__tests__/gamification.service.spec.ts` contiene pruebas para los métodos `awardPoints`, `getUserStats`, `updateStats`, `grantAchievement` y `awardReward`.
+*   `LeaderboardService`: El archivo `backend/src/features/gamification/services/__tests__/leaderboard.service.spec.ts` contiene pruebas para los métodos `getLeaderboard` y `getUserRank`.
+*   `MissionService`: El archivo `backend/src/features/gamification/services/__tests__/mission.service.spec.ts` contiene pruebas para los métodos `createMission`, `getActiveMissions`, `updateMissionProgress` y `findOne`.
+*   `CulturalAchievementService`: El archivo `backend/src/features/gamification/services/__tests__/cultural-achievement.service.spec.ts` contiene pruebas para los métodos `createAchievement`, `getAchievements`, `initializeUserProgress`, `updateProgress`, `getUserAchievements` y `getAchievementProgress`.
+*   `CollaborationRewardService`: El archivo `backend/src/features/gamification/services/__tests__/collaboration-reward.service.spec.ts` contiene pruebas para los métodos `awardCollaboration`, `calculateContributionStreak`, `calculateStreakBonus` y `getCollaborationStats`.
+*   `GamificationService`: El archivo `backend/src/features/gamification/services/__tests__/gamification.service.spec.ts` contiene pruebas para los métodos `awardPoints`, `getUserStats`, `updateStats`, `grantAchievement` y `awardReward`.
 
-#### Pruebas
+Se han agregado pruebas más completas para los servicios `CulturalAchievementService`, `CollaborationRewardService` y `GamificationService` para asegurar una mayor cobertura del módulo de gamificación.
+Además, se ha optimizado el flujo de "Obtención de estadísticas de colaboración" en `CollaborationRewardService` mediante la implementación de un sistema de caché. Esto reduce la carga en la base de datos y mejora el tiempo de respuesta para las solicitudes de estadísticas de colaboración.
 
--   **`addPoints`:**
+---
 
-    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra la gamificación.
-    -   Verifica que se agreguen puntos y actividad reciente, y que se llame a `checkCompletedMissions`.
-    -   Verifica que solo se mantengan las últimas 50 actividades.
+## Próximos pasos
 
--   **`getUserStats`:**
+*   Revisar la cobertura completa de las pruebas unitarias para asegurar que todos los casos de uso estén cubiertos.
+*   Monitorizar el rendimiento de los flujos de negocio y realizar optimizaciones adicionales si es necesario.
+*   Documentar completamente las API del módulo utilizando Swagger.
+*   Se expandió la lógica de cálculo de niveles en `backend/src/lib/gamification.ts` para que sea más precisa y motivadora, con más niveles (ahora 16) y una progresión más suave. La función `calculateLevel` ahora define los siguientes niveles:
+    *   Nivel 1: menos de 50 puntos
+    *   Nivel 2: menos de 100 puntos
+    *   Nivel 3: menos de 150 puntos
+    *   Nivel 4: menos de 200 puntos
+    *   Nivel 5: menos de 250 puntos
+    *   Nivel 6: menos de 300 puntos
+    *   Nivel 7: menos de 400 puntos
+    *   Nivel 8: menos de 500 puntos
+    *   Nivel 9: menos de 600 puntos
+    *   Nivel 10: menos de 700 puntos
+    *   Nivel 11: menos de 800 puntos
+    *   Nivel 12: menos de 900 puntos
+    *   Nivel 13: menos de 1000 puntos
+    *   Nivel 14: menos de 1100 puntos
+    *   Nivel 15: menos de 1200 puntos
+    *   Nivel 16: 1200 puntos o más
+*   Se modificó la función `updateUserLevel` en `backend/src/features/gamification/services/user-level.service.ts` para utilizar la función `calculateLevel` para determinar el nuevo nivel.
+*   Se implementó la lógica para registrar las insignias y recompensas en la tabla `User` en los métodos `grantBadge`, `awardReward` y `grantAchievement`.
+*   Se modificó el método `awardPoints` para actualizar las estadísticas del usuario en función del tipo de actividad. Ahora, si la actividad es de tipo 'lesson', se incrementa el número de lecciones completadas. Si la actividad es de tipo 'exercise', se incrementa el número de ejercicios completados.
+*   Se eliminó el campo `points` de la entidad `CulturalAchievement` en `backend/src/features/gamification/entities/cultural-achievement.entity.ts`.
+*   Se eliminaron los campos `level`, `experience`, `nextLevelExperience` y `culturalAchievements` de la entidad `Gamification` en `backend/src/features/gamification/entities/gamification.entity.ts`.
+*   Se eliminó la entidad `Level` en `backend/src/features/gamification/entities/level.entity.ts`.
+*   Se agregaron pruebas unitarias para las funciones `createMentorshipMission`, `completeMentorshipMission`, `createMentor`, `assignStudent`, `updateMentorshipStatus`, `recordSession`, `getMentorDetails`, `getMentorStudents` y `updateMentorAvailability` en el archivo `backend/src/features/gamification/services/__tests__/mentor.service.spec.ts`.
 
-    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
-    -   Verifica que se devuelvan las estadísticas si el usuario existe.
+---
 
--   **`updateUserPoints`:**
+## Estado del Proyecto
 
-    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
-    -   Verifica que se actualicen los puntos si el usuario existe.
+El módulo de gamificación se encuentra en un estado avanzado de desarrollo. Se han implementado los principales flujos de negocio y se han realizado pruebas unitarias para verificar su correcto funcionamiento.
 
--   **`updateUserLevel`:**
+## Pendientes
 
-    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
-
--   **`awardAchievement`:**
-
-    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
-
--   **`awardReward`:**
-
-    -   Verifica que se lance una excepción `NotFoundException` si no se encuentra el usuario.
+*   Revisar la cobertura completa de las pruebas unitarias para asegurar que todos los casos de uso estén cubiertos.
+*   Monitorizar el rendimiento de los flujos de negocio y realizar optimizaciones adicionales si es necesario.
+*   Documentar completamente las API del módulo utilizando Swagger.

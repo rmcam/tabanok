@@ -3,20 +3,19 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne,
-  OneToOne,
-  JoinColumn
 } from 'typeorm';
-import { Account } from '../../features/account/entities/account.entity'; // Ruta corregida
-import { UserAchievement } from '../../features/gamification/entities/user-achievement.entity'; // Ruta corregida
-import { UserReward } from '../../features/gamification/entities/user-reward.entity'; // Ruta corregida
-import { Progress } from '../../features/progress/entities/progress.entity'; // Ruta corregida
+import { Account } from '../../features/account/entities/account.entity';
+import { Activity } from '../../features/gamification/entities/activity.entity';
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
-import { UserRole, UserStatus } from '../enums/auth.enum';
-import { Unity } from '../../features/unity/entities/unity.entity';
+import { UserAchievement } from '../../features/gamification/entities/user-achievement.entity';
+import { UserReward } from '../../features/gamification/entities/user-reward.entity';
+import { Progress } from '../../features/progress/entities/progress.entity';
 import { Statistics } from '../../features/statistics/entities/statistics.entity';
+import { Unity } from '../../features/unity/entities/unity.entity';
+import { UserRole, UserStatus } from '../enums/auth.enum';
 
 export { UserRole };
 
@@ -120,11 +119,14 @@ export class User {
   @OneToOne(() => Statistics, (statistics) => statistics.user)
   statistics: Statistics;
 
-@OneToMany('Unity', 'user')
-unities: Unity[];
+  @OneToMany('Unity', 'user')
+  unities: Unity[];
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => Activity, (activity) => activity.user)
+  activities: Activity[];
 
   @UpdateDateColumn()
   updatedAt: Date;

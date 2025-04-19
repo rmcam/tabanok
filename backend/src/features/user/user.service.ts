@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account } from '../account/entities/account.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -9,6 +8,8 @@ import { UserRole, UserStatus } from '../../auth/enums/auth.enum';
 import { UserLevel } from '../gamification/entities/user-level.entity';
 import { UserLevelRepository } from '../gamification/repositories/user-level.repository';
 import { Inject } from '@nestjs/common';
+import { Statistics } from '../statistics/entities/statistics.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
@@ -18,6 +19,8 @@ export class UserService {
         @InjectRepository(Account)
         private readonly accountRepository: Repository<Account>,
         private readonly userLevelRepository: UserLevelRepository,
+        @InjectRepository(Statistics)
+        private readonly statisticsRepository: Repository<Statistics>,
     ) { }
 
     async findByUsername(username: string): Promise<User> {
@@ -107,6 +110,8 @@ export class UserService {
 
     async remove(id: string): Promise<void> {
         const user = await this.findOne(id);
+        // Eliminar estadísticas asociadas al usuario
+        await this.statisticsRepository.delete({ userId: id });
         await this.userRepository.remove(user);
     }
 

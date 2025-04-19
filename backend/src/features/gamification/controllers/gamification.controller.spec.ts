@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GamificationController } from './gamification.controller';
 import { GamificationService } from '../services/gamification.service';
+import { LeaderboardService } from '../services/leaderboard.service';
 
 describe('GamificationController', () => {
   let controller: GamificationController;
@@ -10,11 +11,17 @@ describe('GamificationController', () => {
     grantPoints: jest.fn(),
   };
 
+  const mockLeaderboardService = {
+    getLeaderboard: jest.fn(),
+    getUserRank: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GamificationController],
       providers: [
         { provide: GamificationService, useValue: mockGamificationService },
+        { provide: LeaderboardService, useValue: mockLeaderboardService },
       ],
     }).compile();
 

@@ -33,7 +33,7 @@ pnpm install
   ```
   (Acceder en http://localhost:3000)
 
-  **Nota:** Si estás ejecutando el frontend localmente, asegúrate de que la variable `VITE_API_URL` en el archivo `.env` esté configurada como `http://localhost:8000/api/v1`.
+  **Nota:** Si estás ejecutando el frontend localmente, asegúrate de que la variable `VITE_API_URL` en el archivo `.env` esté configurada como `http://localhost:8000`.
 
 - **Base de datos, backend y frontend con Docker Compose:**
 
@@ -91,6 +91,8 @@ pnpm install
 
 ## Variables de Entorno
 
+**Nota:** Además de `VITE_API_URL`, existen otras variables de entorno que deben ser configuradas. Consultar la documentación del backend para más detalles.
+
 ```
 VITE_API_URL=http://localhost:8000/api/v1
 ```
@@ -110,3 +112,13 @@ VITE_API_URL=http://localhost:8000/api/v1
 - Mejorar cobertura de tests en el frontend.
 - Configurar CI/CD y automatizar despliegues.
 - **Licencia:** MIT License
+
+---
+
+## Comandos para Ejecutar Migraciones
+
+```bash
+psql "postgres://postgres:Rm88cam88@localhost:5432/tabanok_db" -f backend/src/migrations/1674280800001-AddLevelColumnToUsersTable.sql
+```
+
+## Variables de Entorno

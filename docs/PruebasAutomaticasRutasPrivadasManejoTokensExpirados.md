@@ -2,13 +2,9 @@
 
 ---
 
-## Pruebas para `PrivateRoute`
+## Pruebas de `PrivateRoute`
 
 Las pruebas para el componente `PrivateRoute` se encuentran en `frontend/src/components/PrivateRoute.test.tsx`.
-
-### Descripción
-
-Este archivo contiene pruebas unitarias para el componente `PrivateRoute`, que se utiliza para proteger rutas en la aplicación. Las pruebas verifican que el componente redirija correctamente a los usuarios no autenticados a la página de inicio de sesión, que renderice correctamente el contenido protegido para los usuarios autenticados y que redirija correctamente a los usuarios sin el rol requerido a la página de no autorizado.
 
 ### Pruebas
 
@@ -136,4 +132,4 @@ Este archivo contiene pruebas unitarias para el componente `PrivateRoute`, que s
 
 ### Manejo de Tokens Expirados
 
-(Pendiente de documentación)
+(Pendiente de documentación) Este documento se actualizará con detalles sobre cómo se manejan los tokens expirados en la aplicación.

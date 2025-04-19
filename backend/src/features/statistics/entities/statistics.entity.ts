@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AreaDto } from '../dto/statistics-area.dto';
 import { Area } from '../interfaces/area.interface';
 import { Category } from '../interfaces/category.interface';
 import {
@@ -67,20 +68,22 @@ export class Statistics {
   @ApiProperty({
     type: 'array',
     items: {
-      $ref: '#/components/schemas/Area',
+      type: 'object',
+      $ref: '#/components/schemas/AreaDto',
     },
   })
   @Column('jsonb', { default: '[]' })
-  strengthAreas: Area[];
+  strengthAreas: AreaDto[];
 
   @ApiProperty({
     type: 'array',
     items: {
-      $ref: '#/components/schemas/Area',
+      type: 'object',
+      $ref: '#/components/schemas/AreaDto',
     },
   })
   @Column('jsonb', { default: '[]' })
-  improvementAreas: Area[];
+  improvementAreas: AreaDto[];
 
   @ApiProperty({
     type: 'object',

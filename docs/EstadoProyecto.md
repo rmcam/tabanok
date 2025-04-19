@@ -20,11 +20,45 @@
 - **Integración backend-frontend verificada y estable.**
 - **Solucionado problema de conexión a la base de datos:** Se resolvieron errores relacionados con TypeORM y ciclos de dependencia en las migraciones (Abril 2025).
 - Accesibilidad en progreso, no cumple completamente con WCAG 2.1.
-- Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios. Se ha eliminado la columna `points` de la entidad `User`.
+- Gamificación: Se han implementado los principales flujos de negocio y se han realizado pruebas unitarias para verificar su correcto funcionamiento. Se ha optimizado el flujo de "Obtención de estadísticas de colaboración" en `CollaborationRewardService` mediante la implementación de un sistema de caché.
 - Rutas protegidas y redirecciones requieren mejoras.
 - El sidebar no se muestra y el dashboard requiere mejoras de estilo.
 - **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha solucionado el error 500 al obtener los temas. Se han definido modelos de datos JSON para el panel del docente y multimedia, mejorando la gestión de datos y la integración con el backend.  Se han añadido nuevos endpoints para la gestión de estos modelos.
 - **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
+- **Panel Docente:** Estructura básica de componentes (`TeacherDashboard`, `StudentList`, `ActivityManager`, `ReportViewer`) y rutas implementadas en el frontend. Acceso restringido a usuarios con rol `teacher` o `admin`.
+
+---
+
+## Próximos pasos recomendados
+
+1.  Expandir la lógica de gamificación y testear flujos de usuario.
+2.  Mejorar cobertura de tests en frontend, especialmente en rutas protegidas y hooks personalizados.
+3.  Activar despliegue automático a producción.
+4.  Finalizar auditorías manuales de accesibilidad.
+5.  Documentar y testear exhaustivamente la protección de rutas y el manejo de autenticación.
+6.  Planificar nuevas funcionalidades y mejoras (panel docente, panel estudiante, integración multimedia).
+7.  Mantener la documentación y la hoja de ruta actualizadas tras cada cambio relevante.
+
+---
+
+## Detalles del módulo Gamificación
+
+Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamificacion.md).
+- Documentación de flujos de testing, despliegue y contribución creada.
+
+---
+
+## Próximos pasos recomendados
+
+1. Expandir la lógica de gamificación y testear flujos de usuario.
+2. Mejorar cobertura de tests en frontend, especialmente en rutas protegidas y hooks personalizados.
+3. Activar despliegue automático a producción.
+4. Finalizar auditorías manuales de accesibilidad.
+5. Documentar y testear exhaustivamente la protección de rutas y el manejo de autenticación.
+6. Planificar nuevas funcionalidades y mejoras (panel docente, panel estudiante, integración multimedia).
+7. Mantener la documentación y la hoja de ruta actualizadas tras cada cambio relevante.
+
+---
 # Estado Actual del Proyecto Tabanok
 
 ---
@@ -46,6 +80,8 @@
 - **Cobertura de tests alta (200 tests exitosos, incluyendo autenticación).**
 - **Integración backend-frontend verificada y estable.**
 - **Solucionado problema de conexión a la base de datos:** Se resolvieron errores relacionados con TypeORM y ciclos de dependencia en las migraciones (Abril 2025).
+- **Solucionado error de llave foránea al eliminar usuarios:** Se modificó el método `remove` en `UserService` para eliminar las estadísticas asociadas al usuario antes de eliminar el usuario.
+- **Solucionado error de correo electrónico/nombre de usuario duplicado al registrar usuarios:** Se modificaron los tests `auth.e2e-spec.ts` para utilizar correos electrónicos y nombres de usuario únicos en cada test.
 - Accesibilidad mejorada: navegación completa por teclado implementada, foco visible asegurado, orden lógico verificado.
 - **Cumple WCAG 2.1 en navegación, menús y menús desplegables (ARIA labels, landmarks, foco).**
 - Gamificación parcialmente implementada. Se ha añadido la función `grantPoints` al servicio de gamificación para otorgar puntos a los usuarios.

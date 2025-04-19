@@ -82,7 +82,7 @@ Verificar que la aplicación cumpla con WCAG 2.1, sea navegable con teclado y ac
 
 ## Registro de hallazgos
 
-Utiliza este espacio para anotar problemas detectados:
+Utiliza este espacio para anotar problemas detectados. Sé específico al describir el problema, la página/componente donde ocurre y la propuesta de mejora:
 
 | Página/Componente | Problema | Descripción | Propuesta de mejora |
 |-------------------|----------|-------------|---------------------|

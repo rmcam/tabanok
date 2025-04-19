@@ -18,9 +18,11 @@ import { UnityModule } from './features/unity/unity.module';
 import { UserModule } from './features/user/user.module';
 import { VocabularyModule } from './features/vocabulary/vocabulary.module';
 import { RecommendationsModule } from './features/recommendations/recommendations.module';
+import { ActivityRepository } from './features/gamification/repositories/activity.repository';
 import { RootController } from './root.controller';
 import { AuthController } from './auth/auth.controller';
 import { DictionaryModule } from './features/dictionary/dictionary.module';
+import { CulturalContentModule } from './features/cultural-content/cultural-content.module';
 
 @Module({
   imports: [
@@ -36,7 +38,6 @@ import { DictionaryModule } from './features/dictionary/dictionary.module';
     AuthModule,
     UserModule,
     AccountModule,
-    ActivityModule,
     ContentModule,
     ExercisesModule,
     GamificationModule,
@@ -48,6 +49,7 @@ import { DictionaryModule } from './features/dictionary/dictionary.module';
     VocabularyModule,
     RecommendationsModule,
     DictionaryModule,
+    CulturalContentModule,
   ],
   controllers: [LanguageValidationController, RootController, AuthController],
   providers: [KamentsaValidatorService],

@@ -30,6 +30,7 @@ import { Statistics } from '../features/statistics/entities/statistics.entity';
 import { Topic } from '../features/topic/entities/topic.entity';
 import { Unity } from '../features/unity/entities/unity.entity';
 import { Vocabulary } from '../features/vocabulary/entities/vocabulary.entity';
+import { Activity } from '../features/gamification/entities/activity.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -77,6 +78,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         SpecialEvent,
         Statistics,
         UserMission,
+        Activity,
       ],
       synchronize: true,
       logging: true,

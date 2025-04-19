@@ -76,8 +76,6 @@ export class CulturalAchievement extends BaseAchievement {
     @Column({ default: false })
     isSecret: boolean;
 
-    @Column({ default: 0 })
-    points: number;
 
 
     @CreateDateColumn()

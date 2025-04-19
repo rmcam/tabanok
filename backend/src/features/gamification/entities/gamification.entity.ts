@@ -24,8 +24,6 @@ export class Gamification {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column('jsonb', { default: [] })
-    culturalAchievements: CulturalAchievement[];
 
     @Column()
     userId: string;
@@ -35,15 +33,6 @@ export class Gamification {
 
     @Column({ type: 'integer', default: 0 })
     points: number;
-
-    @Column({ type: 'integer', default: 1 })
-    level: number;
-
-    @Column({ type: 'integer', default: 0 })
-    experience: number;
-
-    @Column({ type: 'integer', default: 100 })
-    nextLevelExperience: number;
 
     @ManyToMany(() => Achievement)
     @JoinTable()

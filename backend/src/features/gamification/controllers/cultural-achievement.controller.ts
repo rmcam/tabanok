@@ -38,7 +38,15 @@ export class CulturalAchievementController {
         description: 'Acceso denegado. Rol de Administrador requerido.'
     })
     async createAchievement(@Body(ValidationPipe) createAchievementDto: CreateAchievementDto) { // Aplicar ValidationPipe
-        return this.achievementService.createAchievement(createAchievementDto);
+        return this.achievementService.createAchievement(
+            createAchievementDto.name,
+            createAchievementDto.description,
+            createAchievementDto.category,
+            createAchievementDto.type,
+            createAchievementDto.tier,
+            createAchievementDto.requirements,
+            createAchievementDto.pointsReward
+        );
     }
 
     @Get()
@@ -100,7 +108,7 @@ export class CulturalAchievementController {
         @Param('userId', ParseUUIDPipe) userId: string,
         @Param('achievementId', ParseUUIDPipe) achievementId: string
     ) {
-        return this.achievementService.initializeUserProgress(userId, achievementId);
+        return this.achievementService.initializeUserProgress(parseInt(userId), parseInt(achievementId));
     }
 
     @Put(':achievementId/progress/:userId')
@@ -143,8 +151,8 @@ export class CulturalAchievementController {
         @Body(ValidationPipe) updateProgressDto: UpdateProgressDto
     ) {
         return this.achievementService.updateProgress(
-            userId,
-            achievementId,
+            parseInt(userId),
+            parseInt(achievementId),
             updateProgressDto.updates
         );
     }
@@ -173,7 +181,7 @@ export class CulturalAchievementController {
         description: 'Usuario no encontrado o ID inválido.'
     })
     async getUserAchievements(@Param('userId', ParseUUIDPipe) userId: string) {
-        return this.achievementService.getUserAchievements(userId);
+        return this.achievementService.getUserAchievements(parseInt(userId));
     }
 
     @Get(':achievementId/progress/:userId')
@@ -209,6 +217,6 @@ export class CulturalAchievementController {
         @Param('userId', ParseUUIDPipe) userId: string,
         @Param('achievementId', ParseUUIDPipe) achievementId: string
     ) {
-        return this.achievementService.getAchievementProgress(userId, achievementId);
+        return this.achievementService.getAchievementProgress(parseInt(userId), parseInt(achievementId));
     }
 }

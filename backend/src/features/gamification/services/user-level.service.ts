@@ -6,6 +6,7 @@ import { NotificationPriority, NotificationType } from '../../notifications/enti
 import { NotificationService } from '../../notifications/services/notification.service'; // Corregido: import
 import { UserLevel } from '../entities/user-level.entity';
 import { UpdateUserLevelDto } from '../dto/update-user-level.dto';
+import { calculateLevel } from '../../../lib/gamification';
 
 @Injectable()
 export class UserLevelService {
@@ -50,7 +51,7 @@ export class UserLevelService {
         }
 
         // Calcular nuevo nivel basado en puntos de experiencia
-        const newLevel = Math.floor(Math.sqrt(userLevel.experiencePoints / 100));
+        const newLevel = calculateLevel(userLevel.experiencePoints);
 
         if (newLevel > userLevel.currentLevel) {
             userLevel.currentLevel = newLevel;

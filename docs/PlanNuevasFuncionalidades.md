@@ -2,9 +2,9 @@
 
 ---
 
-## 1. Panel Docente
+## 1. Panel Docente (En Desarrollo)
 
-**Objetivo:** Permitir a los docentes gestionar contenidos, ver progreso de estudiantes, crear actividades y acceder a reportes.
+**Objetivo:** Permitir a los docentes gestionar contenidos, ver progreso de estudiantes, crear actividades y acceder a reportes. Estructura básica y rutas implementadas.
 
 **Rutas sugeridas:**
 - `/teacher/dashboard` — Resumen general, accesos rápidos.

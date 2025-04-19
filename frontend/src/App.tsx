@@ -17,14 +17,18 @@ import SearchView from './features/dictionary/components/SearchView';
 // import { useUnits } from './features/dashboard/useUnits'; // Eliminado: No usado (por ahora)
 import VariationsList from './features/dictionary/components/VariationsList';
 import StudentDashboard from './features/student/StudentDashboard';
+import TeacherDashboard from './features/teacher/TeacherDashboard';
+import StudentList from './features/teacher/StudentList';
+import ActivityManager from './features/teacher/ActivityManager';
+import ReportViewer from './features/teacher/ReportViewer';
 
 function App() {
-  const { isAuthenticated, loading, logout } = useContext(AuthContext);
+  const { isAuthenticated, loading, logout } = useContext(AuthContext) || {};
 
   console.log("App - isAuthenticated:", isAuthenticated);
 
   const handleLogout = () => {
-    logout();
+    logout?.();
   };
 
   if (loading) {
@@ -55,13 +59,13 @@ function App() {
           >
             Variaciones
           </Link>
-          <Link to="/student" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">
-            Panel Estudiante
-          </Link>
+          <Link to="/student" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Panel Estudiante</Link>
+          {isAuthenticated && (
+            <Link to="/teacher/dashboard" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">Panel Docente</Link>
+          )}
           {!isAuthenticated ? (
             <>
-              <Link
-                to="/login"
+              <Link to="/login"
                 className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
               >
                 Ingresar
@@ -148,6 +152,11 @@ function App() {
                 </PrivateRoute>
               }
             />
+            {/* Rutas del Panel Docente */}
+            <Route path="/teacher/dashboard" element={<PrivateRoute requiredRoles={['teacher', 'admin']}><TeacherDashboard /></PrivateRoute>} />
+            <Route path="/teacher/students" element={<PrivateRoute requiredRoles={['teacher', 'admin']}><StudentList /></PrivateRoute>} />
+            <Route path="/teacher/activities" element={<PrivateRoute requiredRoles={['teacher', 'admin']}><ActivityManager /></PrivateRoute>} />
+            <Route path="/teacher/reports" element={<PrivateRoute requiredRoles={['teacher', 'admin']}><ReportViewer /></PrivateRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

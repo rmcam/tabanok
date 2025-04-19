@@ -9,7 +9,7 @@ import { Area } from './interfaces/area.interface';
 import { Category } from './interfaces/category.interface';
 import { BaseProgress, MonthlyProgress, PeriodicProgress, WeeklyProgress } from './interfaces/periodic-progress.interface';
 import { CategoryDifficulty, CategoryStatus, CategoryType, TrendType } from './types/category.enum';
-import { UserLevel } from '../gamification/entities/user-level.entity';
+import { UserLevelRepository } from '../gamification/repositories/user-level.repository';
 
 interface UserStatistics {
     gamification: {
@@ -33,8 +33,7 @@ export class StatisticsService {
     constructor(
         @InjectRepository(Statistics)
         private readonly statisticsRepository: Repository<Statistics>,
-        @InjectRepository(UserLevel)
-        private readonly userLevelRepository: Repository<UserLevel>
+        private readonly userLevelRepository: UserLevelRepository
     ) { }
 
     async create(createStatisticsDto: CreateStatisticsDto): Promise<Statistics> {
@@ -1350,7 +1349,7 @@ export class StatisticsService {
     }
 
     async getUserStatistics(userId: string): Promise<UserStatistics> {
-        const userLevel = await this.userLevelRepository.findOne({
+        const userLevel = await this.userLevelRepository.repository.findOne({
             where: { userId }
         });
 
