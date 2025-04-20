@@ -1,8 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useState } from 'react';
-import { signin, signup, forgotPassword, SignupData } from '../services/authService';
+import { signin, signup, forgotPassword, SignupData, refreshToken } from '../services/authService';
 import { AuthResponse, SigninData } from '../types/authTypes';
-import { getToken, isAuthenticated, removeToken, saveToken } from '../utils/authUtils';
+import { getToken, isAuthenticated, removeToken, saveToken, getRefreshToken, saveRefreshToken, removeRefreshToken } from '../utils/authUtils';
 
 interface User {
   id: number;
@@ -24,9 +24,11 @@ const useAuth = (navigate: (path: string) => void) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const token = getToken();
+      const refreshTokenValue = getRefreshToken();
+
       if (isAuthenticated()) {
         try {
-          const token = getToken();
           if (token) {
             const decoded = jwtDecode<{ id: number; email: string }>(token);
             const userData: User = {
@@ -37,7 +39,26 @@ const useAuth = (navigate: (path: string) => void) => {
           }
         } catch (error) {
           console.error('Error decoding token:', error);
-          handleSignout();
+          // Attempt to refresh the token if it's expired
+          if (refreshTokenValue) {
+            try {
+              const refreshedAuth = await refreshToken(refreshTokenValue);
+              saveToken(refreshedAuth.accessToken);
+              saveRefreshToken(refreshedAuth.refreshToken);
+
+              const decoded = jwtDecode<{ id: number; email: string }>(refreshedAuth.accessToken);
+              const userData: User = {
+                id: decoded.id,
+                email: decoded.email,
+              };
+              setUser(userData);
+            } catch (refreshError) {
+              console.error('Error refreshing token:', refreshError);
+              handleSignout();
+            }
+          } else {
+            handleSignout();
+          }
         }
       }
       setLoading(false);
@@ -58,6 +79,7 @@ const useAuth = (navigate: (path: string) => void) => {
       });
       console.log('Respuesta del backend:', response); // Agregar log
       saveToken(response.accessToken);
+      saveRefreshToken(response.refreshToken);
       const decoded = jwtDecode<{ id: number; email: string }>(response.accessToken);
       const userData: User = {
         id: decoded.id,
@@ -82,6 +104,7 @@ const useAuth = (navigate: (path: string) => void) => {
     try {
       const response: AuthResponse = await signin(data);
       saveToken(response.accessToken);
+      saveRefreshToken(response.refreshToken);
       const decoded = jwtDecode<{ id: number; email: string }>(response.accessToken);
       const userData: User = {
         id: decoded.id,
@@ -103,6 +126,7 @@ const useAuth = (navigate: (path: string) => void) => {
 
   const handleSignout = () => {
     removeToken();
+    removeRefreshToken();
     setUser(null);
   };
 

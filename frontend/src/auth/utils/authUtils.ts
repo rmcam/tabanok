@@ -1,6 +1,7 @@
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 const TOKEN_KEY = 'auth_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
 
 export const saveToken = (token: string): void => {
   localStorage.setItem(TOKEN_KEY, token);
@@ -14,6 +15,18 @@ export const removeToken = (): void => {
   localStorage.removeItem(TOKEN_KEY);
 };
 
+export const saveRefreshToken = (refreshToken: string): void => {
+  localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+};
+
+export const getRefreshToken = (): string | null => {
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
+};
+
+export const removeRefreshToken = (): void => {
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+};
+
 export const isAuthenticated = (): boolean => {
   const token = getToken();
   if (!token) {
@@ -24,11 +37,13 @@ export const isAuthenticated = (): boolean => {
     const decoded: JwtPayload = jwtDecode(token);
     if (decoded.exp && decoded.exp * 1000 < Date.now()) {
       removeToken();
+      removeRefreshToken();
       return false;
     }
     return true;
   } catch {
     removeToken();
+    removeRefreshToken();
     return false;
   }
 };

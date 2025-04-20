@@ -28,8 +28,8 @@ export const signup = async (data: SignupData): Promise<AuthResponse> => {
         secondLastName: data.secondLastName,
         email: data.email,
         password: data.password,
-        languages: [],
-        preferences: {},
+        languages: null,
+        preferences: null,
         role: 'user',
       }),
     });
@@ -88,5 +88,28 @@ export const signin = async (data: SigninData): Promise<AuthResponse> => {
     return authData;
   } catch (error) {
     throw new Error(error.message || 'Error en el inicio de sesión');
+  }
+};
+
+// Función para refrescar el token
+export const refreshToken = async (refreshToken: string): Promise<AuthResponse> => {
+  try {
+    const response = await fetch(`${API_URL}/auth/refresh-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al refrescar el token');
+    }
+
+    const authData: AuthResponse = await response.json();
+    return authData;
+  } catch (error) {
+    throw new Error(error.message || 'Error al refrescar el token');
   }
 };

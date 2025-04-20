@@ -56,7 +56,9 @@ export default tseslint.config({
 
 A basic authentication module has been created in the `src/auth` directory. It includes:
 
-*   Form components for sign-in and sign-up, styled with Shadcn UI.
+*   Form components for sign-in and sign-up, styled with Shadcn UI, implemented as modals.
+*   The "Forgot Password" functionality is now implemented as a modal that opens from the sign-in modal.
+*   A "Regresar" button has been added to the "Forgot Password" modal, which redirects the user back to the sign-in modal.
 *   Services for interacting with a backend API (placeholders).
 *   Utility functions for token management (saving, retrieving, removing, and checking).
 *   A `useAuth` hook for managing authentication state and providing sign-in, sign-up, and sign-out functions.
@@ -68,4 +70,11 @@ To use the authentication module, you will need to:
 1. Implement the backend API endpoints.
 2. Connect the form components to the API.
 3. Ensure the backend API redirects to the main page after successful authentication.
-4. Add components using shadcn-ui with the command `npx shadcn@latest add <component-name>`.
+4. Add components using shadcn-ui with the command `pnpm dlx shadcn-ui@latest add <component-name>`.
+
+## Component Organization
+
+The components in this project are organized as follows:
+
+- `src/components/ui/`: Contains the base components from Shadcn UI.
+- `src/components/custom/`: Contains custom components that are specific to this project.
