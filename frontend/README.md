@@ -28,15 +28,15 @@ export default tseslint.config({
       tsconfigRootDir: import.meta.dirname,
     },
   },
-})
+});
 ```
 
 You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
 ```js
 // eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+import reactX from 'eslint-plugin-react-x';
+import reactDom from 'eslint-plugin-react-dom';
 
 export default tseslint.config({
   plugins: {
@@ -50,5 +50,22 @@ export default tseslint.config({
     ...reactX.configs['recommended-typescript'].rules,
     ...reactDom.configs.recommended.rules,
   },
-})
-```
+});
+
+## Authentication Module
+
+A basic authentication module has been created in the `src/auth` directory. It includes:
+
+*   Form components for sign-in and sign-up, styled with Shadcn UI.
+*   Services for interacting with a backend API (placeholders).
+*   Utility functions for token management (saving, retrieving, removing, and checking).
+*   A `useAuth` hook for managing authentication state and providing sign-in, sign-up, and sign-out functions.
+*   Protected routes and redirection based on authentication status.
+*   Redirection to the main page after successful sign-in and sign-up.
+
+To use the authentication module, you will need to:
+
+1. Implement the backend API endpoints.
+2. Connect the form components to the API.
+3. Ensure the backend API redirects to the main page after successful authentication.
+4. Add components using shadcn-ui with the command `npx shadcn@latest add <component-name>`.

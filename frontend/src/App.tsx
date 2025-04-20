@@ -1,175 +1,54 @@
-import { useContext } from 'react';
-import { Toaster } from 'react-hot-toast';
-import { BrowserRouter, Link, Route, Routes, useParams } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
-import GamificationStats from './components/GamificationStats';
-import NotFound from './components/NotFound';
-import PrivateRoute from './components/PrivateRoute';
-import ProfilePage from './components/ProfilePage';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import SigninForm from './auth/components/SigninForm';
+import SignupForm from './auth/components/SignupForm';
+import ForgotPasswordForm from './auth/components/ForgotPasswordForm';
+import useAuth from './auth/hooks/useAuth';
 import { Button } from './components/ui/button';
-import { AuthContext } from './features/auth/AuthContext';
-import { AuthProvider } from './features/auth/AuthProvider';
-import LoginForm from './features/auth/LoginForm';
-import RegisterForm from './features/auth/RegisterForm';
-import CategoriesList from './features/dictionary/components/CategoriesList';
-import EntryDetail from './features/dictionary/components/EntryDetail';
-import SearchView from './features/dictionary/components/SearchView';
-// import { useUnits } from './features/dashboard/useUnits'; // Eliminado: No usado (por ahora)
-import VariationsList from './features/dictionary/components/VariationsList';
-import StudentDashboard from './features/student/StudentDashboard';
+import React from 'react';
 
-function App() {
-  const { isAuthenticated, loading, logout } = useContext(AuthContext);
-
-  console.log("App - isAuthenticated:", isAuthenticated);
-
-  const handleLogout = () => {
-    logout();
-  };
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth(() => {});
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return <div>Cargando...</div>; // O un spinner
   }
 
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Toaster />
-        <nav
-          className="p-4 flex gap-4 bg-gray-100 mb-4"
-          role="navigation"
-          aria-label="Menú principal"
-        >
-          <Link to="/" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">
-            Inicio
-          </Link>
-          <Link
-            to="/categories"
-            className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
-          >
-            Categorías
-          </Link>
-          <Link
-            to="/variations"
-            className="transition-colors hover:bg-gray-100 rounded-md px 2 py-1"
-          >
-            Variaciones
-          </Link>
-          <Link to="/student" className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1">
-            Panel Estudiante
-          </Link>
-          {!isAuthenticated ? (
-            <>
-              <Link
-                to="/login"
-                className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
-              >
-                Ingresar
-              </Link>
-              <Link
-                to="/signup"
-                className="transition-colors hover:bg-gray-100 rounded-md px-2 py-1"
-              >
-                Registrarse
-              </Link>
-            </>
-          ) : (
-            <Button onClick={handleLogout} variant="outline" size="sm">
-              Cerrar sesión
-            </Button>
-          )}
-        </nav>
-        <main role="main" aria-label="Contenido principal" tabIndex={-1}>
-          <Routes>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/signup" element={<RegisterForm />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <SearchView />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/categories"
-              element={
-                <PrivateRoute requiredRoles={['admin']}>
-                  <CategoriesList />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/entry/:id"
-              element={
-                <PrivateRoute>
-                  <EntryDetailWrapper />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/variations"
-              element={
-                <PrivateRoute>
-                  <VariationsList />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/gamification"
-              element={
-                <PrivateRoute>
-                  <GamificationStats userId="123" />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <PrivateRoute>
-                  <ProfilePage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/student"
-              element={
-                <PrivateRoute>
-                  <StudentDashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-      </AuthProvider>
-    </BrowserRouter>
-  );
+  return user ? children : <Navigate to="/signin" />;
 }
 
-function Unauthorized() {
+function App() {
+  const navigate = useNavigate();
+  const { user, handleSignout } = useAuth(navigate);
+
   return (
-    <div>
-      <h1>No autorizado</h1>
-      <p>No tienes permiso para acceder a esta página.</p>
+    <div className="flex flex-col min-h-screen">
+      <header className="bg-gray-100 py-4 px-6 shadow-md">
+        <h1 className="text-2xl font-bold">Mi Aplicación</h1>
+      </header>
+      <main className="flex-1 p-6">
+        <Routes>
+          <Route path="/signin" element={<SigninForm />} />
+          <Route path="/signup" element={<SignupForm />} />
+          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <div>
+                  <p>Bienvenido, {user?.email}</p>
+                  <Button onClick={handleSignout}>Cerrar sesión</Button>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </main>
+      <footer className="bg-gray-100 py-2 px-6 text-center">
+        <p>&copy; 2024 Mi Aplicación</p>
+      </footer>
     </div>
   );
-}
-
-// Wrapper para pasar el param id a EntryDetail
-function EntryDetailWrapper() {
-  const { id } = useParams<{ id: string }>();
-  if (!id) return <p>ID no válido</p>;
-  return <EntryDetail entryId={id} />;
 }
 
 export default App;
