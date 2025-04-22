@@ -1,14 +1,15 @@
-## HomePage Component
+## Componente HomePage
 
-The `HomePage` component is the main landing page for the Tabanok platform. It showcases the platform's features, testimonials, and contact information.
+El componente `HomePage` es la página principal de la plataforma Tabanok. Muestra las características de la plataforma, testimonios e información de contacto.
 
-### Sections
+### Secciones
 
-*   **Hero Section:** Uses a carousel to display key features and calls to action.
-*   **Features Section:** Highlights the main features of the platform (Lecciones Interactivas, Gamificación, Seguimiento de Progreso).
-*   **Featured Lessons Section:** Displays a list of featured lessons with links to view them.
-*   **Testimonials Section:** Shows testimonials from users.
-*   **Contact Section:** Provides a contact form and email link.
+*   **Sección Hero:** Utiliza un carrusel para mostrar características clave y llamadas a la acción.
+*   **Sección de Características:** Destaca las principales características de la plataforma (Lecciones Interactivas, Gamificación, Seguimiento de Progreso) con iconos.
+*   **Sección de Lecciones Destacadas:** Muestra una lista de lecciones destacadas con enlaces para verlas.
+*   **Sección de Testimonios:** Muestra testimonios de usuarios sin imágenes.
+*   **Sección de Contacto:** Proporciona un formulario de contacto y un enlace de correo electrónico.
+*   **Footer:** Muestra un texto de copyright.
 
 ### Data Structures
 
@@ -24,12 +25,11 @@ src/
 ├── components/     # Componentes React
 │   ├── ui/         # Componentes UI genéricos
 │   ├── auth/       # Componentes de autenticación
-│   ├── gamification/   # Componentes de gamificación
-│   ├── profile/    # Perfil de usuario
-│   ├── dashboard/  # Componentes del dashboard
-│   ├── common/    # Componentes comunes
-│   └── layout/     # Layouts
-│   ├── dashboard/  # Componentes del dashboard
+│   ├── common/      # Componentes comunes
+│   ├── dashboard/   # Componentes del dashboard
+│   ├── general/     # Componentes generales
+│   ├── home/        # Componentes de la página de inicio
+│   └── navigation/  # Componentes de navegación
 ├── lib/            # Lógica de negocio genérica
 ├── hooks/          # Hooks React genéricos
 ├── auth/          # Autenticación
@@ -90,11 +90,11 @@ The `Sidebar` component is built using the following components from `src/compon
 - `SidebarGroupContent`: The content of a sidebar group.
 - `SidebarMenu`: A menu within a sidebar group.
 - `SidebarMenuItem`: An item in a sidebar menu.
-- `SidebarMenuButton`: A button for a sidebar menu item.
+- `SidebarMenuButton`: A button for a sidebar menu item. Se ha añadido `focus-visible:outline-none` para mejorar la accesibilidad.
 - `SidebarMenuAction`: An action for a sidebar menu item.
 - `SidebarRail`: A rail for toggling the sidebar.
 
-The `AppSidebar` component in `src/components/app-sidebar.tsx` defines the structure and content of the application's sidebar. It now includes the following:
+The `AppSidebar` component in `src/components/navigation/app-sidebar.tsx` defines the structure and content of the application's sidebar. It now includes the following:
 
 - A search input for searching the application.
 - A button to trigger a toast notification.
@@ -105,4 +105,4 @@ The `AppSidebar` component in `src/components/app-sidebar.tsx` defines the struc
 
 ---
 
-Última actualización: 20/4/2025, 2:46:00 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 21/4/2025, 8:15:00 p. m. (America/Bogota, UTC-5:00)

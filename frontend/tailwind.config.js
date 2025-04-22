@@ -131,7 +131,8 @@ module.exports = {
   			serif: [
   				'Times New Roman',
   				'serif'
-  			]
+  			],
+        DEFAULT: ['Arial', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

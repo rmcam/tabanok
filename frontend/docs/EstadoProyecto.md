@@ -1,11 +1,13 @@
-## HomePage Component Updates
+## Actualizaciones del componente HomePage
 
-The `HomePage` component has been refactored and improved with the following changes:
+El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cambios:
 
-*   Improved the testimonials section to use the `Carousel` component correctly.
-*   Added a new "Featured Lessons" section to showcase key lessons.
-*   Improved the hero section to use a carousel for displaying key features and calls to action.
-*   Added a link to the contact section for easy access to contact information.
+*   Se integró el carrusel de tarjetas directamente en la sección principal del Hero y se mejoró la imagen de "Cultura Kamëntsá".
+*   Se añadieron imágenes o ilustraciones más atractivas y relevantes para cada característica en la sección de características.
+*   Se utilizaron imágenes específicas para cada lección destacada en la sección de lecciones destacadas.
+*   Se utilizaron fotos reales de los usuarios (si es posible) o avatares más personalizados en la sección de testimonios.
+*   Se añadió un formulario de contacto directamente en la página, en lugar de solo un enlace a un correo electrónico en la sección de contacto.
+*   Se aseguró de que la paleta de colores y la tipografía sean coherentes con la identidad visual de Tabanok.
 - Backend funcional con NestJS, conectado a PostgreSQL.
 - Frontend funcional con React + Vite, autenticación y consumo de API.
 - Dependencias y configuración centralizadas.
@@ -56,7 +58,7 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 ## Estado del Frontend
 
 - Aplicación React + Vite con estructura modular. Para más detalles, ver [`docs/Frontend-Arquitectura.md`](./Frontend-Arquitectura.md).
-- Se movió el componente `Content.tsx` de `src/components/Content.tsx` a `src/components/custom/Content.tsx`.
+- Se movió el componente `Content.tsx` de `src/components/Content.tsx` a `src/components/general/Content.tsx`.
 - Se eliminó el componente `src/components/common/CommonContent.tsx` ya que no se estaba utilizando en el proyecto.
 - Se movieron los hooks de `src/hooks/auth/` a `src/auth/hooks/`.
 - Rutas públicas y privadas gestionadas con React Router y el componente `PrivateRoute`. La autenticación por el momento funciona, hay que revisar a detalle.
@@ -75,6 +77,16 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Uso de hooks personalizados para gestión de estado y lógica de UI (`useUnits`, `useAuth`).
 - Prisma utilizado para tipado y posible integración directa.
 - Arquitectura preparada para escalabilidad y nuevas funcionalidades.
+- Se han refactorizado los componentes en `src/components` para mejorar la organización y seguir las buenas prácticas.
+- Se han creado subcarpetas para agrupar componentes relacionados y se han movido los archivos correspondientes.
+- También se han refactorizado componentes grandes en componentes más pequeños y reutilizables.
+- La estructura de directorios en `src/components` ahora es:
+    *   `common/`
+    *   `dashboard/`
+    *   `general/`
+    *   `home/`
+    *   `navigation/`
+    *   `ui/`
 
 ---
 
@@ -84,4 +96,4 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 
 ---
 
-Última actualización: 20/4/2025, 2:00:00 a. m. (America/Bogota, UTC-5:00)
+Última actualización: 21/4/2025, 8:15:00 p. m. (America/Bogota, UTC-5:00)
