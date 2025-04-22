@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 interface HeroProps {
   title: string;
   description: string;
-  buttons?: { label: string; variant: 'default' | 'secondary' | 'link' | 'destructive' | 'outline' | 'ghost' }[];
+  buttons?: { label: string; variant: 'default' | 'secondary' | 'link' | 'destructive' | 'outline' | 'ghost'; onClick?: () => void }[];
   imageSrc: string;
   imageAlt: string;
 }
@@ -28,6 +28,7 @@ const HeroSection: React.FC<HeroProps> = ({ title, description, buttons, imageSr
                     | 'outline'
                     | 'ghost'
                 }
+                onClick={button.onClick}
               >
                 {button.label}
               </Button>

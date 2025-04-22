@@ -32,6 +32,8 @@ POST /auth/signin
 }
 ```
 
+El campo `identifier` permite ingresar con el nombre de usuario o el correo electrónico.
+
 **Response:**
 
 ```json
@@ -75,12 +77,20 @@ POST /auth/signin
 
 **Request:**
 
+El formulario de registro ahora es un formulario de varios pasos. Los campos se dividen en tres pasos:
+
+1.  Información de la cuenta (email, contraseña, usuario)
+2.  Información personal (nombre, segundo nombre, apellido, segundo apellido)
+3.  Confirmación de datos
+
 ```json
 POST /api/auth/signup
 {
   "username": "usuario",
   "firstName": "Nombre",
+  "secondName": "SegundoNombre (Opcional)",
   "firstLastName": "Apellido",
+  "secondLastName": "SegundoApellido (Opcional)",
   "email": "correo@ejemplo.com",
   "password": "contraseña"
 }
@@ -187,7 +197,7 @@ POST /auth/logout
 ## Flujo de Autenticación
 
 1.  El usuario se registra enviando los campos requeridos al endpoint `/api/auth/signup`.
-2.  El usuario inicia sesión enviando `identifier` (usuario o email) y `password` a `/auth/signin`.
+2.  El usuario inicia sesión enviando `identifier` (nombre de usuario o email) y `password` a `/auth/signin`.
 3.  El backend responde con el usuario y un JWT (`accessToken`).
 4.  El frontend almacena el usuario completo (incluyendo el JWT) en sessionStorage con la clave 'authUser'.
 5.  Para acceder a rutas protegidas, el frontend envía el JWT en el header `Authorization: Bearer <token>`, obteniéndolo del usuario almacenado en sessionStorage.
@@ -229,14 +239,16 @@ POST /auth/logout
 
 ## Estructura del Frontend de Autenticación
 
--   `src/lib/api.ts`: Centraliza la configuración de axios para las llamadas a la API.
--   `src/lib/authService.ts`: Contiene las funciones para realizar las llamadas a la API de autenticación.
--   `src/auth/context/`: Contexto de autenticación.
--   `src/App.tsx`: Componente principal de la aplicación, define las rutas y utiliza el componente `PrivateRoute` para proteger las rutas sensibles.
--   `src/components/PrivateRoute.tsx`: Componente para proteger rutas.
--   `src/auth/components/`: Componentes para la autenticación.
--   `src/components/ui/`: Componentes de la interfaz de usuario.
--   `src/components/Dashboard.tsx`: Componente para la página del panel de control.
+-   `src/auth/services/authService.ts`: Contiene las funciones para realizar las llamadas a la API de autenticación (Login, Signup, Forgot Password, etc.) y las interfaces de datos (`SigninData`, `SignupData`).
+-   `src/auth/hooks/useAuthService.ts`: Hook personalizado que encapsula la lógica de las llamadas a la API de autenticación y la gestión de tokens.
+-   `src/auth/hooks/useAuth.ts`: Hook personalizado que encapsula la lógica de autenticación (manejo de estado, llamadas a `authService`, almacenamiento en `sessionStorage`, navegación).
+-   `src/auth/components/`: Componentes específicos de autenticación (`SigninForm.tsx`, `SignupForm.tsx`, `ForgotPasswordForm.tsx`).
+    -   `SignupForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.
+    -   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.
+-   `src/components/common/Modal.tsx`: Componente genérico reutilizable para mostrar contenido en un diálogo modal, basado en `shadcn/ui/dialog`. Incluye título y descripción para accesibilidad.
+-   `src/components/common/AuthModals.tsx`: Componente que agrupa los modales de `Signin`, `Signup` y `ForgotPassword`. Permite controlar qué modal abrir por defecto (`defaultOpen`), si mostrar los disparadores por defecto (`showDefaultTriggers`), y ejecutar una acción al cerrar un modal (`onModalClose`).
+-   `src/components/common/PrivateRoute.tsx`: Componente de orden superior para proteger rutas que requieren autenticación.
+-   `src/App.tsx`: Define las rutas principales de la aplicación y utiliza `PrivateRoute`.
 
 ---
 
@@ -247,4 +259,4 @@ POST /auth/logout
 
 ---
 
-Última actualización: 20/4/2025, 2:00:00 a. m. (America/Bogota, UTC-5:00)
+Última actualización: 21/4/2025, 10:49:00 p. m. (America/Bogota, UTC-5:00)

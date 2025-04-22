@@ -9,6 +9,14 @@ import {
 import { Activity, Book, Gamepad2 } from 'lucide-react';
 import HeroSection from './components/HeroSection';
 import { Card, CardContent } from '../ui';
+import AuthModals from '@/components/common/AuthModals';
+import { useState } from 'react';
+
+interface HeroButtonProps {
+  label: string;
+  variant: 'default' | 'secondary' | 'link' | 'destructive' | 'outline' | 'ghost';
+  onClick?: () => void;
+}
 
 const testimonials = [
   {
@@ -46,8 +54,8 @@ const heroCards = [
     description:
       'Descubre una plataforma innovadora para enseñar la lengua Kamëntsá de manera divertida y efectiva.',
     buttons: [
-      { label: 'Comienza ahora', variant: 'default' },
-      { label: 'Más información', variant: 'secondary' },
+      { label: 'Comienza ahora', variant: 'default' as const },
+      { label: 'Más información', variant: 'secondary' as const },
     ],
   },
   {
@@ -82,15 +90,40 @@ const heroCards = [
 ];
 
 const HomePage = () => {
+  const [defaultAuthModal, setDefaultAuthModal] = useState<"signin" | "signup" | "forgotPassword" | undefined>(undefined);
+
+  const handleComienzaAhoraClick = () => {
+    setDefaultAuthModal("signup");
+  };
+
+  // Function to reset the defaultAuthModal state when any modal closes
+  const handleModalClose = () => {
+    setDefaultAuthModal(undefined);
+  };
+
+  const updatedHeroCards = heroCards[0].buttons.map(button => {
+    const heroButton: HeroButtonProps = {
+      label: button.label,
+      variant: button.variant,
+    };
+    if (button.label === "Comienza ahora") {
+      heroButton.onClick = handleComienzaAhoraClick;
+    }
+    return heroButton;
+  });
+
   return (
     <div className="container mx-auto py-8">
+      {/* Hide default triggers and pass the close handler */}
+      <AuthModals
+        defaultOpen={defaultAuthModal}
+        showDefaultTriggers={false}
+        onModalClose={handleModalClose} // Pass the handler
+      />
       <HeroSection
         title={heroCards[0].title}
         description={heroCards[0].description}
-        buttons={heroCards[0].buttons.map(button => ({
-          ...button,
-          variant: button.variant as "default" | "secondary" | "link" | "destructive" | "outline" | "ghost"
-        }))}
+        buttons={updatedHeroCards}
         imageSrc="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Ni%C3%B1os_Kamentsa.JPG/1280px-Ni%C3%B1os_Kamentsa.JPG"
         imageAlt="Niños Kamentsa"
       />

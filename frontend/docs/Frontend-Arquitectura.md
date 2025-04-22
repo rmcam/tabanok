@@ -10,6 +10,7 @@ El componente `HomePage` es la página principal de la plataforma Tabanok. Muest
 *   **Sección de Testimonios:** Muestra testimonios de usuarios sin imágenes.
 *   **Sección de Contacto:** Proporciona un formulario de contacto y un enlace de correo electrónico.
 *   **Footer:** Muestra un texto de copyright.
+*   **Integración de Modales de Autenticación:** Utiliza el componente `AuthModals` para mostrar los modales de inicio de sesión, registro y recuperación de contraseña. El botón "Comienza ahora" en la sección Hero está configurado para abrir directamente el modal de registro. Los disparadores por defecto de `AuthModals` están ocultos (`showDefaultTriggers={false}`).
 
 ### Data Structures
 
@@ -23,17 +24,19 @@ src/
 ├── main.tsx        # Punto de entrada
 ├── assets/         # Archivos estáticos
 ├── components/     # Componentes React
-│   ├── ui/         # Componentes UI genéricos
-│   ├── auth/       # Componentes de autenticación
-│   ├── common/      # Componentes comunes
+│   ├── ui/         # Componentes UI genéricos (shadcn/ui y personalizados)
+│   ├── auth/       # Componentes específicos de autenticación (formularios)
+│   ├── common/      # Componentes comunes reutilizables (Modal, AuthModals, PrivateRoute, etc.)
 │   ├── dashboard/   # Componentes del dashboard
-│   ├── general/     # Componentes generales
+│   ├── general/     # Componentes generales (ej. layout de página)
 │   ├── home/        # Componentes de la página de inicio
 │   └── navigation/  # Componentes de navegación
 ├── lib/            # Lógica de negocio genérica
 ├── hooks/          # Hooks React genéricos
 ├── auth/          # Autenticación
-│   └── hooks/     # Hooks React para autenticación
+│   ├── hooks/     # Hooks React para autenticación
+│   │   ├── useAuth.ts # Hook para la autenticación
+│   │   └── useAuthService.ts # Hook para el servicio de autenticación
 ├── styles/         # Estilos CSS
 └── ...             # Otros archivos
 
@@ -66,7 +69,7 @@ El frontend consume el backend mediante un **cliente Axios centralizado** ubicad
 - `src/features/dictionary/hooks/` — Diccionario
 - `src/features/gamification/hooks/useGamification.ts` - Gamificación
 
-Los **hooks** gestionan la lógica de consumo del backend y estado. Los **componentes** usan estos hooks para mostrar datos y gestionar la UI.
+Los **hooks** gestionan la lógica de consumo del backend y estado (ej. `useAuth` para manejar login/signup). Los **componentes** usan estos hooks para mostrar datos y gestionar la UI (ej. `SignupForm` usa `useAuth`).
 
 ---
 
@@ -105,4 +108,7 @@ The `AppSidebar` component in `src/components/navigation/app-sidebar.tsx` define
 
 ---
 
-Última actualización: 21/4/2025, 8:15:00 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 21/4/2025, 10:50:00 p. m. (America/Bogota, UTC-5:00)
+
+-   `SignupForm.tsx`: Implementa un formulario de varios pasos con validación utilizando el hook `useFormValidation`.
+-   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.

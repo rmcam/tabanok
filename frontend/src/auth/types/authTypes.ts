@@ -1,3 +1,13 @@
+export interface SignupData {
+  email: string;
+  password: string;
+  username: string;
+  firstName: string;
+  secondName: string;
+  firstLastName: string;
+  secondLastName: string;
+}
+
 export interface SigninData {
   identifier: string;
   password: string;

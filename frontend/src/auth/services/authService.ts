@@ -76,7 +76,10 @@ export const signin = async (data: SigninData): Promise<AuthResponse> => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        identifier: data.identifier,
+        password: data.password,
+      }),
     });
 
     if (!response.ok) {

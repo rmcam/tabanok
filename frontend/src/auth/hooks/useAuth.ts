@@ -1,8 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useState } from 'react';
-import { signin, signup, forgotPassword, SignupData, refreshToken } from '../services/authService';
-import { AuthResponse, SigninData } from '../types/authTypes';
-import { getToken, isAuthenticated, removeToken, saveToken, getRefreshToken, saveRefreshToken, removeRefreshToken } from '../utils/authUtils';
+import { SignupData, SigninData } from '../types/authTypes';
+import { getToken, isAuthenticated, getRefreshToken } from '../utils/authUtils';
+import useAuthService from './useAuthService';
 
 interface User {
   id: number;
@@ -21,6 +21,12 @@ export interface AuthContextType {
 const useAuth = (navigate: (path: string) => void) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { handleSignup: signupService, handleSignin: signinService, handleForgotPassword: forgotPasswordService, handleRefreshToken, handleSignout: signoutService } = useAuthService();
+
+   const handleSignout = () => {
+    signoutService();
+    setUser(null);
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -42,10 +48,7 @@ const useAuth = (navigate: (path: string) => void) => {
           // Attempt to refresh the token if it's expired
           if (refreshTokenValue) {
             try {
-              const refreshedAuth = await refreshToken(refreshTokenValue);
-              saveToken(refreshedAuth.accessToken);
-              saveRefreshToken(refreshedAuth.refreshToken);
-
+              const refreshedAuth = await handleRefreshToken(refreshTokenValue);
               const decoded = jwtDecode<{ id: number; email: string }>(refreshedAuth.accessToken);
               const userData: User = {
                 id: decoded.id,
@@ -64,22 +67,19 @@ const useAuth = (navigate: (path: string) => void) => {
       setLoading(false);
     };
     checkAuth();
-  }, []);
+  }, [handleRefreshToken, handleSignout]);
 
-  const handleSignup = async (data: SignupData) => {
+ const handleSignup = async (data: SignupData) => {
     try {
-      const response = await signup({
+      const response = await signupService({
         email: data.email,
         password: data.password,
-        username: data.email, // Usar el email como nombre de usuario por defecto
-        firstName: '',
-        secondName: '',
-        firstLastName: '',
-        secondLastName: '',
+        username: data.username, // Usar el email como nombre de usuario por defecto
+        firstName: data.firstName,
+        secondName: data.secondName,
+        firstLastName: data.firstLastName,
+        secondLastName: data.secondLastName,
       });
-      console.log('Respuesta del backend:', response); // Agregar log
-      saveToken(response.accessToken);
-      saveRefreshToken(response.refreshToken);
       const decoded = jwtDecode<{ id: number; email: string }>(response.accessToken);
       const userData: User = {
         id: decoded.id,
@@ -90,8 +90,8 @@ const useAuth = (navigate: (path: string) => void) => {
       return true; // Indica éxito
     } catch (error) {
       console.error('Error al registrarse:', error);
-       // Verificar si el error tiene un mensaje específico del backend
-       if (error instanceof Error && error.message) {
+      // Verificar si el error tiene un mensaje específico del backend
+      if (error instanceof Error && error.message) {
         alert(`Error al registrarse: ${error.message}`); // Mostrar mensaje al usuario
       } else {
         alert('Error al registrarse. Por favor, inténtalo de nuevo.'); // Mensaje genérico
@@ -102,9 +102,7 @@ const useAuth = (navigate: (path: string) => void) => {
 
   const handleSignin = async (data: SigninData) => {
     try {
-      const response: AuthResponse = await signin(data);
-      saveToken(response.accessToken);
-      saveRefreshToken(response.refreshToken);
+      const response = await signinService(data);
       const decoded = jwtDecode<{ id: number; email: string }>(response.accessToken);
       const userData: User = {
         id: decoded.id,
@@ -124,15 +122,9 @@ const useAuth = (navigate: (path: string) => void) => {
     }
   };
 
-  const handleSignout = () => {
-    removeToken();
-    removeRefreshToken();
-    setUser(null);
-  };
-
   const handleForgotPassword = async (email: string) => {
     try {
-      await forgotPassword(email);
+      await forgotPasswordService(email);
       alert('Se ha enviado un correo electrónico para restablecer tu contraseña.');
     } catch (error: unknown) {
       if (error instanceof Error && error.message) {
