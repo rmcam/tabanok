@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../../auth/entities/user.entity';
 import { calculateLevel } from '../../../lib/gamification';
 import { Achievement } from '../entities/achievement.entity';
-import { Activity } from '../entities/activity.entity';
+import { UserActivity } from '../entities/activity.entity';
 import { Mission } from '../entities/mission.entity';
 import { Reward } from '../entities/reward.entity';
 import { UserAchievement } from '../entities/user-achievement.entity';
@@ -15,8 +15,8 @@ import { UserReward } from '../entities/user-reward.entity';
 @Injectable()
 export class GamificationService {
   constructor(
-    @InjectRepository(Activity)
-    private readonly activityRepository: Repository<Activity>,
+    @InjectRepository(UserActivity)
+    private readonly activityRepository: Repository<UserActivity>,
     @InjectRepository(Reward)
     private rewardRepository: Repository<Reward>,
     @InjectRepository(User)

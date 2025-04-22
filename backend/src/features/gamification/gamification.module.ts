@@ -53,7 +53,7 @@ import { MissionTemplateRepository } from './repositories/mission-template.repos
 import { AuthModule } from '../../auth/auth.module';
 import { UserLevelRepository } from './repositories/user-level.repository';
 import { GamificationRepository } from './repositories/gamification.repository';
-import { Activity } from './entities/activity.entity';
+import { UserActivity } from './entities/activity.entity';
 
 const ENTITIES = [
     User,
@@ -74,7 +74,7 @@ const ENTITIES = [
     UserMission,
     UserBadge,
     Gamification, 
-    Activity
+    UserActivity
 ];
 
 const CONTROLLERS = [

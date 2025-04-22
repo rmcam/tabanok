@@ -8,7 +8,7 @@ El hook `useAuth` proporciona acceso al contexto de autenticación.
 
 ### Ubicación
 
-`frontend/src/features/auth/useAuth.ts`
+`frontend/src/auth/context/auth.utils.ts`
 
 ### Descripción
 
@@ -115,3 +115,7 @@ function MyComponent() {
     </ul>
   );
 }
+
+---
+
+Última actualización: 20/4/2025, 2:00:00 a. m. (America/Bogota, UTC-5:00)

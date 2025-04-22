@@ -1,18 +1,60 @@
-# Arquitectura Frontend Tabanok
+ ## Componente HomePage
 
-## Tecnologías principales
+El componente `HomePage` es la página principal de la plataforma Tabanok. Muestra las características de la plataforma, testimonios e información de contacto.
 
-- **React**
-- **Vite** como bundler
-- **TypeScript**
-- **Three.js** para animaciones 3D
-- **Tailwind CSS** para estilos. La configuración de Tailwind CSS se realiza importando `@import "tailwindcss";` en `src/index.css` y configurando `postcss.config.cjs` para usar `@tailwindcss/postcss`.
+### Secciones
 
-## Organización general
+*   **Sección Hero:** Muestra un título, descripción, imagen de fondo y botones de acción.
+*   **Sección de Características:** Destaca las principales características de la plataforma (Lecciones Interactivas, Gamificación, Seguimiento de Progreso) con iconos y descripciones.
+*   **Sección de Lecciones Destacadas:** Muestra una lista de lecciones destacadas con enlaces para verlas y un botón para ver todas las lecciones.
+*   **Sección de Testimonios:** Muestra testimonios de usuarios.
+*   **Sección de Preguntas Frecuentes:** Muestra una lista de preguntas frecuentes y sus respuestas.
+*   **Sección de Contacto:** Muestra un formulario de contacto.
+*   **Footer:** Muestra un texto de copyright.
+*   **Integración de Modales de Autenticación:** Utiliza el componente `AuthModals` para mostrar los modales de inicio de sesión, registro y recuperación de contraseña. El botón "Comienza ahora" en la sección Hero está configurado para abrir directamente el modal de registro. Los disparadores por defecto de `AuthModals` están ocultos (`showDefaultTriggers={false}`).
 
-El frontend está organizado por **dominios funcionales** y **tipos de componentes** para facilitar la escalabilidad y el mantenimiento.
+### Mejoras recientes
 
-### Estructura de carpetas
+*   Se eliminó la sección FAQ duplicada.
+*   Se cambió el fondo de la sección de contacto a blanco.
+*   Se cambió el color del enlace de contacto a `k-azul-500`.
+*   Se aumentó el padding vertical del footer a `py-2`.
+*   Se mejoró la responsividad de las imágenes en la sección de Lecciones Destacadas.
+*   Se centralizó la lógica de las tarjetas de la sección Hero.
+*   Se utilizó un componente reutilizable para las tarjetas de características.
+*   Se mejoró la accesibilidad de las imágenes en la sección de Lecciones Destacadas.
+*   Se implementó la funcionalidad de "Ver todas las lecciones".
+*   Se agregaron imágenes a los testimonios.
+*   Se ha añadido la funcionalidad de autoplay al carrusel de testimonios.
+
+### Carrusel Interactivo
+
+Se ha implementado un carrusel interactivo en la HeroSection para mostrar diferentes tarjetas de `heroCardsData` con transiciones suaves y controles de navegación. El carrusel incluye indicadores interactivos que permiten al usuario navegar directamente a una tarjeta específica.
+
+*   Se añadió un efecto de "card hover" a las Lecciones Destacadas para hacerlas más interactivas.
+*   Se implementó un efecto de desplazamiento suave al hacer clic en los enlaces "Ver lección" y "Ver todas las lecciones" utilizando `react-router-hash-link`.
+*   Se centralizó la lógica de las tarjetas de la sección Hero, obteniendo los datos directamente desde `heroCards.ts`.
+
+### Carga Dinámica de Lecciones Destacadas
+
+Se ha implementado la carga dinámica de las lecciones destacadas desde la API del backend. El componente `HomePage` utiliza el hook `useEffect` para realizar una solicitud a la API y obtener las lecciones destacadas. La URL de la API se obtiene desde la variable de entorno `VITE_API_URL`.
+*   Se eliminó la dependencia del archivo JSON `public/heroCards.json`.
+*   Se implementó una animación de aparición gradual (fade-in) al cargar la página.
+*   Se agregó un efecto parallax a la sección del Hero (`src/components/home/components/HeroSection.tsx`).
+    *   Se ajustó la opacidad del fondo negro para que la imagen sea más visible.
+    *   Se alineó verticalmente el contenido del Hero Section para que esté centrado.
+*   Se reemplazó el carrusel de testimonios con uno que tiene una animación de aparición gradual.
+*   Se añadió un efecto de desplazamiento horizontal a la sección de "Lecciones Destacadas".
+    *   Se añadió un espacio entre las tarjetas.
+    *   Se aumentó el tamaño de la imagen y el texto.
+*   Se modificaron los colores de los botones (`src/components/ui/button.tsx`) para que tengan un color más acorde a la paleta de colores de la cultura Kamëntsá.
+*   Se alinearon los campos del formulario y se aumentó el tamaño del texto en `src/components/home/components/ContactForm.tsx`.
+
+### Data Structures
+
+*   `testimonials`: An array of objects containing user testimonials.
+*   `featuredLessons`: An array of objects containing information about featured lessons.
+*   `heroCardsData`: An array of objects containing information displayed in the hero carousel.
 
 ```
 src/
@@ -20,35 +62,20 @@ src/
 ├── main.tsx        # Punto de entrada
 ├── assets/         # Archivos estáticos
 ├── components/     # Componentes React
-│   ├── ui/         # Componentes UI genéricos y reutilizables (Atomic Design)
-│   │   ├── atoms/
-│   │   ├── molecules/
-│   │   └── organisms/
-│   ├── auth/       # Componentes relacionados con autenticación
-│   ├── gamification/   # Componentes de gamificación
-│   ├── profile/    # Perfil de usuario
-│   ├── dashboard/  # Componentes del dashboard
-│   │   ├── ProgressSection.tsx
-│   │   ├── RewardsSection.tsx
-│   │   ├── FeaturedContent.tsx
-│   │   ├── RecommendationsSection.tsx
-│   │   └── CommunitySection.tsx
-│   └── layout/     # Layouts, barras laterales, navegación
-├── features/       # Funcionalidades específicas
-│   ├── auth/       # Autenticación
-│   │   ├── components/ # Componentes React
-│   │   ├── hooks/      # Hooks React
-│   │   └── lib/        # Lógica de negocio
-│   ├── gamification/   # Gamificación
-│   │   ├── components/ # Componentes React
-│   │   ├── hooks/      # Hooks React
-│   │   └── lib/        # Lógica de negocio
-├── hooks/          # Hooks React genéricos
+│   ├── ui/         # Componentes UI genéricos (shadcn/ui y personalizados)
+│   ├── auth/       # Componentes específicos de autenticación (formularios)
+│   ├── common/      # Componentes comunes reutilizables (Modal, AuthModals, PrivateRoute, etc.)
+│   ├── dashboard/   # Componentes del dashboard
+│   ├── general/     # Componentes generales (ej. layout de página)
+│   ├── home/        # Componentes de la página de inicio
+│   └── navigation/  # Componentes de navegación
 ├── lib/            # Lógica de negocio genérica
+├── hooks/          # Hooks React genéricos
+├── auth/          # Autenticación
+│   ├── hooks/     # Hooks React para autenticación
+│   │   ├── useAuth.ts # Hook para la autenticación
+│   │   └── useAuthService.ts # Hook para el servicio de autenticación
 ├── styles/         # Estilos CSS
-│   ├── components/ # Estilos para componentes
-│   ├── base/       # Estilos base (reset, tipografía)
-│   └── utils/      # Mixins, variables
 └── ...             # Otros archivos
 
 public/             # Archivos estáticos
@@ -68,78 +95,58 @@ public/             # Archivos estáticos
 - Permite identificar rápidamente dónde agregar o modificar funcionalidades.
 - Separa claramente UI genérica de lógica y componentes específicos.
 
-## Notas para desarrollo
-
-- Mantener la separación por dominios.
-- Reutilizar componentes UI cuando sea posible.
-- Documentar nuevos hooks, componentes y acciones.
-- Actualizar esta documentación cuando se hagan cambios estructurales.
-
 ---
 
 ## Integración con Backend
 
-El frontend consume el backend mediante un **cliente Axios centralizado** ubicado en:
-
-- `src/lib/api.ts`
-
-Este cliente:
-
-- Usa la URL base configurada en `VITE_API_URL`.
-- Añade automáticamente el token JWT a las peticiones, obteniéndolo del usuario almacenado en sessionStorage.
-- Permite interceptar y manejar errores globales.
+El frontend consume el backend mediante un **cliente Axios centralizado** ubicado en `src/lib/api.ts`.
 
 ### Hooks para consumir el backend
 
-Se han implementado hooks específicos para interactuar con los endpoints del backend, ubicados en:
-
-- `src/features/auth/useAuth.ts` — signin, logout, estado autenticado
-- `src/features/dictionary/hooks/useSearch.ts` — búsqueda de términos (ahora usa la ruta `/api/v1/search`)
-- `src/features/dictionary/hooks/useEntry.ts` — detalle de una entrada
-- `src/features/dictionary/hooks/useCategories.ts` — categorías
-- `src/features/dictionary/hooks/useVariations.ts` — variaciones dialectales (ahora usa la ruta `/api/v1/search`)
+- `src/auth/hooks/useAuth.ts` — Autenticación
+- `src/features/dictionary/hooks/` — Diccionario
 - `src/features/gamification/hooks/useGamification.ts` - Gamificación
 
-### Componentes que usan estos hooks
-
-- `src/features/auth/components/LoginForm.tsx` — formulario de login
-- `src/features/dictionary/components/SearchView.tsx` — vista de búsqueda
-- `src/features/dictionary/components/EntryDetail.tsx` — detalle de entrada
-- `src/features/dictionary/components/CategoriesList.tsx` — listado de categorías
-- `src/features/dictionary/components/VariationsList.tsx` — listado de variaciones dialectales
-- `src/features/gamification/components/Leaderboard.tsx` - Leaderboard
-- `src/features/gamification/components/CulturalAchievement.tsx` - Cultural Achievement
-- `src/features/gamification/components/Mentor.tsx` - Mentor
-
-
-### Flujo general
-
-Los **hooks** gestionan la lógica de consumo del backend y estado.  
-Los **componentes** usan estos hooks para mostrar datos y gestionar la UI.  
-Esto permite una integración **modular, escalable y segura**.
-
-### Buenas prácticas
-
-- Crear hooks para cada nuevo endpoint o conjunto de endpoints
-- Crear componentes que usen estos hooks para mostrar datos
-- Mantener la separación por dominios funcionales
-- Documentar cualquier nuevo hook o componente
-- Actualizar esta sección cuando se agreguen nuevas integraciones
+Los **hooks** gestionan la lógica de consumo del backend y estado (ej. `useAuth` para manejar login/signup). Los **componentes** usan estos hooks para mostrar datos y gestionar la UI (ej. `SignupForm` usa `useAuth`).
 
 ---
 
-## Licencia
+### Sidebar Component
 
-MIT License
+The `Sidebar` component provides a composable, themeable, and customizable sidebar. It includes the following features:
 
-## Modelos de Datos
+- **Collapsible SidebarGroup:** The `SidebarGroup` components are now collapsible, allowing users to expand and collapse sections of the sidebar to better organize content.
+- **SidebarMenuAction:** Each `SidebarMenuItem` now includes a `SidebarMenuAction` component, which allows users to perform actions on the menu item, such as editing or deleting.
+- **SidebarRail:** A `SidebarRail` component has been added to the main layout, providing a convenient way for users to toggle the sidebar open and closed.
+- **Theming:** The sidebar's appearance can be customized using CSS variables, allowing for easy integration with the application's overall theme.
 
-El frontend utiliza modelos de datos JSON para gestionar la información recibida del backend.  Estos modelos mejoran la organización y la eficiencia del código.
+The `Sidebar` component is built using the following components from `src/components/ui/sidebar.tsx`:
 
-### `teacher_dashboard_model.json`
+- `SidebarProvider`: Provides the sidebar context to the other components.
+- `Sidebar`: The main sidebar container.
+- `SidebarHeader`: A sticky header for the sidebar.
+- `SidebarContent`: The scrollable content of the sidebar.
+- `SidebarGroup`: A section within the sidebar content.
+- `SidebarGroupLabel`: A label for a sidebar group.
+- `SidebarGroupContent`: The content of a sidebar group.
+- `SidebarMenu`: A menu within a sidebar group.
+- `SidebarMenuItem`: An item in a sidebar menu.
+- `SidebarMenuButton`: A button for a sidebar menu item. Se ha añadido `focus-visible:outline-none` para mejorar la accesibilidad.
+- `SidebarMenuAction`: An action for a sidebar menu item.
+- `SidebarRail`: A rail for toggling the sidebar.
 
-Este modelo define la estructura de datos para el panel del docente, incluyendo información del usuario, lecciones, actividades, unidades, progreso y evaluaciones.
+The `AppSidebar` component in `src/components/navigation/app-sidebar.tsx` defines the structure and content of the application's sidebar. It now includes the following:
 
-### `multimedia_model.json`
+- A search input for searching the application.
+- A button to trigger a toast notification.
+- The following groups:
+    - Application: Contains the main navigation items. The items are now rendered using the `ApplicationMenuItems` component in `src/components/ApplicationMenuItems.tsx`, making it easier to add or remove items.
+    - Administración: Contains items related to administration tasks, such as managing users and roles.
+    - Configuración: Contains items related to application settings, such as general settings and appearance.
 
-Este modelo define la estructura de datos para la gestión de archivos multimedia, incluyendo información sobre el ID, título, descripción, tipo, URL, ID de la lección y metadatos.
+---
+
+Última actualización: 21/4/2025, 10:50:00 p. m. (America/Bogota, UTC-5:00)
+
+-   `SignupForm.tsx`: Implementa un formulario de varios pasos con validación en tiempo real (que solo se ejecuta al interactuar con el campo) utilizando el hook `useFormValidation`.
+-   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.

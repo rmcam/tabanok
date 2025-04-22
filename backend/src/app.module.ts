@@ -23,6 +23,10 @@ import { RootController } from './root.controller';
 import { AuthController } from './auth/auth.controller';
 import { DictionaryModule } from './features/dictionary/dictionary.module';
 import { CulturalContentModule } from './features/cultural-content/cultural-content.module';
+import { MultimediaModule } from './features/multimedia/multimedia.module';
+import { APP_GUARD, Reflector } from '@nestjs/core'; // Importar APP_GUARD y Reflector
+import { RolesGuard } from './auth/guards/roles.guard'; // Importar RolesGuard
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'; // Importar JwtAuthGuard
 
 @Module({
   imports: [
@@ -38,6 +42,7 @@ import { CulturalContentModule } from './features/cultural-content/cultural-cont
     AuthModule,
     UserModule,
     AccountModule,
+    ActivityModule,
     ContentModule,
     ExercisesModule,
     GamificationModule,
@@ -50,8 +55,21 @@ import { CulturalContentModule } from './features/cultural-content/cultural-cont
     RecommendationsModule,
     DictionaryModule,
     CulturalContentModule,
+    MultimediaModule,
   ],
   controllers: [LanguageValidationController, RootController, AuthController],
-  providers: [KamentsaValidatorService],
+  providers: [
+    KamentsaValidatorService,
+    {
+      provide: APP_GUARD,
+      useFactory: (reflector: Reflector) => new JwtAuthGuard(reflector),
+      inject: [Reflector],
+    },
+    // Si necesitas aplicar RolesGuard globalmente de nuevo, hazlo aquí
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
 export class AppModule {}

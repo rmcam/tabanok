@@ -10,6 +10,8 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import favicon from 'serve-favicon';
 import { join } from 'path';
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'; // Importar JwtAuthGuard
+import { Reflector } from '@nestjs/core'; // Importar Reflector
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
@@ -63,6 +65,7 @@ async function bootstrap() {
     }),
   );
 
+  // Aplicar guardia JWT globalmente
   // Configurar prefijo global para la API
   // app.setGlobalPrefix('api/v1');
 

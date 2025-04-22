@@ -4,16 +4,17 @@
 
 ## Resumen
 
-**Nota:** La autenticación está en proceso de revisión.
-
 Este documento describe la implementación actual de la autenticación en Tabanok, integrando **React (Vite + TypeScript)** en el frontend y **NestJS** en el backend.
 
 ---
 
 ## Endpoints de Autenticación
 
-- **Login:** `POST /auth/signin`
-- **Registro:** `POST /auth/signup`
+- **Login:** `POST /signin`
+- **Registro:** `POST /signup`
+- **Cerrar sesión:** `POST /auth/logout`
+- **Solicitar restablecimiento de contraseña:** `POST /auth/forgot-password`
+- **Restablecer contraseña:** `POST /auth/reset-password`
 
 ---
 
@@ -30,6 +31,8 @@ POST /auth/signin
   "password": "contraseña"
 }
 ```
+
+El campo `identifier` permite ingresar con el nombre de usuario o el correo electrónico.
 
 **Response:**
 
@@ -74,12 +77,22 @@ POST /auth/signin
 
 **Request:**
 
+El formulario de registro ahora es un formulario de varios pasos. Los campos se dividen en tres pasos:
+
+*   Información de la cuenta (email, contraseña, usuario)
+*   Información personal (nombre, segundo nombre, apellido, segundo apellido)
+*   Confirmación de datos
+
+La validación en tiempo real solo se ejecuta cuando el usuario interactúa con el campo.
+
 ```json
 POST /api/auth/signup
 {
   "username": "usuario",
   "firstName": "Nombre",
+  "secondName": "SegundoNombre (Opcional)",
   "firstLastName": "Apellido",
+  "secondLastName": "SegundoApellido (Opcional)",
   "email": "correo@ejemplo.com",
   "password": "contraseña"
 }
@@ -124,175 +137,7 @@ POST /api/auth/signup
 }
 ```
 
----
-
-## Flujo de Autenticación
-
-**Nota:** Al crear un nuevo usuario, se crea automáticamente una entrada en la tabla `statistics` para almacenar su información de progreso y logros. La generación de reportes de estadísticas se ha refactorizado para mejorar su estructura y mantenibilidad.
-
-1. El usuario se registra enviando los campos requeridos al endpoint `/api/auth/signup`.
-2. El usuario inicia sesión enviando `identifier` (usuario o email) y `password` a `/api/auth/signin`.
-3. El backend responde con el usuario y un JWT (`accessToken`).
-4. El frontend almacena el usuario completo (incluyendo el JWT) en sessionStorage con la clave 'authUser'.
-5. Para acceder a rutas protegidas, el frontend envía el JWT en el header `Authorization: Bearer <token>`, obteniéndolo del usuario almacenado en sessionStorage.
-6. El backend valida el token y autoriza el acceso.
-
----
-
-## Protección de rutas sensibles
-
-### Frontend
-
-- El frontend utiliza el componente `PrivateRoute` para proteger rutas sensibles.
-- Si el usuario no está autenticado, se muestra un loader mientras se verifica el estado; si no está autenticado tras la verificación, se redirige automáticamente a la página de login (`/login`).
-- Si la ruta requiere un rol específico (por ejemplo, `admin`), y el usuario no lo tiene, se redirige a `/unauthorized`.
-- Tras iniciar sesión correctamente, el usuario es redirigido automáticamente a `/dashboard`. El componente `Dashboard` utiliza el hook `useUnits` para cargar las unidades. La ruta de la API para obtener las unidades es `/api/unity`.
-- Las rutas protegidas actualmente son:
-    - `/dashboard`
-    - `/`
-    - `/categories` (requiere rol `admin`)
-    - `/entry/:id`
-    - `/variations`
-    - `/gamification`
-    - `/profile`
-- Ejemplo de uso en `App.tsx`:
-    ```tsx
-    <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-    <Route path="/categories" element={<PrivateRoute requiredRole="admin"><CategoriesList /></PrivateRoute>} />
-    <Route path="/entry/:id" element={<PrivateRoute><EntryDetailWrapper /></PrivateRoute>} />
-    ```
-
-### Backend
-
-- El backend utiliza guards (`JwtAuthGuard` y `RolesGuard`) para proteger las rutas.
-- `JwtAuthGuard` verifica la validez del token JWT en el encabezado `Authorization`.
-- `RolesGuard` verifica si el usuario tiene el rol necesario para acceder a la ruta.
-- Si el usuario no está autenticado o no tiene permisos, se deniega el acceso con un código de estado 401 (No autorizado) o 403 (Prohibido).
-
-#### Manejo de Tokens Expirados
-
-- El backend verifica la fecha de expiración del token JWT.
-- Si el token ha expirado, se devuelve un error 401 (No autorizado).
-- El frontend intercepta este error y redirige al usuario a la página de inicio de sesión para renovar el token.
-
----
-
-## Pruebas para `PrivateRoute`
-
-Las pruebas para el componente `PrivateRoute` se encuentran en `frontend/src/components/PrivateRoute.test.tsx`.
-
-
----
-
-## Estructura del Frontend de Autenticación
-
-- `lib/api.ts`: Centraliza la configuración de axios para las llamadas a la API, incluyendo la URL base y los interceptores.
-- `api.ts`: Centraliza las llamadas a la API de autenticación (`signin`, `signup`, `logout`), utilizando el cliente axios configurado en `lib/api.ts`.
-- `AuthContext.tsx`: Contexto global de autenticación (usuario, loading, error, métodos). Define la interfaz `AuthUser` con las propiedades `id`, `username`, `email`, `roles`, `token` y `refreshToken`.
-- `AuthProvider.tsx`: Provider que gestiona el estado de autenticación y expone el contexto. **Utiliza `useMemo` y `useCallback` para optimizar el rendimiento y evitar re-renderizados innecesarios de los componentes que consumen el contexto.**
-- `useAuth.ts`: Hook para acceder al contexto de autenticación. **Es normal que este hook se llame varias veces durante la carga inicial de la aplicación, ya que varios componentes (como `PrivateRoute`) lo utilizan y el estado de autenticación puede cambiar durante este proceso. En desarrollo, React StrictMode puede causar que los efectos se ejecuten dos veces.**
-- `LoginForm.tsx`, `SignupForm.tsx`: Formularios desacoplados de la lógica de red.
-- `PrivateRoute.tsx`: Componente para proteger rutas.
-
-**Nota:** En el `AuthProvider.tsx`, el `useEffect` que guarda el usuario en `sessionStorage` puede ejecutarse dos veces en desarrollo debido a React StrictMode. Esto es normal y no indica un problema en el código.
-
----
-
-## Buenas prácticas aplicadas
-
-- Login institucional: el usuario puede iniciar sesión con su usuario institucional o correo electrónico.
-- El registro requiere campos validados: `username`, `firstName`, `firstLastName`, `email`, `password`.
-- Separación de responsabilidades entre frontend y backend.
-- Uso de JWT para autenticación y autorización.
-- Protección de rutas con hooks en el frontend y guards en el backend.
-- Código tipado con TypeScript.
-- Centralización de la lógica de autenticación.
-- Uso de hooks y contextos para acceso global al estado de autenticación.
-- **Licencia:** MIT License
-
----
-
-## Pendientes y recomendaciones
-
-- Se han implementado refresh tokens para mejorar la seguridad.
-- Se han implementado roles y permisos más granulares en el componente `PrivateRoute`.
-- Se ha mejorado la experiencia de usuario en el manejo de errores.
-- Documentar el flujo de recuperación de contraseña y validación de email.
-- Mantener ejemplos de payloads y respuestas actualizados.
-- Documentar el endpoint de cierre de sesión y la lista negra de tokens revocados.
-
----
-
-## Cierre de Sesión
-
-Se ha implementado un endpoint para cerrar la sesión y revocar el token de acceso actual.
-
-### Endpoint
-
--   **Cerrar sesión:** `POST /auth/logout`
-
-### Request
-
-```json
-POST /auth/logout
-```
-
-### Response
-
-```json
-{
-  "message": "Sesión cerrada exitosamente"
-}
-```
-
-### Implementación
-
-Cuando un usuario cierra la sesión, el token de acceso actual se agrega a una lista negra de tokens revocados en la base de datos. Antes de permitir el acceso a una ruta protegida, se verifica si el token está en la lista negra. Si el token está en la lista negra, se deniega el acceso.
-
----
-
-## Recuperación de Contraseña
-
-1.  El usuario solicita restablecer su contraseña a través de la interfaz de usuario.
-2.  El frontend envía una solicitud al endpoint `/auth/forgot-password` en el backend, proporcionando el correo electrónico del usuario.
-3.  El backend genera un token único (`resetPasswordToken`) y una fecha de expiración (`resetPasswordExpires`) para el token.
-4.  El backend actualiza la entidad `User` con el token y la fecha de expiración generados.
-5.  El backend envía un correo electrónico al usuario con un enlace que contiene el token de restablecimiento de contraseña.
-6.  El usuario hace clic en el enlace en el correo electrónico, que lo redirige a una página en el frontend donde puede ingresar su nueva contraseña.
-7.  El frontend envía una solicitud al endpoint `/auth/reset-password` en el backend, proporcionando el token y la nueva contraseña.
-8.  El backend verifica que el token sea válido y que no haya expirado.
-9.  Si el token es válido, el backend actualiza la contraseña del usuario en la base de datos y elimina el token y la fecha de expiración de la entidad `User`.
-10. El backend responde con un mensaje de éxito.
-11. El frontend redirige al usuario a la página de inicio de sesión.
-
-### Endpoints
-
--   **Solicitar restablecimiento de contraseña:** `POST /auth/forgot-password`
--   **Restablecer contraseña:** `POST /auth/reset-password`
-
-### Payloads y Respuestas
-
-#### Solicitar restablecimiento de contraseña
-
-**Request:**
-
-```json
-POST /auth/forgot-password
-{
-  "email": "correo@ejemplo.com"
-}
-```
-
-**Response:**
-
-```json
-{
-  "statusCode": 200,
-  "message": "Correo electrónico de restablecimiento de contraseña enviado"
-}
-```
-
-#### Restablecer contraseña
+### Restablecer contraseña
 
 **Request:**
 
@@ -313,13 +158,118 @@ POST /auth/reset-password
 }
 ```
 
-### Entidad `User`
+### Solicitar restablecimiento de contraseña
 
-La entidad `User` contiene las siguientes propiedades relacionadas con el restablecimiento de contraseña:
+**Request:**
 
--   `resetPasswordToken`: Token único para restablecer la contraseña.
--   `resetPasswordExpires`: Fecha de expiración del token.
+```json
+POST /auth/forgot-password
+{
+  "email": "correo@ejemplo.com"
+}
+```
 
-## Validación de Email
+**Response:**
 
-(Pendiente de documentación)
+```json
+{
+  "statusCode": 200,
+  "message": "Correo electrónico de restablecimiento de contraseña enviado"
+}
+```
+
+### Cierre de Sesión
+
+**Request:**
+
+```json
+POST /auth/logout
+```
+
+**Response:**
+
+```json
+{
+  "message": "Sesión cerrada exitosamente"
+}
+```
+
+---
+
+## Flujo de Autenticación
+
+1.  El usuario se registra enviando los campos requeridos al endpoint `/api/auth/signup`.
+2.  El usuario inicia sesión enviando `identifier` (nombre de usuario o email) y `password` a `/auth/signin`.
+3.  El backend responde con el usuario y un JWT (`accessToken`).
+4.  El frontend almacena el usuario completo (incluyendo el JWT) en sessionStorage con la clave 'authUser'.
+5.  Para acceder a rutas protegidas, el frontend envía el JWT en el header `Authorization: Bearer <token>`, obteniéndolo del usuario almacenado en sessionStorage.
+6.  El backend valida el token y autoriza el acceso.
+
+---
+
+## Protección de rutas sensibles
+
+### Frontend
+
+-   El frontend utiliza el componente `PrivateRoute` para proteger rutas sensibles.
+-   Si el usuario no está autenticado, se muestra un loader mientras se verifica el estado; si no está autenticado tras la verificación, se redirige automáticamente a la página de login (`/login`).
+-   Si la ruta requiere un rol específico (por ejemplo, `admin`), y el usuario no lo tiene, se redirige a `/unauthorized`.
+-   Tras iniciar sesión correctamente, el usuario es redirigido automáticamente a `/dashboard`. El componente `Dashboard` utiliza el hook `useUnits` para cargar las unidades. La ruta de la API para obtener las unidades es `/api/unity`.
+-   Las rutas protegidas actualmente son:
+    -   `/dashboard`
+    -   `/`
+-   Ejemplo de uso en `App.tsx`:
+
+    ```tsx
+    <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+    ```
+
+### Backend
+
+-   El backend utiliza guards (`JwtAuthGuard` y `RolesGuard`) para proteger las rutas. Estas guardias se aplican **globalmente** a toda la aplicación.
+-   `JwtAuthGuard` verifica la validez del token JWT en el encabezado `Authorization`. Las rutas marcadas con `@Public()` son excluidas de esta guardia.
+-   `RolesGuard` verifica si el usuario tiene el rol necesario para acceder a la ruta, basándose en el decorador `@Roles()`.
+-   Si el usuario no está autenticado, no tiene permisos, o el token ha expirado, se deniega el acceso con un código de estado 401 (No autorizado) o 403 (Prohibido).
+
+#### Manejo de Tokens Expirados
+
+-   El backend verifica la fecha de expiración del token JWT.
+-   Si el token ha expirado, se devuelve un error 401 (No autorizado).
+-   El frontend intercepta este error y redirige al usuario a la página de inicio de sesión para renovar el token.
+
+#### Manejo de Rutas Públicas Específicas (`/lesson/featured`)
+
+Se identificó un problema donde el endpoint `GET /lesson/featured`, a pesar de estar marcado con `@Public()`, requería autenticación. La causa raíz fue el orden de las rutas en `LessonController`, donde la ruta dinámica `GET /lesson/:id` interceptaba las solicitudes dirigidas a `/lesson/featured`.
+
+**Solución Implementada:**
+
+1.  **Reordenamiento de Rutas:** En `src/features/lesson/lesson.controller.ts`, la definición de la ruta `GET /lesson/featured` se movió para que aparezca antes de la ruta `GET /lesson/:id`. Esto asegura que la solicitud a `/lesson/featured` sea manejada por el método correcto.
+2.  **Configuración Global del Guardia:** El `JwtAuthGuard` se aplica globalmente en `src/app.module.ts` utilizando `APP_GUARD` con `useFactory` para asegurar la correcta inyección del `Reflector`.
+3.  **Limpieza del Módulo de Autenticación:** Se eliminó `JwtAuthGuard` y `JwtStrategy` de los `providers` y `exports` en `src/auth/auth.module.ts` para evitar duplicidad y posibles conflictos con la instancia global del guardia.
+4.  **Verificación Manual en el Guardia (Solución Alternativa):** Se añadió una verificación explícita en el método `canActivate` de `JwtAuthGuard` para permitir el acceso si la URL de la solicitud comienza con `/lesson/featured` y el método es `GET`. Esto actúa como una capa adicional de seguridad si el reconocimiento de metadatos falla por alguna razón.
+
+---
+
+## Estructura del Frontend de Autenticación
+
+-   `src/auth/services/authService.ts`: Contiene las funciones para realizar las llamadas a la API de autenticación (Login, Signup, Forgot Password, etc.) y las interfaces de datos (`SigninData`, `SignupData`).
+-   `src/auth/hooks/useAuthService.ts`: Hook personalizado que encapsula la lógica de las llamadas a la API de autenticación y la gestión de tokens.
+-   `src/auth/hooks/useAuth.ts`: Hook personalizado que encapsula la lógica de autenticación (manejo de estado, llamadas a `authService`, almacenamiento en `sessionStorage`, navegación).
+-   `src/auth/components/`: Componentes específicos de autenticación (`SigninForm.tsx`, `SignupForm.tsx`, `ForgotPasswordForm.tsx`).
+    -   `SignupForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.
+    -   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.
+-   `src/components/common/Modal.tsx`: Componente genérico reutilizable para mostrar contenido en un diálogo modal, basado en `shadcn/ui/dialog`. Incluye título y descripción para accesibilidad.
+-   `src/components/common/AuthModals.tsx`: Componente que agrupa los modales de `Signin`, `Signup` y `ForgotPassword`. Permite controlar qué modal abrir por defecto (`defaultOpen`), si mostrar los disparadores por defecto (`showDefaultTriggers`), y ejecutar una acción al cerrar un modal (`onModalClose`).
+-   `src/components/common/PrivateRoute.tsx`: Componente de orden superior para proteger rutas que requieren autenticación.
+-   `src/App.tsx`: Define las rutas principales de la aplicación y utiliza `PrivateRoute`.
+
+---
+
+## Pendientes y recomendaciones
+
+-   Documentar el flujo de validación de email.
+-   Mantener ejemplos de payloads y respuestas actualizados.
+
+---
+
+Última actualización: 22/4/2025, 12:17:46 a. m. (America/Bogota, UTC-5:00)

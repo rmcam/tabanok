@@ -59,4 +59,4 @@ Ver próximos pasos en [`docs/Pendientes.md`](./Pendientes.md).
 
 ## Última actualización
 
-Abril 2025
+22/4/2025, 12:18:36 a. m. (America/Bogota, UTC-5:00)

@@ -8,6 +8,7 @@ import { CulturalContent } from './features/cultural-content/cultural-content.en
 import { Evaluation } from './features/evaluation/evaluation.entity';
 import { Exercise } from './features/exercises/entities/exercise.entity';
 import { Achievement } from './features/gamification/entities/achievement.entity';
+import { Multimedia } from './features/multimedia/entities/multimedia.entity';
 import { Badge } from './features/gamification/entities/badge.entity';
 import { CulturalAchievement } from './features/gamification/entities/cultural-achievement.entity';
 import { Gamification } from './features/gamification/entities/gamification.entity';
@@ -42,6 +43,7 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       Exercise,
       Evaluation,
       Lesson,
+      Multimedia,
       Progress,
       Reward,
       Topic,

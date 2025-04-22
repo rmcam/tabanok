@@ -116,12 +116,6 @@ El modelo de datos para multimedia se define en `models/multimedia_model.json`.
 }
 ```
 
-### Propiedades
+---
 
--   `id`: Identificador único del multimedia.
--   `title`: Título del multimedia.
--   `description`: Descripción del multimedia.
--   `type`: Tipo de multimedia (ej. imagen, video, audio).
--   `url`: URL del multimedia.
--   `lessonId`: Identificador de la lección a la que pertenece el multimedia.
--   `metadata`: Metadatos adicionales del multimedia.
+Última actualización: 20/4/2025, 2:00:00 a. m. (America/Bogota, UTC-5:00)

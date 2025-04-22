@@ -1,3 +1,4 @@
+import { UserActivity } from '@/features/gamification/entities/activity.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
@@ -24,13 +25,13 @@ import { UserLevel } from '../features/gamification/entities/user-level.entity';
 import { UserMission } from '../features/gamification/entities/user-mission.entity';
 import { UserReward } from '../features/gamification/entities/user-reward.entity';
 import { Lesson } from '../features/lesson/entities/lesson.entity';
+import { Multimedia } from '../features/multimedia/entities/multimedia.entity';
 import { Progress } from '../features/progress/entities/progress.entity';
 import { Reward } from '../features/reward/entities/reward.entity';
 import { Statistics } from '../features/statistics/entities/statistics.entity';
 import { Topic } from '../features/topic/entities/topic.entity';
 import { Unity } from '../features/unity/entities/unity.entity';
 import { Vocabulary } from '../features/vocabulary/entities/vocabulary.entity';
-import { Activity } from '../features/gamification/entities/activity.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -78,7 +79,8 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         SpecialEvent,
         Statistics,
         UserMission,
-        Activity,
+        UserActivity,
+        Multimedia,
       ],
       synchronize: true,
       logging: true,

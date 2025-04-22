@@ -40,8 +40,7 @@ import { StatisticsService } from '../features/statistics/statistics.service';
     providers: [
         AuthService,
         StatisticsService,
-        JwtStrategy,
-        RolesGuard
+        RolesGuard // Eliminado JwtStrategy de aquí
     ],
     exports: [
         JwtModule,

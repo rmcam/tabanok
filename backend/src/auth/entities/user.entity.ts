@@ -1,3 +1,4 @@
+import { UserActivity } from '@/features/gamification/entities/activity.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,7 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Account } from '../../features/account/entities/account.entity';
-import { Activity } from '../../features/gamification/entities/activity.entity';
 import { Leaderboard } from '../../features/gamification/entities/leaderboard.entity';
 import { UserAchievement } from '../../features/gamification/entities/user-achievement.entity';
 import { UserReward } from '../../features/gamification/entities/user-reward.entity';
@@ -125,8 +125,8 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Activity, (activity) => activity.user)
-  activities: Activity[];
+  @OneToMany(() => UserActivity, (activity) => activity.user)
+  activities: UserActivity[];
 
   @UpdateDateColumn()
   updatedAt: Date;
