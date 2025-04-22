@@ -1,185 +1,173 @@
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Input } from '@/components/ui/input';
+import * as React from "react"
+import {
+  AudioWaveform,
+  BookOpen,
+  Bot,
+  Command,
+  Frame,
+  GalleryVerticalEnd,
+  Map,
+  PieChart,
+  Settings2,
+  SquareTerminal,
+} from "lucide-react"
+
+import { NavMain } from "@/components/nav-main"
+import { NavProjects } from "@/components/nav-projects"
+import { NavUser } from "@/components/nav-user"
+import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import { Toaster } from '@/components/ui/sonner';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-  ChevronDown,
-  Monitor,
-  MoreHorizontal,
-  Settings,
-  Shield,
-  SlidersHorizontal,
-  Users,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { ApplicationMenuItems } from './ApplicationMenuItems';
-import { Button } from './ui/button';
+  SidebarRail,
+} from "@/components/ui/sidebar"
 
-export function AppSidebar() {
+// This is sample data.
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  teams: [
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: Command,
+      plan: "Free",
+    },
+  ],
+  navMain: [
+    {
+      title: "Playground",
+      url: "#",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "History",
+          url: "#",
+        },
+        {
+          title: "Starred",
+          url: "#",
+        },
+        {
+          title: "Settings",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Models",
+      url: "#",
+      icon: Bot,
+      items: [
+        {
+          title: "Genesis",
+          url: "#",
+        },
+        {
+          title: "Explorer",
+          url: "#",
+        },
+        {
+          title: "Quantum",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Documentation",
+      url: "#",
+      icon: BookOpen,
+      items: [
+        {
+          title: "Introduction",
+          url: "#",
+        },
+        {
+          title: "Get Started",
+          url: "#",
+        },
+        {
+          title: "Tutorials",
+          url: "#",
+        },
+        {
+          title: "Changelog",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Settings",
+      url: "#",
+      icon: Settings2,
+      items: [
+        {
+          title: "General",
+          url: "#",
+        },
+        {
+          title: "Team",
+          url: "#",
+        },
+        {
+          title: "Billing",
+          url: "#",
+        },
+        {
+          title: "Limits",
+          url: "#",
+        },
+      ],
+    },
+  ],
+  projects: [
+    {
+      name: "Design Engineering",
+      url: "#",
+      icon: Frame,
+    },
+    {
+      name: "Sales & Marketing",
+      url: "#",
+      icon: PieChart,
+    },
+    {
+      name: "Travel",
+      url: "#",
+      icon: Map,
+    },
+  ],
+}
 
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        Sidebar Header
+        <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <Input type="text" placeholder="Buscar..." />
-        <Button onClick={() => toast('¡Éxito! Notificación mostrada correctamente.')}>
-          Add toast
-        </Button>
-        <Toaster />
-        <Collapsible defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                Application
-                <ChevronDown className="ml-2 h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <ApplicationMenuItems />
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                Administración
-                <ChevronDown className="ml-2 h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild>
-                            <a href="#">
-                              <Settings aria-label="Settings" />
-                              <span>Settings</span>
-                            </a>
-                          </SidebarMenuButton>
-                          <SidebarMenuAction aria-label="More actions">
-                            <MoreHorizontal />
-                          </SidebarMenuAction>
-                        </SidebarMenuItem>
-                      </TooltipTrigger>
-                      <TooltipContent>Settings</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild>
-                            <a href="#">
-                              <Users aria-label="Users" />
-                              <span>Users</span>
-                            </a>
-                          </SidebarMenuButton>
-                          <SidebarMenuAction aria-label="More actions">
-                            <MoreHorizontal />
-                          </SidebarMenuAction>
-                        </SidebarMenuItem>
-                      </TooltipTrigger>
-                      <TooltipContent>Users</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild>
-                            <a href="#">
-                              <Shield aria-label="Roles" />
-                              <span>Roles</span>
-                            </a>
-                          </SidebarMenuButton>
-                          <SidebarMenuAction aria-label="More actions">
-                            <MoreHorizontal />
-                          </SidebarMenuAction>
-                        </SidebarMenuItem>
-                      </TooltipTrigger>
-                      <TooltipContent>Roles</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                Configuración
-                <ChevronDown className="ml-2 h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild>
-                            <a href="#">
-                              <SlidersHorizontal aria-label="General" />
-                              <span>General</span>
-                            </a>
-                          </SidebarMenuButton>
-                          <SidebarMenuAction aria-label="More actions">
-                            <MoreHorizontal />
-                          </SidebarMenuAction>
-                        </SidebarMenuItem>
-                      </TooltipTrigger>
-                      <TooltipContent>General</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton asChild>
-                            <a href="#">
-                              <Monitor aria-label="Appearance" />
-                              <span>Appearance</span>
-                            </a>
-                          </SidebarMenuButton>
-                          <SidebarMenuAction aria-label="More actions">
-                            <MoreHorizontal />
-                          </SidebarMenuAction>
-                        </SidebarMenuItem>
-                      </TooltipTrigger>
-                      <TooltipContent>Appearance</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <NavMain items={data.navMain} />
+        <NavProjects projects={data.projects} />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
-  );
+  )
 }

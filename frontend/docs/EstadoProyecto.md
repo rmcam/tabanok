@@ -1,11 +1,11 @@
-# Estado Actual del Proyecto Tabanok
+## HomePage Component Updates
 
----
+The `HomePage` component has been refactored and improved with the following changes:
 
-## Estado general
-
-- Monorepo optimizado con pnpm workspaces y lockfile único.
-- **Licencia MIT implementada:** Se añadió la licencia MIT a todos los archivos de documentación durante la actualización de abril de 2025. Esta licencia fue elegida por su permisividad y compatibilidad con proyectos de código abierto.
+*   Improved the testimonials section to use the `Carousel` component correctly.
+*   Added a new "Featured Lessons" section to showcase key lessons.
+*   Improved the hero section to use a carousel for displaying key features and calls to action.
+*   Added a link to the contact section for easy access to contact information.
 - Backend funcional con NestJS, conectado a PostgreSQL.
 - Frontend funcional con React + Vite, autenticación y consumo de API.
 - Dependencias y configuración centralizadas.
@@ -28,9 +28,10 @@
 - **Se han actualizado las dependencias del proyecto, incluyendo `react-day-picker`, `date-fns` y `vite`.**
 - **Se ha reemplazado `vite-plugin-components` con `unplugin-vue-components`.**
 - **Se ha eliminado la dependencia `@types/jwt-decode`.**
-- **Panel Docente:** Estructura básica de componentes (`TeacherDashboard`, `StudentList`, `ActivityManager`, `ReportViewer`) y rutas implementadas en el frontend. Acceso restringido a usuarios con rol `teacher` o `admin`. Se ha implementado la gestión de contenidos en el Panel Docente, permitiendo crear, eliminar y editar contenidos. Se ha implementado la lógica para mostrar el campo de contenido dependiendo del tipo de contenido seleccionado, la lógica para guardar los datos del formulario en el frontend (simulada con una alerta), la lógica para la gestión de categorías y etiquetas, y se ha mejorado la interfaz de usuario del formulario. Se han creado los componentes `CategoryManager.tsx` y `TagManager.tsx` para la gestión de categorías y etiquetas, respectivamente. Se ha creado el componente `Form.tsx` para mejorar la interfaz de usuario del formulario.
+- **Panel Docente:** El dashboard ha sido mejorado, moviendo componentes desde `TeacherDashboard.tsx` a `Dashboard.tsx` y adaptando el diseño. El dashboard ahora incluye secciones para "Herramientas para docentes", "Cómo funciona" y "Evaluaciones Efectivas". Se ha implementado la gestión de contenidos en el Panel Docente, permitiendo crear, eliminar y editar contenidos. Se ha implementado la lógica para mostrar el campo de contenido dependiendo del tipo de contenido seleccionado, la lógica para la gestión de categorías y etiquetas, y se ha mejorado la interfaz de usuario del formulario. Se han creado los componentes `CategoryManager.tsx` y `TagManager.tsx` para la gestión de categorías y etiquetas, respectivamente. Se ha creado el componente `Form.tsx` para mejorar la interfaz de usuario del formulario.
 - **Documentación de endpoints con Swagger normalizada y profesionalmente documentada.**
 - **Gestión de Contenidos:** Se ha implementado la interfaz de usuario para la gestión de contenidos en el Panel Docente.
+- **Protección de rutas:** Se ha revisado la protección de rutas, redirigiendo a "/" si no está logueado. Se ha modificado la lógica para mostrar el sidebar en `App.tsx` para que también dependa del estado de autenticación.
 
 ---
 

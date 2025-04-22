@@ -1,20 +1,20 @@
-# Arquitectura Frontend Tabanok
+## HomePage Component
 
-## Tecnologías principales
+The `HomePage` component is the main landing page for the Tabanok platform. It showcases the platform's features, testimonials, and contact information.
 
-- **React**
-- **Vite** como bundler
-- **TypeScript**
-- **Three.js** para animaciones 3D
-- **Tailwind CSS** para estilos
-- **unplugin-vue-components** para la importación automática de componentes
-- **Sonner** para notificaciones
+### Sections
 
-## Organización general
+*   **Hero Section:** Uses a carousel to display key features and calls to action.
+*   **Features Section:** Highlights the main features of the platform (Lecciones Interactivas, Gamificación, Seguimiento de Progreso).
+*   **Featured Lessons Section:** Displays a list of featured lessons with links to view them.
+*   **Testimonials Section:** Shows testimonials from users.
+*   **Contact Section:** Provides a contact form and email link.
 
-El frontend está organizado por **dominios funcionales** y **tipos de componentes** para facilitar la escalabilidad y el mantenimiento.
+### Data Structures
 
-### Estructura de carpetas
+*   `testimonials`: An array of objects containing user testimonials.
+*   `featuredLessons`: An array of objects containing information about featured lessons.
+*   `heroCards`: An array of objects containing information displayed in the hero carousel.
 
 ```
 src/
