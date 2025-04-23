@@ -110,6 +110,7 @@ const useAuth = (navigate: (path: string) => void) => {
         email: decoded.email,
       };
       setUser(userData);
+      navigate('/dashboard'); // Redirigir al dashboard después del inicio de sesión
       return true; // Indica éxito
     } catch (error: unknown) {
       console.error('Error al iniciar sesión:', error);

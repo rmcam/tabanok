@@ -1,9 +1,10 @@
+import { useCallback } from 'react'; // Import useCallback
 import { signin, signup, forgotPassword, SignupData, refreshToken } from '../services/authService';
 import { AuthResponse, SigninData } from '../types/authTypes';
 import { removeToken, saveToken, saveRefreshToken, removeRefreshToken } from '../utils/authUtils';
 
 const useAuthService = () => {
-  const handleSignup = async (data: SignupData) => {
+  const handleSignup = useCallback(async (data: SignupData) => { // Wrap in useCallback
     try {
       const response = await signup({
         email: data.email,
@@ -28,9 +29,9 @@ const useAuthService = () => {
       }
       throw error;
     }
-  };
+  }, []); // Empty dependency array as there are no external dependencies
 
-  const handleSignin = async (data: SigninData) => {
+  const handleSignin = useCallback(async (data: SigninData) => { // Wrap in useCallback
     try {
       const response: AuthResponse = await signin({
         identifier: data.identifier,
@@ -49,9 +50,9 @@ const useAuthService = () => {
       }
       throw error;
     }
-  };
+  }, []); // Empty dependency array
 
-  const handleForgotPassword = async (email: string) => {
+  const handleForgotPassword = useCallback(async (email: string) => { // Wrap in useCallback
     try {
       await forgotPassword(email);
       alert('Se ha enviado un correo electrónico para restablecer tu contraseña.');
@@ -63,9 +64,9 @@ const useAuthService = () => {
       }
       throw error;
     }
-  };
+  }, []); // Empty dependency array
 
-  const handleRefreshToken = async (refreshTokenValue: string) => {
+  const handleRefreshToken = useCallback(async (refreshTokenValue: string) => { // Wrap in useCallback
     try {
       const refreshedAuth = await refreshToken(refreshTokenValue);
       saveToken(refreshedAuth.accessToken);
@@ -77,12 +78,12 @@ const useAuthService = () => {
       removeRefreshToken();
       throw refreshError;
     }
-  };
+  }, []); // Empty dependency array
 
-  const handleSignout = () => {
+  const handleSignout = useCallback(() => { // Wrap in useCallback
     removeToken();
     removeRefreshToken();
-  };
+  }, []); // Empty dependency array
 
   return {
     handleSignup,

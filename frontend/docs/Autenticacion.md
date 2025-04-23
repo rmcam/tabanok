@@ -75,15 +75,15 @@ El campo `identifier` permite ingresar con el nombre de usuario o el correo elec
 
 ### Registro
 
-**Request:**
-
-El formulario de registro ahora es un formulario de varios pasos con **indicador de progreso** y **validación por pasos**. Los campos se dividen en tres pasos:
+**Descripción:** El formulario de registro ahora es un formulario de varios pasos con **indicador de progreso** y **validación por pasos**. Los campos se dividen en tres pasos:
 
 *   Paso 1: Información de la cuenta (email, contraseña, usuario)
 *   Paso 2: Información personal (nombre, segundo nombre, apellido, segundo apellido)
 *   Paso 3: Confirmación de datos
 
 La validación se ejecuta al interactuar con el campo (`onBlur`) y **al intentar avanzar al siguiente paso**. Los inputs muestran **feedback visual de error** (borde rojo).
+
+**Request:**
 
 ```json
 POST /api/auth/signup

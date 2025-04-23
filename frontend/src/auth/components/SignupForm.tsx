@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import useFormValidation from '@/hooks/useFormValidation';
 import React, { useEffect, useState } from 'react';
+import { signup } from '@/auth/services/authService'; // Import the signup function
 
 const SignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [signupError, setSignupError] = useState<string | null>(null); // State for signup errors
   const [step, setStep] = useState(1);
   const initialValues = {
     email: '',
@@ -95,60 +97,92 @@ const SignUpForm = () => {
   ]);
 
   const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
     setIsLoading(true);
+
+    // Trigger validation for all fields
     handleSubmit(validationRules)(e);
+
+    // Check isValid state after handleSubmit has potentially updated it
+    // Note: isValid might not be immediately updated after handleSubmit in the same render cycle.
+    // A more robust approach might involve checking errors directly or using a callback from handleSubmit
+    // For now, we rely on the useEffect updating the error states and isValid
     if (isValid) {
       // Aquí puedes agregar la lógica para enviar los datos al backend
-      console.log({
+      console.log('Formulario válido, enviando datos:', {
         email: values.email,
         password: values.password,
+        username: values.username,
         firstName: values.firstName,
         secondName: values.secondName,
         firstLastName: values.firstLastName,
         secondLastName: values.secondLastName,
       });
+      try {
+        console.log('Formulario válido, enviando datos:', {
+          email: values.email,
+          password: values.password,
+          username: values.username,
+          firstName: values.firstName,
+          secondName: values.secondName,
+          firstLastName: values.firstLastName,
+          secondLastName: values.secondLastName,
+        });
+        // Call the signup service
+        const response = await signup({
+          email: values.email,
+          password: values.password,
+          username: values.username,
+          firstName: values.firstName,
+          secondName: values.secondName,
+          firstLastName: values.firstLastName,
+          secondLastName: values.secondLastName,
+        });
+        console.log('Registro exitoso:', response);
+        // TODO: Handle successful signup (e.g., redirect, show success message)
+      } catch (error) { // Removed ': any'
+        console.error('Error durante el registro:', error);
+        if (error instanceof Error) {
+          setSignupError(error.message);
+        } else {
+          setSignupError('Ocurrió un error desconocido durante el registro.');
+        }
+      }
+    } else {
+      console.log('Errores de validación en el formulario final.');
+      // Optionally, provide user feedback here that there are errors
     }
     setIsLoading(false);
   };
 
   const nextStep = () => {
     let currentStepFields: (keyof typeof initialValues)[] = [];
-    let hasErrors = false;
+    let fieldsToTouch: React.Dispatch<React.SetStateAction<boolean>>[] = [];
 
     if (step === 1) {
       currentStepFields = ['email', 'password', 'username'];
-      setEmailTouched(true);
-      setPasswordTouched(true);
-      setUsernameTouched(true);
-      if (emailError || passwordError || usernameError) {
-        hasErrors = true;
-      }
+      fieldsToTouch = [setEmailTouched, setPasswordTouched, setUsernameTouched];
     } else if (step === 2) {
-      currentStepFields = ['firstName', 'secondName', 'firstLastName', 'secondLastName'];
-      setFirstNameTouched(true);
-      setSecondNameTouched(true);
-      setFirstLastNameTouched(true);
-      setSecondLastNameTouched(true);
-      if (firstNameError || secondNameError || firstLastNameError || secondLastNameError) {
-        hasErrors = true;
-      }
+      currentStepFields = ['firstName', 'firstLastName']; // Only required fields for step 2
+      fieldsToTouch = [setFirstNameTouched, setFirstLastNameTouched];
     }
 
-    // Re-run validation for current step fields to ensure errors state is updated
+    // Mark fields as touched for the current step
+    fieldsToTouch.forEach(setTouched => setTouched(true));
+
+    // Manually validate fields for the current step
+    let stepIsValid = true;
     currentStepFields.forEach(field => {
       const error = validationRules[field](values[field]);
       if (field === 'email') setEmailError(error || '');
       if (field === 'password') setPasswordError(error || '');
       if (field === 'username') setUsernameError(error || '');
       if (field === 'firstName') setFirstNameError(error || '');
-      if (field === 'secondName') setSecondNameError(error || '');
       if (field === 'firstLastName') setFirstLastNameError(error || '');
-      if (field === 'secondLastName') setSecondLastNameError(error || '');
-      if (error) hasErrors = true;
+      if (error) stepIsValid = false;
     });
 
-
-    if (!hasErrors) {
+    if (stepIsValid) {
       setStep(step + 1);
     } else {
       console.log(`Validation errors in step ${step}. Cannot proceed.`);
@@ -316,6 +350,10 @@ const SignUpForm = () => {
               {isLoading ? <Loading /> : 'Registrarse'}
             </Button>
           </>
+        )}
+
+        {signupError && (
+          <p className="text-red-500 text-sm mt-2 text-center">{signupError}</p>
         )}
       </form>
     </div>

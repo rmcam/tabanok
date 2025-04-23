@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import clsx from 'clsx';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { HashLink } from 'react-router-hash-link'; // Importar HashLink
 
 interface HeroProps {
   title: string;
@@ -9,13 +11,12 @@ interface HeroProps {
     variant: 'default' | 'secondary' | 'link' | 'destructive' | 'outline' | 'ghost';
     onClick?: () => void;
     action?: 'openSignupModal';
+    href?: string; // Añadir propiedad href
   }[];
   imageSrc: string;
   imageAlt: string;
   onComienzaAhoraClick?: () => void;
 }
-
-import { motion, useScroll, useTransform } from 'framer-motion';
 
 const HeroSection: React.FC<HeroProps> = ({
   title,
@@ -47,25 +48,51 @@ const HeroSection: React.FC<HeroProps> = ({
         <p className="text-xl mb-8 text-white">{description}</p>
         {buttons && (
           <div className="space-x-4 mt-8">
-            {buttons.map((button, buttonIndex) => (
-              <Button
-                key={buttonIndex}
-                variant={
-                  button.variant as
-                    | 'default'
-                    | 'secondary'
-                    | 'link'
-                    | 'destructive'
-                    | 'outline'
-                    | 'ghost'
-                }
-                onClick={
-                  button.action === 'openSignupModal' ? onComienzaAhoraClick : button.onClick
-                }
-              >
-                {button.label}
-              </Button>
-            ))}
+            {buttons.map((button, buttonIndex) => {
+              // Determinar el manejador de clic
+              const handleClick =
+                button.action === 'openSignupModal' ? onComienzaAhoraClick : button.onClick;
+
+              // Renderizar como HashLink si tiene href, de lo contrario como Button
+              if (button.href) {
+                return (
+                  <HashLink key={buttonIndex} to={button.href} smooth={true} duration={500}>
+                    <Button
+                      variant={
+                        button.variant as
+                          | 'default'
+                          | 'secondary'
+                          | 'link'
+                          | 'destructive'
+                          | 'outline'
+                          | 'ghost'
+                      }
+                      onClick={handleClick} // Mantener el manejador de clic para acciones adicionales si es necesario
+                    >
+                      {button.label}
+                    </Button>
+                  </HashLink>
+                );
+              } else {
+                return (
+                  <Button
+                    key={buttonIndex}
+                    variant={
+                      button.variant as
+                        | 'default'
+                        | 'secondary'
+                        | 'link'
+                        | 'destructive'
+                        | 'outline'
+                        | 'ghost'
+                    }
+                    onClick={handleClick}
+                  >
+                    {button.label}
+                  </Button>
+                );
+              }
+            })}
           </div>
         )}
       </div>

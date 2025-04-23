@@ -157,7 +157,9 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 *   Se refactorizaron las clases CSS comunes de los `FeatureCard` en una constante para mejorar la mantenibilidad.
 *   Se añadió un mecanismo de reintento para la carga de lecciones destacadas en caso de error, mostrando un botón para reintentar.
 *   Se añadieron enlaces de ejemplo (Política de Privacidad, Términos de Servicio, Contacto) en el pie de página.
+*   Se agregó una barra de navegación estática (`HomeNavbar.tsx`) a la página de inicio que es visible al cargar y permanece fija al desplazarse, conteniendo los botones "Iniciar Sesión" y "Registrarse".
+*   Se eliminó la acción directa de abrir el modal de registro del botón "Comienza ahora" en la sección principal, ya que esta funcionalidad ahora se maneja a través de la barra de navegación estática.
 
 ---
 
-Última actualización: 22/4/2025, 6:16 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 23/4/2025, 1:42 p. m. (America/Bogota, UTC-5:00)

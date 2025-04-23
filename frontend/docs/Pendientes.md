@@ -62,6 +62,7 @@
 - [ ] Falta de descripciones accesibles para iconos y elementos visuales.
 - [ ] Navegación por teclado funcional, pero mejorable en menús y diálogos.
 - [x] Formularios sin mensajes de error accesibles (`aria-invalid`, `aria-describedby`). (Se añadió feedback visual de error en los inputs). | ✅ |
+  - **Nota:** Se implementó un formulario de registro de varios pasos con validación por pasos y feedback visual de error en `SignupForm.tsx`.
 - [ ] Expandir la lógica de gamificación.
 - [ ] Configurar CI/CD.
 - [ ] Automatizar despliegues a producción.

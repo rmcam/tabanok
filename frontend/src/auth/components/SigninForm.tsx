@@ -1,8 +1,9 @@
-import { signin } from '@/auth/services/authService';
 import Loading from '@/components/common/Loading';
 import { Button, Input, Label } from '@/components/ui';
 import useFormValidation from '@/hooks/useFormValidation';
-import React, { FormEvent, useCallback } from 'react';
+import React, { FormEvent, useCallback, useState } from 'react';
+import useAuth from '../hooks/useAuth'; // Import useAuth hook
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 interface SigninFormProps {
   identifier: string;
@@ -19,28 +20,39 @@ const SigninForm: React.FC = () => {
   const { values, errors, isValid, handleChange } =
     useFormValidation<SigninFormProps>(initialValues);
 
+  const navigate = useNavigate(); // Get navigate function
+  const { handleSignin } = useAuth(navigate); // Use useAuth hook and get handleSignin
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
   const submitHandler = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      setIsLoading(true);
+      setApiError(null); // Clear previous errors
       try {
-        const authData = await signin({
+        // Use handleSignin from the hook
+        await handleSignin({
           identifier: values.identifier,
           password: values.password,
         });
-        console.log('Inicio de sesión exitoso:', authData);
-        // TODO: Guardar el token y redirigir al usuario
-      } catch (error: unknown) {
+        // Redirection is handled inside useAuth's handleSignin
+      } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
         console.error('Error al iniciar sesión:', error);
-        // TODO: Mostrar el error al usuario
+        // Intenta parsear el error para mostrar un mensaje más amigable
+        const errorMessage = error.response?.data?.message || error.message || 'Error al iniciar sesión. Inténtalo de nuevo.';
+        setApiError(errorMessage); // Muestra el mensaje de error parseado
+      } finally {
+        setIsLoading(false);
       }
     },
-    [values],
+    [values, handleSignin], // Add handleSignin to dependencies
   );
 
   return (
     <div className="flex flex-col items-center justify-center"> {/* Removed card styles */}
-      {/* Removed duplicated title: <div className="text-2xl font-bold mb-6 text-gray-800">Iniciar Sesión</div> */}
-      {errors && <p className="text-red-500 mb-4">Error</p>} {/* Added margin */}
+      {apiError && <p className="text-red-500 mb-4">{apiError}</p>} {/* Display API error */}
       <form onSubmit={submitHandler} className="w-full max-w-sm space-y-6"> {/* Increased space-y, Adjusted max-width */}
         <div className="grid gap-3"> {/* Increased gap */}
           <Label htmlFor="identifier" className="text-sm">
@@ -79,8 +91,8 @@ const SigninForm: React.FC = () => {
             </a>
           </div>
         </div>
-        <Button type="submit" className="w-full rounded-lg py-2" disabled={!isValid}>
-          {isValid ? <Loading /> : 'Iniciar Sesión'}
+        <Button type="submit" className="w-full rounded-lg py-2" disabled={!isValid || isLoading}>
+          {isLoading ? <Loading /> : 'Iniciar Sesión'}
         </Button>
       </form>
     </div>
