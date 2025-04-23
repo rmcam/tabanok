@@ -1,96 +1,94 @@
 import { useCallback } from 'react'; // Import useCallback
-import { signin, signup, forgotPassword, SignupData, refreshToken } from '../services/authService';
-import { AuthResponse, SigninData } from '../types/authTypes';
-import { removeToken, saveToken, saveRefreshToken, removeRefreshToken } from '../utils/authUtils';
+import { signin, signup, forgotPassword, SignupData, verifySession, signout } from '../services/authService'; // Importar verifySession y signout, eliminar refreshToken
+import { SigninData, User } from '../types/authTypes'; // Importar User, eliminar AuthResponse
+// Eliminar importaciones de authUtils
+// import { removeToken, saveToken, saveRefreshToken, removeRefreshToken } from '../utils/authUtils';
+// Eliminar importación de toast
+// import { toast } from 'sonner';
+
+// Eliminar función showToast
+// const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+//   if (type === 'success') {
+//     toast.success(message);
+//   } else if (type === 'error') {
+//     toast.error(message);
+//   } else {
+//     toast.info(message);
+//   }
+// };
 
 const useAuthService = () => {
-  const handleSignup = useCallback(async (data: SignupData) => { // Wrap in useCallback
+  const handleSignup = useCallback(async (data: SignupData): Promise<void> => { // Cambiar tipo de retorno a Promise<void>
     try {
-      const response = await signup({
+      await signup({ // Ya no esperamos respuesta con tokens
         email: data.email,
         password: data.password,
-        username: data.email, // Usar el email como nombre de usuario por defecto
+        username: data.username, // Usar el username proporcionado
         firstName: data.firstName,
         secondName: data.secondName,
         firstLastName: data.firstLastName,
         secondLastName: data.secondLastName,
       });
-      console.log('Respuesta del backend:', response); // Agregar log
-      saveToken(response.accessToken);
-      saveRefreshToken(response.refreshToken);
-      return response;
+      // El backend establece las cookies HttpOnly
     } catch (error) {
       console.error('Error al registrarse:', error);
-      // Verificar si el error tiene un mensaje específico del backend
-      if (error instanceof Error && error.message) {
-        alert(`Error al registrarse: ${error.message}`); // Mostrar mensaje al usuario
-      } else {
-        alert('Error al registrarse. Por favor, inténtalo de nuevo.'); // Mensaje genérico
-      }
+      // Los toasts ahora se manejan en AuthContext
       throw error;
     }
-  }, []); // Empty dependency array as there are no external dependencies
+  }, []);
 
-  const handleSignin = useCallback(async (data: SigninData) => { // Wrap in useCallback
+  const handleSignin = useCallback(async (data: SigninData): Promise<void> => { // Cambiar tipo de retorno a Promise<void>
     try {
-      const response: AuthResponse = await signin({
+      await signin({ // Ya no esperamos respuesta con tokens
         identifier: data.identifier,
         password: data.password,
       });
-      saveToken(response.accessToken);
-      saveRefreshToken(response.refreshToken);
-      return response;
+      // El backend establece las cookies HttpOnly
     } catch (error: unknown) {
       console.error('Error al iniciar sesión:', error);
-      // Verificar si el error tiene un mensaje específico del backend
-      if (error instanceof Error && error.message) {
-        alert(`Error al iniciar sesión: ${error.message}`); // Mostrar mensaje al usuario
-      } else {
-        alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.'); // Mensaje genérico
-      }
+      // Los toasts ahora se manejan en AuthContext
       throw error;
     }
-  }, []); // Empty dependency array
+  }, []);
 
-  const handleForgotPassword = useCallback(async (email: string) => { // Wrap in useCallback
+  const handleForgotPassword = useCallback(async (email: string): Promise<void> => { // Mantener tipo de retorno
     try {
       await forgotPassword(email);
-      alert('Se ha enviado un correo electrónico para restablecer tu contraseña.');
+      // Los toasts ahora se manejan en AuthContext
     } catch (error: unknown) {
-      if (error instanceof Error && error.message) {
-        alert(`Error al solicitar el restablecimiento de contraseña: ${error.message}`);
-      } else {
-        alert('Error al solicitar el restablecimiento de contraseña. Por favor, inténtalo de nuevo.');
-      }
+      console.error('Error al solicitar el restablecimiento de contraseña:', error);
+      // Los toasts ahora se manejan en AuthContext
       throw error;
     }
-  }, []); // Empty dependency array
+  }, []);
 
-  const handleRefreshToken = useCallback(async (refreshTokenValue: string) => { // Wrap in useCallback
+  const handleSignout = useCallback(async (): Promise<void> => { // Cambiar tipo de retorno a Promise<void>
     try {
-      const refreshedAuth = await refreshToken(refreshTokenValue);
-      saveToken(refreshedAuth.accessToken);
-      saveRefreshToken(refreshedAuth.refreshToken);
-      return refreshedAuth;
-    } catch (refreshError) {
-      console.error('Error refreshing token:', refreshError);
-      removeToken();
-      removeRefreshToken();
-      throw refreshError;
+      await signout(); // Llama al endpoint de logout en el backend
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      // Los toasts ahora se manejan en AuthContext
+      throw error;
     }
-  }, []); // Empty dependency array
+  }, []);
 
-  const handleSignout = useCallback(() => { // Wrap in useCallback
-    removeToken();
-    removeRefreshToken();
-  }, []); // Empty dependency array
+  const handleVerifySession = useCallback(async (): Promise<User | null> => { // Nueva función para verificar sesión
+    try {
+      const user = await verifySession();
+      return user;
+    } catch (error) {
+      console.error('Error verifying session:', error);
+      throw error;
+    }
+  }, []);
 
   return {
     handleSignup,
     handleSignin,
     handleForgotPassword,
-    handleRefreshToken,
+    // handleRefreshToken ya no se exporta ni se usa directamente en AuthContext
     handleSignout,
+    verifySession: handleVerifySession, // Exportar la nueva función con un nombre más descriptivo para el contexto
   };
 };
 

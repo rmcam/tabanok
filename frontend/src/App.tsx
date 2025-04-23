@@ -1,46 +1,52 @@
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import useAuth from './auth/hooks/useAuth';
-import PageContainer from './components/common/PageContainer';
+import React, { lazy, Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom'; // Eliminar useNavigate
+import { useAuth } from './auth/hooks/useAuth'; // Importar useAuth desde el hook
 import PrivateRoute from './components/common/PrivateRoute';
-import Dashboard from './components/dashboard/Dashboard';
-import TeacherDashboard from './components/dashboard/TeacherDashboard';
+import AuthenticatedLayout from './components/layout/AuthenticatedLayout'; // Importar el nuevo layout
+// Importaciones dinámicas para code-splitting
+const Dashboard = lazy(() => import('./components/dashboard/Dashboard'));
+const TeacherDashboard = lazy(() => import('./components/dashboard/TeacherDashboard'));
 import HomePage from './components/home/HomePage';
-import { AppSidebar } from './components/navigation/app-sidebar';
 import { SidebarProvider } from './components/ui/sidebar';
 // import { SidebarTrigger } from './components/ui/sidebar';
 
 function App() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { user } = useAuth(navigate);
-  const showSidebar = location.pathname !== '/' && user;
+  const { loading } = useAuth(); // Eliminar user y el argumento navigate
+
+  // Mostrar un indicador de carga o null mientras se verifica la autenticación inicial
+  if (loading) {
+    return <div>Cargando autenticación...</div>; // O un spinner, etc.
+  }
 
   return (
     <SidebarProvider>
-      {showSidebar && <AppSidebar />}
-      <PageContainer>
-        <div className="flex-1 p-4">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <AuthenticatedLayout> {/* Usar el layout autenticado */}
+                <Suspense fallback={<div>Cargando contenido...</div>}> {/* Mover Suspense aquí */}
                   <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/teacher-dashboard"
-              element={
-                <PrivateRoute>
+                </Suspense>
+              </AuthenticatedLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/teacher-dashboard"
+          element={
+            <PrivateRoute>
+              <AuthenticatedLayout> {/* Usar el layout autenticado */}
+                <Suspense fallback={<div>Cargando contenido...</div>}> {/* Mover Suspense aquí */}
                   <TeacherDashboard />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-        </div>
-      </PageContainer>
+                </Suspense>
+              </AuthenticatedLayout>
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </SidebarProvider>
   );
 }

@@ -93,8 +93,10 @@ src/
 ├── lib/            # Lógica de negocio genérica
 ├── hooks/          # Hooks React genéricos
 ├── auth/          # Autenticación
-│   ├── hooks/     # Hooks React para autenticación
-│   │   ├── useAuth.ts # Hook para la autenticación
+│   ├── context/   # Contexto de autenticación
+│   │   └── authContext.ts # Contexto y tipo AuthContextType
+│   │   └── authProvider.tsx # Proveedor AuthProvider
+│   ├── hooks/     # Hooks React para autenticación (useAuthService, useAuth)
 │   │   └── useAuthService.ts # Hook para el servicio de autenticación
 ├── styles/         # Estilos CSS
 └── ...             # Otros archivos
@@ -105,9 +107,9 @@ public/             # Archivos estáticos
 ### Convenciones
 
 - **Alias `@/`**: configurado en `vite.config.ts` para importar desde la raíz del frontend.
-- **Componentes UI**: deben ser lo más genéricos posible y ubicarse en `components/ui/`.
+- **Componentes UI**: deben ser lo más genérico posible y ubicarse en `components/ui/`.
 - **Componentes específicos**: se agrupan por dominio funcional.
-- **Hooks**: generales o específicos, organizados en subcarpetas.
+- **Hooks**: generales o específicos, organizados en subcarpetas. El hook `useAuth` ahora se exporta desde el contexto de autenticación.
 - **Lógica de negocio**: en `lib/`, separada por dominio.
 
 ### Ventajas
@@ -124,7 +126,7 @@ El frontend consume el backend mediante un **cliente Axios centralizado** ubicad
 
 ### Hooks para consumir el backend
 
-- `src/auth/hooks/useAuth.ts` — Autenticación
+- `src/auth/hooks/useAuth.ts` (a través del hook `useAuth`) — Autenticación
 - `src/features/dictionary/hooks/` — Diccionario
 - `src/features/gamification/hooks/useGamification.ts` - Gamificación
 
@@ -167,12 +169,12 @@ The `AppSidebar` component in `src/components/navigation/app-sidebar.tsx` define
 
 ---
 
-Última actualización: 21/4/2025, 10:50:00 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 23/4/2025, 2:28:00 p. m. (America/Bogota, UTC-5:00)
 
--   `SignupForm.tsx`: Implementa un formulario de varios pasos con **indicador de progreso** y **validación por pasos**. Utiliza el hook `useFormValidation` y ahora incluye **feedback visual de error** en los inputs.
--   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation` y ahora incluye **feedback visual de error** en los inputs.
--   `ForgotPasswordForm.tsx`: Implementa un formulario con validación básica y ahora incluye **feedback visual de error** en el input.
+-   `SignupForm.tsx`: Implementa un formulario de varios pasos con **indicador de progreso** y **validación por pasos**. Utiliza el hook `useFormValidation`, incluye **feedback visual de error** en los inputs, y ahora utiliza el hook `useAuth` para realizar la operación de registro y manejar la navegación. Se ha refactorizado para **eliminar estados locales redundantes** y utilizar el estado de carga del contexto (`signingUp`).
+-   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`, incluye **feedback visual de error** en los inputs, y ahora utiliza el hook `useAuth` para realizar la operación de inicio de sesión y manejar la navegación. Se ha refactorizado para utilizar el estado de carga del contexto (`signingIn`).
+-   `ForgotPasswordForm.tsx`: Implementa un formulario con validación básica, incluye **feedback visual de error** en el input, y ahora utiliza el hook `useAuth` para realizar la operación de recuperación de contraseña. Se ha refactorizado para utilizar el estado de carga del contexto (`requestingPasswordReset`).
 
 ---
 
-Última actualización: 23/4/2025, 2:15:00 a. m. (America/Bogota, UTC-5:00)
+Última actualización: 23/4/2025, 3:35:00 p. m. (America/Bogota, UTC-5:00)

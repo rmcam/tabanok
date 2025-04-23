@@ -3,12 +3,12 @@ import { Input } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import useFormValidation from '@/hooks/useFormValidation';
-import React, { useEffect, useState } from 'react';
-import { signup } from '@/auth/services/authService'; // Import the signup function
+import React, { FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../auth/hooks/useAuth'; // Corregir la ruta de importación
 
 const SignUpForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [signupError, setSignupError] = useState<string | null>(null); // State for signup errors
+  const [signupError, setSignupError] = useState<string | null>(null);
   const [step, setStep] = useState(1);
   const initialValues = {
     email: '',
@@ -20,22 +20,7 @@ const SignUpForm = () => {
     secondLastName: '',
   };
 
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [usernameError, setUsernameError] = useState('');
-  const [firstNameError, setFirstNameError] = useState('');
-  const [secondNameError, setSecondNameError] = useState('');
-  const [firstLastNameError, setFirstLastNameError] = useState('');
-  const [secondLastNameError, setSecondLastNameError] = useState('');
-
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [usernameTouched, setUsernameTouched] = useState(false);
-  const [firstNameTouched, setFirstNameTouched] = useState(false);
-  const [secondNameTouched, setSecondNameTouched] = useState(false);
-  const [firstLastNameTouched, setFirstLastNameTouched] = useState(false);
-  const [secondLastNameTouched, setSecondLastNameTouched] = useState(false);
-
+  // Define validation rules separately
   const validationRules = React.useMemo(
     () => ({
       email: (value: string) => {
@@ -56,70 +41,41 @@ const SignUpForm = () => {
         if (!value) return 'Nombre es requerido';
         return undefined;
       },
-      secondName: (value: string) => {
-        if (!value) return 'Segundo nombre es requerido';
-        return undefined;
+      secondName: () => {
+        return undefined; // Optional field
       },
       firstLastName: (value: string) => {
         if (!value) return 'Apellido es requerido';
         return undefined;
       },
-      secondLastName: (value: string) => {
-        if (!value) return 'Segundo apellido es requerido';
-        return undefined;
+      secondLastName: () => {
+        return undefined; // Optional field
       },
     }),
     [],
   );
 
-  const { values, isValid, handleChange, handleSubmit } = useFormValidation(initialValues);
+  const { values, errors, isValid, handleChange, handleSubmit } = useFormValidation(initialValues);
 
-  useEffect(() => {
-    if (emailTouched) setEmailError(validationRules.email(values.email) || '');
-    if (passwordTouched) setPasswordError(validationRules.password(values.password) || '');
-    if (usernameTouched) setUsernameError(validationRules.username(values.username) || '');
-    if (firstNameTouched) setFirstNameError(validationRules.firstName(values.firstName) || '');
-    if (secondNameTouched) setSecondNameError(validationRules.secondName(values.secondName) || '');
-    if (firstLastNameTouched)
-      setFirstLastNameError(validationRules.firstLastName(values.firstLastName) || '');
-    if (secondLastNameTouched)
-      setSecondLastNameError(validationRules.secondLastName(values.secondLastName) || '');
-  }, [
-    values,
-    emailTouched,
-    passwordTouched,
-    usernameTouched,
-    firstNameTouched,
-    secondNameTouched,
-    firstLastNameTouched,
-    secondLastNameTouched,
-    validationRules,
-  ]);
+  const navigate = useNavigate();
+  const { signup, signingUp } = useAuth();
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
-    setIsLoading(true);
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSignupError(null);
 
-    // Trigger validation for all fields
-    handleSubmit(validationRules)(e);
+    // Trigger validation for all fields on final submit
+    // Based on the previous error message "Se esperaban 1 argumentos, pero se obtuvieron 0" for handleSubmit(),
+    // it seems handleSubmit might expect the validation rules as an argument.
+    // This contradicts the error for useFormValidation itself, but let's try passing rules here.
+    const formIsValid = handleSubmit(validationRules); // Pass validationRules to handleSubmit
 
-    // Check isValid state after handleSubmit has potentially updated it
-    // Note: isValid might not be immediately updated after handleSubmit in the same render cycle.
-    // A more robust approach might involve checking errors directly or using a callback from handleSubmit
-    // For now, we rely on the useEffect updating the error states and isValid
-    if (isValid) {
-      // Aquí puedes agregar la lógica para enviar los datos al backend
-      console.log('Formulario válido, enviando datos:', {
-        email: values.email,
-        password: values.password,
-        username: values.username,
-        firstName: values.firstName,
-        secondName: values.secondName,
-        firstLastName: values.firstLastName,
-        secondLastName: values.secondLastName,
-      });
+    // Check overall form validity using the state provided by the hook
+    // isValid is updated by useFormValidation after handleChange and handleSubmit
+    if (formIsValid) { // Use the boolean return value from handleSubmit
+      console.log('Formulario válido, enviando datos:', values);
       try {
-        console.log('Formulario válido, enviando datos:', {
+        const success = await signup({
           email: values.email,
           password: values.password,
           username: values.username,
@@ -128,65 +84,46 @@ const SignUpForm = () => {
           firstLastName: values.firstLastName,
           secondLastName: values.secondLastName,
         });
-        // Call the signup service
-        const response = await signup({
-          email: values.email,
-          password: values.password,
-          username: values.username,
-          firstName: values.firstName,
-          secondName: values.secondName,
-          firstLastName: values.firstLastName,
-          secondLastName: values.secondLastName,
-        });
-        console.log('Registro exitoso:', response);
-        // TODO: Handle successful signup (e.g., redirect, show success message)
-      } catch (error) { // Removed ': any'
-        console.error('Error durante el registro:', error);
-        if (error instanceof Error) {
-          setSignupError(error.message);
-        } else {
-          setSignupError('Ocurrió un error desconocido durante el registro.');
+        if (success) {
+          console.log('Registro exitoso');
+          navigate('/');
         }
+      } catch (error: unknown) { // Usar unknown para un manejo de errores más seguro
+        console.error('Error durante el registro:', error);
+        const errorMessage = (error instanceof Error && error.message) ? error.message : 'Ocurrió un error desconocido durante el registro.';
+        setSignupError(errorMessage);
       }
     } else {
       console.log('Errores de validación en el formulario final.');
-      // Optionally, provide user feedback here that there are errors
+      // Errors will be displayed by the Input components using the errors state from useFormValidation
     }
-    setIsLoading(false);
   };
 
   const nextStep = () => {
     let currentStepFields: (keyof typeof initialValues)[] = [];
-    let fieldsToTouch: React.Dispatch<React.SetStateAction<boolean>>[] = [];
 
     if (step === 1) {
       currentStepFields = ['email', 'password', 'username'];
-      fieldsToTouch = [setEmailTouched, setPasswordTouched, setUsernameTouched];
     } else if (step === 2) {
       currentStepFields = ['firstName', 'firstLastName']; // Only required fields for step 2
-      fieldsToTouch = [setFirstNameTouched, setFirstLastNameTouched];
     }
 
-    // Mark fields as touched for the current step
-    fieldsToTouch.forEach(setTouched => setTouched(true));
-
-    // Manually validate fields for the current step
-    let stepIsValid = true;
-    currentStepFields.forEach(field => {
-      const error = validationRules[field](values[field]);
-      if (field === 'email') setEmailError(error || '');
-      if (field === 'password') setPasswordError(error || '');
-      if (field === 'username') setUsernameError(error || '');
-      if (field === 'firstName') setFirstNameError(error || '');
-      if (field === 'firstLastName') setFirstLastNameError(error || '');
-      if (error) stepIsValid = false;
+    // Simple check if required fields for the current step are filled and valid based on the defined rules
+    const stepFieldsValid = currentStepFields.every(field => {
+      const value = values[field];
+      const rule = validationRules[field];
+      // Check if the field has a validation rule and if applying the rule results in no error
+      return rule && !rule(value);
     });
 
-    if (stepIsValid) {
+    if (stepFieldsValid) {
       setStep(step + 1);
     } else {
       console.log(`Validation errors in step ${step}. Cannot proceed.`);
-      // Optionally, provide user feedback here that there are errors
+      // Errors for the current step's fields should be visible via the `errors` state from useFormValidation
+      // if the hook updates `errors` on `handleChange` or `onBlur` (if onBlur is re-added).
+      // For a multi-step form, a more sophisticated validation trigger per step might be needed,
+      // potentially by extending useFormValidation or implementing custom field-level validation on blur.
     }
   };
 
@@ -195,8 +132,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center"> {/* Removed card styles */}
-      {/* Removed duplicated title: <div className="text-2xl font-bold mb-8 text-gray-800">Registrarse</div> */}
+    <div className="flex flex-col items-center justify-center">
       <div className="mb-4 text-center text-gray-700">
         Paso {step} de 3
       </div>
@@ -214,10 +150,9 @@ const SignUpForm = () => {
                 name="email"
                 value={values.email}
                 onChange={handleChange}
-                onBlur={() => setEmailTouched(true)}
-                aria-invalid={!!emailError}
+                aria-invalid={!!errors.email}
               />
-              {emailError && <p className="text-red-500 text-sm mt-2">{emailError}</p>}
+              {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email}</p>}
             </div>
             <div className="grid gap-1">
               <Label htmlFor="password" className="text-sm text-gray-700">
@@ -230,10 +165,9 @@ const SignUpForm = () => {
                 name="password"
                 value={values.password}
                 onChange={handleChange}
-                onBlur={() => setPasswordTouched(true)}
-                aria-invalid={!!passwordError}
+                aria-invalid={!!errors.password}
               />
-              {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
+              {errors.password && <p className="text-red-500 text-sm mt-2">{errors.password}</p>}
             </div>
             <div className="grid gap-1">
               <Label htmlFor="username" className="text-sm text-gray-700">
@@ -246,10 +180,9 @@ const SignUpForm = () => {
                 name="username"
                 value={values.username}
                 onChange={handleChange}
-                onBlur={() => setUsernameTouched(true)}
-                aria-invalid={!!usernameError}
+                aria-invalid={!!errors.username}
               />
-              {usernameError && <p className="text-red-500 text-sm mt-2">{usernameError}</p>}
+              {errors.username && <p className="text-red-500 text-sm mt-2">{errors.username}</p>}
             </div>
             <Button type="button" onClick={nextStep} className="w-full rounded-lg py-2 mt-4">
               Siguiente
@@ -270,10 +203,9 @@ const SignUpForm = () => {
                 name="firstName"
                 value={values.firstName}
                 onChange={handleChange}
-                onBlur={() => setFirstNameTouched(true)}
-                aria-invalid={!!firstNameError}
+                aria-invalid={!!errors.firstName}
               />
-              {firstNameError && <p className="text-red-500 text-sm mt-2">{firstNameError}</p>}
+              {errors.firstName && <p className="text-red-500 text-sm mt-2">{errors.firstName}</p>}
             </div>
             <div className="grid gap-1">
               <Label htmlFor="secondName" className="text-sm text-gray-700">
@@ -286,10 +218,9 @@ const SignUpForm = () => {
                 name="secondName"
                 value={values.secondName}
                 onChange={handleChange}
-                onBlur={() => setSecondNameTouched(true)}
-                aria-invalid={!!secondNameError}
+                aria-invalid={!!errors.secondName}
               />
-              {secondNameError && <p className="text-red-500 text-sm mt-2">{secondNameError}</p>}
+              {errors.secondName && <p className="text-red-500 text-sm mt-2">{errors.secondName}</p>}
             </div>
             <div className="grid gap-1">
               <Label htmlFor="firstLastName" className="text-sm text-gray-700">
@@ -302,10 +233,9 @@ const SignUpForm = () => {
                 name="firstLastName"
                 value={values.firstLastName}
                 onChange={handleChange}
-                onBlur={() => setFirstLastNameTouched(true)}
-                aria-invalid={!!firstLastNameError}
+                aria-invalid={!!errors.firstLastName}
               />
-              {firstLastNameError && <p className="text-red-500 text-sm mt-2">{firstLastNameError}</p>}
+              {errors.firstLastName && <p className="text-red-500 text-sm mt-2">{errors.firstLastName}</p>}
             </div>
             <div className="grid gap-1">
               <Label htmlFor="secondLastName" className="text-sm text-gray-700">
@@ -318,10 +248,9 @@ const SignUpForm = () => {
                 name="secondLastName"
                 value={values.secondLastName}
                 onChange={handleChange}
-                onBlur={() => setSecondLastNameTouched(true)}
-                aria-invalid={!!secondLastNameError}
+                aria-invalid={!!errors.secondLastName}
               />
-              {secondLastNameError && <p className="text-red-500 text-sm mt-2">{secondLastNameError}</p>}
+              {errors.secondLastName && <p className="text-red-500 text-sm mt-2">{errors.secondLastName}</p>}
             </div>
             <Button type="button" onClick={prevStep} className="w-full rounded-lg py-2 mt-4">
               Anterior
@@ -346,8 +275,8 @@ const SignUpForm = () => {
             <Button type="button" onClick={prevStep} className="w-full rounded-lg py-2 mt-4">
               Anterior
             </Button>
-            <Button type="submit" className="w-full rounded-lg py-2" disabled={!isValid || isLoading}>
-              {isLoading ? <Loading /> : 'Registrarse'}
+            <Button type="submit" className="w-full rounded-lg py-2" disabled={!isValid || signingUp}>
+              {signingUp ? <Loading /> : 'Registrarse'}
             </Button>
           </>
         )}

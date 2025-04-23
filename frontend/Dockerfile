@@ -1,20 +1,17 @@
 # Etapa de build
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages ./packages
-COPY frontend/package.json ./frontend/package.json
-COPY frontend/tsconfig.json ./frontend/tsconfig.json
-COPY frontend/tsconfig.app.json ./frontend/tsconfig.app.json
-COPY frontend/tsconfig.node.json ./frontend/tsconfig.node.json
-COPY frontend/vite.config.ts ./frontend/vite.config.ts
-COPY frontend/index.html ./frontend/index.html
-COPY frontend/src ./frontend/src
-COPY frontend/public ./frontend/public
 
-RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
+# Usar Corepack para pnpm
+RUN corepack enable && pnpm install --no-frozen-lockfile
+
+# Copiar todo el directorio frontend
+COPY frontend ./frontend
+
 RUN pnpm --filter frontend build
 
 # Etapa de producción: nginx para servir archivos estáticos

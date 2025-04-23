@@ -63,6 +63,8 @@ El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cam
 - **Sidebar desplegable implementado:** Se agregó un sidebar desplegable que aparece en todos los sitios excepto en la ruta "/". Se añadió un buscador al sidebar utilizando el componente Input. Se añadió un sistema de notificaciones al dashboard utilizando el componente Sonner.
 - **Mejoras en el Dashboard:** Se modificó el dashboard para darle un aspecto profesional pero llamativo para los niños, incluyendo un fondo degradado, un título más llamativo y un gráfico de barras para las estadísticas. Se añadieron breadcrumbs para facilitar la navegación dentro del dashboard.
 - **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha solucionado el error 500 al obtener los temas. Se han definido modelos de datos JSON para el panel del docente y multimedia, mejorando la gestión de datos y la integración con el backend. Se han añadido nuevos endpoints para la gestión de estos modelos.
+- **Implementación de HttpOnly cookies:** Los tokens de autenticación (`accessToken` y `refreshToken`) ahora se almacenan en cookies HttpOnly en el backend para mejorar la seguridad. La implementación en el frontend para utilizar estas cookies en lugar de `localStorage` está completa.
+- **Mejoras en el módulo de autenticación del frontend:** Se integró `sonner` para notificaciones, se mejoró el manejo de errores en los servicios y contexto, y se unificó el manejo de errores en el `AuthContext` para lanzar excepciones en lugar de retornar booleanos en caso de fallo. Se actualizaron los componentes de formulario (`SigninForm`, `SignupForm`, `ForgotPasswordForm`) para manejar estos errores.
 - **Análisis de accesibilidad del carrusel de testimonios:** Se verificó que el componente `Carousel` base soporta navegación con teclado y botones. La funcionalidad de autoplay está presente (usando `data-autoplay`), pero no hay controles explícitos de pausa/reproducción integrados en el componente actual. Añadir estos controles requeriría desarrollo adicional.
 - **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
 - **Se han actualizado las dependencias del proyecto, incluyendo `react-day-picker`, `date-fns` y `vite`.**
@@ -113,8 +115,8 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Se eliminó el componente `src/components/common/CommonContent.tsx` ya que no se estaba utilizando en el proyecto.
 - Se movieron los hooks de `src/hooks/auth/` a `src/auth/hooks/`.
 - Rutas públicas y privadas gestionadas con React Router y el componente `PrivateRoute`. La autenticación por el momento funciona, hay que revisar a detalle.
-- Autenticación y manejo de roles implementados completamente.
-- La información del usuario, el token de autenticación y los roles se guardan en el almacenamiento local.
+- **Autenticación y manejo de roles implementados completamente utilizando un Contexto de React (`AuthContext`) y un Proveedor (`AuthProvider`).**
+- La información del usuario, el token de autenticación y los roles ahora se gestionan a través de cookies HttpOnly en el backend y se obtienen mediante la verificación de sesión.
 - El componente `PrivateRoute` verifica si el usuario está autenticado y si tiene el rol necesario para acceder a la ruta, devolviendo solo los hijos autorizados.
 - Se ha agregado una ruta para la página "unauthorized".
 - El componente `App` verifica si el usuario está autenticado al cargar la aplicación.

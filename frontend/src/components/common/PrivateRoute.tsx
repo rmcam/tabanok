@@ -1,18 +1,17 @@
 import React from 'react';
-import useAuth from '../../auth/hooks/useAuth';
-import { useNavigate, Navigate, useLocation } from 'react-router-dom';
-import { User } from '../../auth/types/authTypes';
+import { Navigate, useLocation } from 'react-router-dom'; // Eliminar useNavigate
+import { useAuth } from '../../auth/hooks/useAuth'; // Import useAuth desde el hook
 import Loading from './Loading';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
-  requiredRoles?: string[];
+  requiredRoles?: string[]; // Agregar requiredRoles de nuevo
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, requiredRoles }) => {
-  const navigate = useNavigate();
+  // Incluir requiredRoles en las props
   const location = useLocation();
-  const { user, loading } = useAuth(navigate);
+  const { user, loading } = useAuth(); // Eliminar el argumento navigate
 
   if (loading) {
     return <Loading />;
@@ -22,7 +21,8 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, requiredRoles }) 
     return <Navigate to="/" state={{ from: location, showSigninModal: true }} />;
   }
 
-  if (requiredRoles && user && !requiredRoles.includes((user as User).role)) {
+  // Descomentar la lógica de verificación de roles
+  if (requiredRoles && user && !requiredRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" />;
   }
 

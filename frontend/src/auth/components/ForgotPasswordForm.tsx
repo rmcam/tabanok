@@ -1,37 +1,45 @@
 import { Input } from '@/components/ui';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import Loading from '@/components/common/Loading'; // Import Loading component
 import React, { useState } from 'react';
-import useAuth, { AuthContextType } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const ForgotPasswordForm: React.FC = () => {
   const [email, setEmail] = useState('');
-  const navigate = useNavigate();
-  const { handleForgotPassword } = useAuth(navigate) as AuthContextType;
-  const [error, setError] = useState<string | null>(null);
+  // Use useAuth hook from context and get forgotPassword and requestingPasswordReset state
+  const { forgotPassword, requestingPasswordReset } = useAuth();
+  const [localError, setLocalError] = useState<string | null>(null); // Use localError for basic email validation
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setLocalError(null); // Clear previous local errors
+
     if (!email) {
-      setError('Por favor, ingresa tu correo electrónico.');
+      setLocalError('Por favor, ingresa tu correo electrónico.');
       return;
     }
-    await handleForgotPassword(email).then(() => {
-      console.log("Email sent successfully");
-    }).catch((error) => {
-      console.error("Error sending email:", error);
-      setError("Failed to send email. Please try again.");
-    });
+
+    // Basic email format validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setLocalError('Por favor, ingresa un correo electrónico válido.');
+      return;
+    }
+
+    try {
+      await forgotPassword(email);
+      // Success message is handled by showToast in AuthContext
+    } catch (error: unknown) { // Usar unknown para un manejo de errores más seguro
+      // Error message is handled by showToast in AuthContext
+      console.error("Error sending email:", error); // Keep console log for debugging
+    }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center"> {/* Removed card styles */}
-      {/* Removed duplicated title: <div className="text-2xl font-bold mb-6 text-gray-800">Recuperar Contraseña</div> */}
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6"> {/* Increased space-y, Adjusted max-width */}
-        <div className="grid gap-3"> {/* Increased gap */}
-          <Label htmlFor="email" className="text-sm text-gray-700"> {/* Adjusted text color */}
+    <div className="flex flex-col items-center justify-center">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
+        <div className="grid gap-3">
+          <Label htmlFor="email" className="text-sm text-gray-700">
             Correo electrónico
           </Label>
           <Input
@@ -40,13 +48,14 @@ const ForgotPasswordForm: React.FC = () => {
             placeholder="Ingresa tu correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
-            className={`w-full rounded-lg border ${error ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
+            required // Keep HTML required for basic browser validation
+            className={`w-full rounded-lg border ${localError ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50`}
+            aria-invalid={!!localError} // Indicate invalid state based on local error
           />
         </div>
-        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-        <Button type="submit" className="w-full rounded-lg py-2">
-          Enviar enlace de restablecimiento
+        {localError && <p className="text-red-500 text-sm mt-1">{localError}</p>} {/* Display local validation error */}
+        <Button type="submit" className="w-full rounded-lg py-2" disabled={requestingPasswordReset}>
+          {requestingPasswordReset ? <Loading /> : 'Enviar enlace de restablecimiento'} {/* Use context loading state */}
         </Button>
       </form>
     </div>
