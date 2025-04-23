@@ -57,4 +57,4 @@ const useFormValidation = <T extends { [key: string]: string }>(initialValues: T
   };
 };
 
-export default useFormValidation;
+export { useFormValidation as default, UseFormValidationResult };

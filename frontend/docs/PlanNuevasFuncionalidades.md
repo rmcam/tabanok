@@ -11,6 +11,7 @@
 - `/teacher/students` — Lista y progreso de estudiantes.
 - `/teacher/activities` — Gestión de actividades y recursos.
 - `/teacher/reports` — Reportes de avance y logros.
+- `/lesson/featured` - Endpoint para obtener lecciones destacadas.
 
 **Componentes clave:**
 - TeacherDashboard
@@ -48,11 +49,32 @@
 
 ## 3. Integración Multimedia
 
-**Propuesta:**
+**Estado Actual:** Se ha implementado la lógica de backend para la gestión de multimedia, incluyendo seguridad y soporte para almacenamiento en la nube.
+
+**Implementación Backend:**
+- Se creó el módulo `MultimediaModule` con entidad, DTOs, controlador y servicio.
+- Se implementaron endpoints REST en `/multimedia` para operaciones CRUD básicas sobre los metadatos de multimedia.
+- Se añadió un endpoint `POST /multimedia/upload` para la subida de archivos.
+- **Se implementó lógica de seguridad robusta (autenticación JWT y roles `ADMIN`, `TEACHER`) para los endpoints de subida y acceso (`/multimedia` y `/multimedia/file/:filename`).**
+- Se implementó validación básica de tamaño (máx 10MB) y tipo de archivo (imágenes, video, audio) en la subida.
+- **Se refactorizó la lógica de almacenamiento de archivos al `MultimediaService`.**
+- **Se añadió soporte básico para almacenamiento configurable (local o AWS S3) a través de variables de entorno (`STORAGE_PROVIDER`, `STORAGE_BUCKET`, `STORAGE_REGION`, `STORAGE_ACCESS_KEY`, `STORAGE_SECRET_KEY`).**
+- Los metadatos del archivo subido (nombre, ruta, tipo, tamaño) se guardan en la base de datos.
+- **El endpoint `GET /multimedia/file/:filename` ahora maneja la obtención de archivos desde el proveedor de almacenamiento configurado (sirve localmente o redirige a URL firmada de S3).**
+
+**Tareas Pendientes:**
+- [x] Completar la implementación de la lógica de eliminación de archivos en AWS S3 en el `MultimediaService`.
+- [x] Mejorar el manejo de errores en la subida y acceso a archivos (tanto local como S3).
+- [x] Mejorar la obtención de archivos desde S3 (obtención de URLs firmadas implementada, manejo de streams pendiente si es necesario).
+- [x] Implementar validación de roles más granular.
+- [ ] Implementar la lógica en el frontend para la subida y visualización de archivos multimedia.
+- [ ] Usar un componente `MultimediaPlayer` reutilizable en el frontend.
+- [ ] Desarrollar la galería accesible en el frontend.
+- [ ] Escribir pruebas unitarias y de integración.
+
+**Propuesta Original:**
 - Permitir subir y visualizar archivos de audio (pronunciación, canciones), video (cuentos, rituales) e imágenes (arte, símbolos).
-- Usar un componente `MultimediaPlayer` reutilizable.
 - Soporte para formatos: mp3, wav, mp4, webm, jpg, png, svg.
-- Backend: endpoints REST para gestión de archivos multimedia (subida, consulta, borrado).
 - Frontend: galería accesible, reproductor integrado, descripciones y metadatos.
 
 ---
@@ -69,3 +91,7 @@
 ---
 
 _Este documento sirve como hoja de ruta para las próximas funcionalidades clave del proyecto Tabanok. Ver siguientes pasos en [`docs/Pendientes.md`](./Pendientes.md)._
+
+---
+
+Última actualización: 22/4/2025, 12:18:24 a. m. (America/Bogota, UTC-5:00)

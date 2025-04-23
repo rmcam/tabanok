@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SignupData, SigninData } from '../types/authTypes';
 import { getToken, isAuthenticated, getRefreshToken } from '../utils/authUtils';
 import useAuthService from './useAuthService';
@@ -23,10 +23,11 @@ const useAuth = (navigate: (path: string) => void) => {
   const [loading, setLoading] = useState(true);
   const { handleSignup: signupService, handleSignin: signinService, handleForgotPassword: forgotPasswordService, handleRefreshToken, handleSignout: signoutService } = useAuthService();
 
-   const handleSignout = () => {
+   const handleSignout = useCallback(() => {
     signoutService();
     setUser(null);
-  };
+  }, [signoutService]);
+  
 
   useEffect(() => {
     const checkAuth = async () => {

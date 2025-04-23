@@ -15,15 +15,17 @@ interface ModalProps {
   title: string;
   description?: string;
   children: React.ReactNode;
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode; // Make trigger optional
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onOpenChange, title, description, children, trigger }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+      {trigger && ( // Conditionally render DialogTrigger
+        <DialogTrigger asChild>
+          {trigger}
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

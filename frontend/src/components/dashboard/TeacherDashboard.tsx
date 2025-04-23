@@ -1,8 +1,9 @@
-import React from 'react';
-import ContentManager from './components/ContentManager';
-import StudentProgress from './components/StudentProgress';
 import ActivityCreator from './components/ActivityCreator';
+import ContentManager from './components/ContentManager';
+import MultimediaGallery from './components/MultimediaGallery';
+import MultimediaUploadForm from './components/MultimediaUploadForm';
 import ReportViewer from './components/ReportViewer';
+import StudentProgress from './components/StudentProgress';
 
 const TeacherDashboard = () => {
   return (
@@ -12,6 +13,10 @@ const TeacherDashboard = () => {
       <StudentProgress />
       <ActivityCreator />
       <ReportViewer />
+      <hr /> {/* Separador visual */}
+      <MultimediaUploadForm />
+      <hr /> {/* Separador visual */}
+      <MultimediaGallery />
     </div>
   );
 };

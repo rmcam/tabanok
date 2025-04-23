@@ -1,4 +1,4 @@
-    # Pendientes
+# Pendientes
 
 ---
 
@@ -34,7 +34,11 @@
 - Implementar la lógica para la gestión de categorías y etiquetas en el Panel Docente.
 - Mejorar la interfaz de usuario del formulario en el Panel Docente.
 - Refactorizar los componentes en `src/components` para mejorar la organización y seguir las buenas prácticas.
-- Actualizar la documentación para reflejar los cambios en el componente `HomePage`.
+- [x] Actualizar la documentación para reflejar los cambios en el componente `HomePage`. | ✅ |
+- Mejorar el contraste entre el texto y la imagen de fondo en la Hero Section.
+- [x] Implementar un carrusel interactivo en la HeroSection para mostrar diferentes tarjetas de `heroCardsData` con transiciones suaves y controles de navegación. | ✅ |
+- Añadir un efecto de "card hover" a las Lecciones Destacadas para hacerlas más interactivas.
+- Implementar un efecto de desplazamiento suave al hacer clic en los enlaces "Ver lección" y "Ver todas las lecciones" utilizando `react-router-hash-link`.
 
 ## Estado de cumplimiento
 
@@ -57,7 +61,7 @@
 
 - [ ] Falta de descripciones accesibles para iconos y elementos visuales.
 - [ ] Navegación por teclado funcional, pero mejorable en menús y diálogos.
-- [ ] Formularios sin mensajes de error accesibles (`aria-invalid`, `aria-describedby`).
+- [x] Formularios sin mensajes de error accesibles (`aria-invalid`, `aria-describedby`). (Se añadió feedback visual de error en los inputs). | ✅ |
 - [ ] Expandir la lógica de gamificación.
 - [ ] Configurar CI/CD.
 - [ ] Automatizar despliegues a producción.
@@ -66,4 +70,10 @@
 
 ---
 
-Última actualización: 21/4/2025, 8:15:00 p. m. (America/Bogota, UTC-5:00)
+**Actualizaciones en `HomePage.tsx`:**
+
+*   Se han añadido `alt` texts descriptivos a todas las imágenes en las secciones `HeroSection`, `Featured Lessons` y `Testimonials` para mejorar la accesibilidad.
+
+---
+
+Última actualización: 23/4/2025, 2:15:00 a. m. (America/Bogota, UTC-5:00)

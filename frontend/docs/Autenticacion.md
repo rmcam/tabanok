@@ -77,11 +77,13 @@ El campo `identifier` permite ingresar con el nombre de usuario o el correo elec
 
 **Request:**
 
-El formulario de registro ahora es un formulario de varios pasos. Los campos se dividen en tres pasos:
+El formulario de registro ahora es un formulario de varios pasos con **indicador de progreso** y **validación por pasos**. Los campos se dividen en tres pasos:
 
-1.  Información de la cuenta (email, contraseña, usuario)
-2.  Información personal (nombre, segundo nombre, apellido, segundo apellido)
-3.  Confirmación de datos
+*   Paso 1: Información de la cuenta (email, contraseña, usuario)
+*   Paso 2: Información personal (nombre, segundo nombre, apellido, segundo apellido)
+*   Paso 3: Confirmación de datos
+
+La validación se ejecuta al interactuar con el campo (`onBlur`) y **al intentar avanzar al siguiente paso**. Los inputs muestran **feedback visual de error** (borde rojo).
 
 ```json
 POST /api/auth/signup
@@ -224,16 +226,27 @@ POST /auth/logout
 
 ### Backend
 
--   El backend utiliza guards (`JwtAuthGuard` y `RolesGuard`) para proteger las rutas.
--   `JwtAuthGuard` verifica la validez del token JWT en el encabezado `Authorization`.
--   `RolesGuard` verifica si el usuario tiene el rol necesario para acceder a la ruta.
--   Si el usuario no está autenticado o no tiene permisos, se deniega el acceso con un código de estado 401 (No autorizado) o 403 (Prohibido).
+-   El backend utiliza guards (`JwtAuthGuard` y `RolesGuard`) para proteger las rutas. Estas guardias se aplican **globalmente** a toda la aplicación.
+-   `JwtAuthGuard` verifica la validez del token JWT en el encabezado `Authorization`. Las rutas marcadas con `@Public()` son excluidas de esta guardia.
+-   `RolesGuard` verifica si el usuario tiene el rol necesario para acceder a la ruta, basándose en el decorador `@Roles()`.
+-   Si el usuario no está autenticado, no tiene permisos, o el token ha expirado, se deniega el acceso con un código de estado 401 (No autorizado) o 403 (Prohibido).
 
 #### Manejo de Tokens Expirados
 
 -   El backend verifica la fecha de expiración del token JWT.
 -   Si el token ha expirado, se devuelve un error 401 (No autorizado).
 -   El frontend intercepta este error y redirige al usuario a la página de inicio de sesión para renovar el token.
+
+#### Manejo de Rutas Públicas Específicas (`/lesson/featured`)
+
+Se identificó un problema donde el endpoint `GET /lesson/featured`, a pesar de estar marcado con `@Public()`, requería autenticación. La causa raíz fue el orden de las rutas en `LessonController`, donde la ruta dinámica `GET /lesson/:id` interceptaba las solicitudes dirigidas a `/lesson/featured`.
+
+**Solución Implementada:**
+
+1.  **Reordenamiento de Rutas:** En `src/features/lesson/lesson.controller.ts`, la definición de la ruta `GET /lesson/featured` se movió para que aparezca antes de la ruta `GET /lesson/:id`. Esto asegura que la solicitud a `/lesson/featured` sea manejada por el método correcto.
+2.  **Configuración Global del Guardia:** El `JwtAuthGuard` se aplica globalmente en `src/app.module.ts` utilizando `APP_GUARD` con `useFactory` para asegurar la correcta inyección del `Reflector`.
+3.  **Limpieza del Módulo de Autenticación:** Se eliminó `JwtAuthGuard` y `JwtStrategy` de los `providers` y `exports` en `src/auth/auth.module.ts` para evitar duplicidad y posibles conflictos con la instancia global del guardia.
+4.  **Verificación Manual en el Guardia (Solución Alternativa):** Se añadió una verificación explícita en el método `canActivate` de `JwtAuthGuard` para permitir el acceso si la URL de la solicitud comienza con `/lesson/featured` y el método es `GET`. Esto actúa como una capa adicional de seguridad si el reconocimiento de metadatos falla por alguna razón.
 
 ---
 
@@ -242,11 +255,10 @@ POST /auth/logout
 -   `src/auth/services/authService.ts`: Contiene las funciones para realizar las llamadas a la API de autenticación (Login, Signup, Forgot Password, etc.) y las interfaces de datos (`SigninData`, `SignupData`).
 -   `src/auth/hooks/useAuthService.ts`: Hook personalizado que encapsula la lógica de las llamadas a la API de autenticación y la gestión de tokens.
 -   `src/auth/hooks/useAuth.ts`: Hook personalizado que encapsula la lógica de autenticación (manejo de estado, llamadas a `authService`, almacenamiento en `sessionStorage`, navegación).
--   `src/auth/components/`: Componentes específicos de autenticación (`SigninForm.tsx`, `SignupForm.tsx`, `ForgotPasswordForm.tsx`).
-    -   `SignupForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.
-    -   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.
--   `src/components/common/Modal.tsx`: Componente genérico reutilizable para mostrar contenido en un diálogo modal, basado en `shadcn/ui/dialog`. Incluye título y descripción para accesibilidad.
--   `src/components/common/AuthModals.tsx`: Componente que agrupa los modales de `Signin`, `Signup` y `ForgotPassword`. Permite controlar qué modal abrir por defecto (`defaultOpen`), si mostrar los disparadores por defecto (`showDefaultTriggers`), y ejecutar una acción al cerrar un modal (`onModalClose`).
+-   `src/auth/components/`: Componentes específicos de autenticación (`SigninForm.tsx`, `SignupForm.tsx`, `ForgotPasswordForm.tsx`). Implementan formularios con validación utilizando el hook `useFormValidation` y ahora incluyen **feedback visual de error** en los inputs.
+-   `src/components/common/FormWrapper.tsx`: Nuevo componente para envolver los formularios, centralizando los **estilos visuales del contenedor** (padding, fondo, bordes, sombra).
+-   `src/components/common/Modal.tsx`: Componente genérico reutilizable para mostrar contenido en un diálogo modal. Se modificó para que la prop `trigger` sea **opcional**, permitiendo la apertura programática.
+-   `src/components/common/AuthModals.tsx`: Componente que agrupa los modales de `Signin`, `Signup` y `ForgotPassword`. Se **refactorizó para usar un único componente `Modal`** cuyo contenido cambia dinámicamente. Permite controlar qué modal abrir por defecto (`defaultOpen`), si mostrar los disparadores por defecto (`showDefaultTriggers`), y ejecutar una acción al cerrar un modal (`onModalClose`).
 -   `src/components/common/PrivateRoute.tsx`: Componente de orden superior para proteger rutas que requieren autenticación.
 -   `src/App.tsx`: Define las rutas principales de la aplicación y utiliza `PrivateRoute`.
 
@@ -256,7 +268,9 @@ POST /auth/logout
 
 -   Documentar el flujo de validación de email.
 -   Mantener ejemplos de payloads y respuestas actualizados.
+-   Considerar la implementación de un **sistema de notificación global** (ej. toast) para mostrar mensajes de éxito o error después del envío del formulario.
+-   Asegurar la **congruencia de la tipografía** en los formularios con la paleta de estilos general del proyecto.
 
 ---
 
-Última actualización: 21/4/2025, 10:49:00 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 23/4/2025, 2:15:00 a. m. (America/Bogota, UTC-5:00)

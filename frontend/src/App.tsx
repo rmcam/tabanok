@@ -1,12 +1,12 @@
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { AppSidebar } from './components/navigation/app-sidebar';
+import useAuth from './auth/hooks/useAuth';
 import PageContainer from './components/common/PageContainer';
+import PrivateRoute from './components/common/PrivateRoute';
 import Dashboard from './components/dashboard/Dashboard';
 import TeacherDashboard from './components/dashboard/TeacherDashboard';
 import HomePage from './components/home/HomePage';
+import { AppSidebar } from './components/navigation/app-sidebar';
 import { SidebarProvider } from './components/ui/sidebar';
-import PrivateRoute from './components/common/PrivateRoute';
-import useAuth from './auth/hooks/useAuth';
 // import { SidebarTrigger } from './components/ui/sidebar';
 
 function App() {
@@ -22,8 +22,22 @@ function App() {
         <div className="flex-1 p-4">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-            <Route path="/teacher-dashboard" element={<PrivateRoute><TeacherDashboard /></PrivateRoute>} />
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/teacher-dashboard"
+              element={
+                <PrivateRoute>
+                  <TeacherDashboard />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </div>
       </PageContainer>

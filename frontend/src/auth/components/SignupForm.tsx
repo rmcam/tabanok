@@ -1,9 +1,9 @@
-import { Input } from '@/components/ui';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import React, { useState } from 'react';
-import useFormValidation from '@/hooks/useFormValidation';
 import Loading from '@/components/common/Loading';
+import { Input } from '@/components/ui';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import useFormValidation from '@/hooks/useFormValidation';
+import React, { useEffect, useState } from 'react';
 
 const SignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,40 +18,81 @@ const SignUpForm = () => {
     secondLastName: '',
   };
 
-  const validationRules = {
-    email: (value: string) => {
-      if (!value) return 'Email es requerido';
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email no es válido';
-      return undefined;
-    },
-    password: (value: string) => {
-      if (!value) return 'Contraseña es requerida';
-      if (value.length < 6) return 'Contraseña debe tener al menos 6 caracteres';
-      return undefined;
-    },
-    username: (value: string) => {
-      if (!value) return 'Usuario es requerido';
-      return undefined;
-    },
-    firstName: (value: string) => {
-      if (!value) return 'Nombre es requerido';
-      return undefined;
-    },
-    secondName: (value: string) => {
-      if (!value) return 'Segundo nombre es requerido';
-      return undefined;
-    },
-    firstLastName: (value: string) => {
-      if (!value) return 'Apellido es requerido';
-      return undefined;
-    },
-    secondLastName: (value: string) => {
-      if (!value) return 'Segundo apellido es requerido';
-      return undefined;
-    },
-  };
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [firstNameError, setFirstNameError] = useState('');
+  const [secondNameError, setSecondNameError] = useState('');
+  const [firstLastNameError, setFirstLastNameError] = useState('');
+  const [secondLastNameError, setSecondLastNameError] = useState('');
 
-  const { values, errors, isValid, handleChange, handleSubmit } = useFormValidation(initialValues);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [usernameTouched, setUsernameTouched] = useState(false);
+  const [firstNameTouched, setFirstNameTouched] = useState(false);
+  const [secondNameTouched, setSecondNameTouched] = useState(false);
+  const [firstLastNameTouched, setFirstLastNameTouched] = useState(false);
+  const [secondLastNameTouched, setSecondLastNameTouched] = useState(false);
+
+  const validationRules = React.useMemo(
+    () => ({
+      email: (value: string) => {
+        if (!value) return 'Email es requerido';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email no es válido';
+        return undefined;
+      },
+      password: (value: string) => {
+        if (!value) return 'Contraseña es requerida';
+        if (value.length < 6) return 'Contraseña debe tener al menos 6 caracteres';
+        return undefined;
+      },
+      username: (value: string) => {
+        if (!value) return 'Usuario es requerido';
+        return undefined;
+      },
+      firstName: (value: string) => {
+        if (!value) return 'Nombre es requerido';
+        return undefined;
+      },
+      secondName: (value: string) => {
+        if (!value) return 'Segundo nombre es requerido';
+        return undefined;
+      },
+      firstLastName: (value: string) => {
+        if (!value) return 'Apellido es requerido';
+        return undefined;
+      },
+      secondLastName: (value: string) => {
+        if (!value) return 'Segundo apellido es requerido';
+        return undefined;
+      },
+    }),
+    [],
+  );
+
+  const { values, isValid, handleChange, handleSubmit } = useFormValidation(initialValues);
+
+  useEffect(() => {
+    if (emailTouched) setEmailError(validationRules.email(values.email) || '');
+    if (passwordTouched) setPasswordError(validationRules.password(values.password) || '');
+    if (usernameTouched) setUsernameError(validationRules.username(values.username) || '');
+    if (firstNameTouched) setFirstNameError(validationRules.firstName(values.firstName) || '');
+    if (secondNameTouched) setSecondNameError(validationRules.secondName(values.secondName) || '');
+    if (firstLastNameTouched)
+      setFirstLastNameError(validationRules.firstLastName(values.firstLastName) || '');
+    if (secondLastNameTouched)
+      setSecondLastNameError(validationRules.secondLastName(values.secondLastName) || '');
+  }, [
+    values,
+    emailTouched,
+    passwordTouched,
+    usernameTouched,
+    firstNameTouched,
+    secondNameTouched,
+    firstLastNameTouched,
+    secondLastNameTouched,
+    validationRules,
+  ]);
 
   const onSubmit = async (e: React.FormEvent) => {
     setIsLoading(true);
@@ -71,7 +112,48 @@ const SignUpForm = () => {
   };
 
   const nextStep = () => {
-    setStep(step + 1);
+    let currentStepFields: (keyof typeof initialValues)[] = [];
+    let hasErrors = false;
+
+    if (step === 1) {
+      currentStepFields = ['email', 'password', 'username'];
+      setEmailTouched(true);
+      setPasswordTouched(true);
+      setUsernameTouched(true);
+      if (emailError || passwordError || usernameError) {
+        hasErrors = true;
+      }
+    } else if (step === 2) {
+      currentStepFields = ['firstName', 'secondName', 'firstLastName', 'secondLastName'];
+      setFirstNameTouched(true);
+      setSecondNameTouched(true);
+      setFirstLastNameTouched(true);
+      setSecondLastNameTouched(true);
+      if (firstNameError || secondNameError || firstLastNameError || secondLastNameError) {
+        hasErrors = true;
+      }
+    }
+
+    // Re-run validation for current step fields to ensure errors state is updated
+    currentStepFields.forEach(field => {
+      const error = validationRules[field](values[field]);
+      if (field === 'email') setEmailError(error || '');
+      if (field === 'password') setPasswordError(error || '');
+      if (field === 'username') setUsernameError(error || '');
+      if (field === 'firstName') setFirstNameError(error || '');
+      if (field === 'secondName') setSecondNameError(error || '');
+      if (field === 'firstLastName') setFirstLastNameError(error || '');
+      if (field === 'secondLastName') setSecondLastNameError(error || '');
+      if (error) hasErrors = true;
+    });
+
+
+    if (!hasErrors) {
+      setStep(step + 1);
+    } else {
+      console.log(`Validation errors in step ${step}. Cannot proceed.`);
+      // Optionally, provide user feedback here that there are errors
+    }
   };
 
   const prevStep = () => {
@@ -79,13 +161,16 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="text-2xl font-bold mb-4">Registrarse</div>
-      <form onSubmit={onSubmit} className="w-full max-w-xs space-y-4">
+    <div className="flex flex-col items-center justify-center"> {/* Removed card styles */}
+      {/* Removed duplicated title: <div className="text-2xl font-bold mb-8 text-gray-800">Registrarse</div> */}
+      <div className="mb-4 text-center text-gray-700">
+        Paso {step} de 3
+      </div>
+      <form onSubmit={onSubmit} className="w-full max-w-sm space-y-3">
         {step === 1 && (
           <>
-            <div className="grid gap-2">
-              <Label htmlFor="email" className="text-sm">
+            <div className="grid gap-1">
+              <Label htmlFor="email" className="text-sm text-gray-700">
                 Email
               </Label>
               <Input
@@ -95,12 +180,13 @@ const SignUpForm = () => {
                 name="email"
                 value={values.email}
                 onChange={handleChange}
-                className="w-full rounded-md"
+                onBlur={() => setEmailTouched(true)}
+                aria-invalid={!!emailError}
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              {emailError && <p className="text-red-500 text-sm mt-2">{emailError}</p>}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password" className="text-sm">
+            <div className="grid gap-1">
+              <Label htmlFor="password" className="text-sm text-gray-700">
                 Contraseña
               </Label>
               <Input
@@ -110,12 +196,13 @@ const SignUpForm = () => {
                 name="password"
                 value={values.password}
                 onChange={handleChange}
-                className="w-full rounded-md"
+                onBlur={() => setPasswordTouched(true)}
+                aria-invalid={!!passwordError}
               />
-              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+              {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="username" className="text-sm">
+            <div className="grid gap-1">
+              <Label htmlFor="username" className="text-sm text-gray-700">
                 Usuario
               </Label>
               <Input
@@ -125,11 +212,12 @@ const SignUpForm = () => {
                 name="username"
                 value={values.username}
                 onChange={handleChange}
-                className="w-full rounded-md"
+                onBlur={() => setUsernameTouched(true)}
+                aria-invalid={!!usernameError}
               />
-              {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+              {usernameError && <p className="text-red-500 text-sm mt-2">{usernameError}</p>}
             </div>
-            <Button type="button" onClick={nextStep} className="w-full rounded-md">
+            <Button type="button" onClick={nextStep} className="w-full rounded-lg py-2 mt-4">
               Siguiente
             </Button>
           </>
@@ -137,8 +225,8 @@ const SignUpForm = () => {
 
         {step === 2 && (
           <>
-            <div className="grid gap-2">
-              <Label htmlFor="firstName" className="text-sm">
+            <div className="grid gap-1">
+              <Label htmlFor="firstName" className="text-sm text-gray-700">
                 Nombre
               </Label>
               <Input
@@ -148,12 +236,13 @@ const SignUpForm = () => {
                 name="firstName"
                 value={values.firstName}
                 onChange={handleChange}
-                className="w-full rounded-md"
+                onBlur={() => setFirstNameTouched(true)}
+                aria-invalid={!!firstNameError}
               />
-              {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+              {firstNameError && <p className="text-red-500 text-sm mt-2">{firstNameError}</p>}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="secondName" className="text-sm">
+            <div className="grid gap-1">
+              <Label htmlFor="secondName" className="text-sm text-gray-700">
                 Segundo Nombre
               </Label>
               <Input
@@ -163,12 +252,13 @@ const SignUpForm = () => {
                 name="secondName"
                 value={values.secondName}
                 onChange={handleChange}
-                className="w-full rounded-md"
+                onBlur={() => setSecondNameTouched(true)}
+                aria-invalid={!!secondNameError}
               />
-              {errors.secondName && <p className="text-red-500 text-sm">{errors.secondName}</p>}
+              {secondNameError && <p className="text-red-500 text-sm mt-2">{secondNameError}</p>}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="firstLastName" className="text-sm">
+            <div className="grid gap-1">
+              <Label htmlFor="firstLastName" className="text-sm text-gray-700">
                 Apellido
               </Label>
               <Input
@@ -178,12 +268,13 @@ const SignUpForm = () => {
                 name="firstLastName"
                 value={values.firstLastName}
                 onChange={handleChange}
-                className="w-full rounded-md"
+                onBlur={() => setFirstLastNameTouched(true)}
+                aria-invalid={!!firstLastNameError}
               />
-              {errors.firstLastName && <p className="text-red-500 text-sm">{errors.firstLastName}</p>}
+              {firstLastNameError && <p className="text-red-500 text-sm mt-2">{firstLastNameError}</p>}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="secondLastName" className="text-sm">
+            <div className="grid gap-1">
+              <Label htmlFor="secondLastName" className="text-sm text-gray-700">
                 Segundo Apellido
               </Label>
               <Input
@@ -193,14 +284,15 @@ const SignUpForm = () => {
                 name="secondLastName"
                 value={values.secondLastName}
                 onChange={handleChange}
-                className="w-full rounded-md"
+                onBlur={() => setSecondLastNameTouched(true)}
+                aria-invalid={!!secondLastNameError}
               />
-              {errors.secondLastName && <p className="text-red-500 text-sm">{errors.secondLastName}</p>}
+              {secondLastNameError && <p className="text-red-500 text-sm mt-2">{secondLastNameError}</p>}
             </div>
-            <Button type="button" onClick={prevStep} className="w-full rounded-md">
+            <Button type="button" onClick={prevStep} className="w-full rounded-lg py-2 mt-4">
               Anterior
             </Button>
-            <Button type="button" onClick={nextStep} className="w-full rounded-md">
+            <Button type="button" onClick={nextStep} className="w-full rounded-lg py-2">
               Siguiente
             </Button>
           </>
@@ -208,8 +300,8 @@ const SignUpForm = () => {
 
         {step === 3 && (
           <>
-            <div>
-              <p>Confirme sus datos:</p>
+            <div className="space-y-2 text-gray-700">
+              <p className="font-semibold">Confirme sus datos:</p>
               <p>Email: {values.email}</p>
               <p>Usuario: {values.username}</p>
               <p>Nombre: {values.firstName}</p>
@@ -217,10 +309,10 @@ const SignUpForm = () => {
               <p>Apellido: {values.firstLastName}</p>
               <p>Segundo Apellido: {values.secondLastName}</p>
             </div>
-            <Button type="button" onClick={prevStep} className="w-full rounded-md">
+            <Button type="button" onClick={prevStep} className="w-full rounded-lg py-2 mt-4">
               Anterior
             </Button>
-            <Button type="submit" className="w-full rounded-md" disabled={!isValid || isLoading}>
+            <Button type="submit" className="w-full rounded-lg py-2" disabled={!isValid || isLoading}>
               {isLoading ? <Loading /> : 'Registrarse'}
             </Button>
           </>

@@ -1,10 +1,9 @@
 import ForgotPasswordForm from '@/auth/components/ForgotPasswordForm';
 import SigninForm from '@/auth/components/SigninForm';
 import SignupForm from '@/auth/components/SignupForm';
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react'; // Import useEffect
 import Modal from './Modal';
-import { Button } from '@/components/ui/button';
-
 interface AuthModalsProps {
   defaultOpen?: 'signin' | 'signup' | 'forgotPassword';
   showDefaultTriggers?: boolean; // Add prop to control default triggers
@@ -17,86 +16,89 @@ const AuthModals: React.FC<AuthModalsProps> = ({
   onModalClose,
 }) => {
   // Add onModalClose prop
-  const [isSigninOpen, setIsSigninOpen] = useState(defaultOpen === 'signin');
-  const [isSignupOpen, setIsSignupOpen] = useState(defaultOpen === 'signup');
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(
-    defaultOpen === 'forgotPassword',
+  const [openModal, setOpenModal] = useState<'signin' | 'signup' | 'forgotPassword' | null>(
+    defaultOpen || null,
   );
 
-  // Add useEffect to handle changes in defaultOpen after initial render
   useEffect(() => {
-    if (defaultOpen === 'signin') {
-      setIsSigninOpen(true);
-    } else if (defaultOpen === 'signup') {
-      setIsSignupOpen(true);
-    } else if (defaultOpen === 'forgotPassword') {
-      setIsForgotPasswordOpen(true);
-    }
-    // Note: We might want to reset the other modals to closed here,
-    // depending on the desired behavior when defaultOpen changes.
-    // For now, it just opens the specified one.
-  }, [defaultOpen]); // Re-run effect when defaultOpen changes
+    setOpenModal(defaultOpen || null);
+  }, [defaultOpen]);
 
-  // Helper function to handle modal closing and call the callback
-  const handleOpenChange =
-    (setter: React.Dispatch<React.SetStateAction<boolean>>, resetForm?: () => void) =>
-    (open: boolean | undefined) => {
-      setter(!!open); // Ensure boolean value
-      if (!open) {
+  const handleOpenChange = (modalName: 'signin' | 'signup' | 'forgotPassword' | null) => {
+    return (open: boolean) => {
+      if (open) {
+        setOpenModal(modalName);
+      } else {
+        setOpenModal(null);
         if (onModalClose) {
           onModalClose();
         }
-        if (resetForm) {
-          resetForm();
-        }
       }
     };
+  };
+
+  const renderForm = () => {
+    switch (openModal) {
+      case 'signin':
+        return <SigninForm />;
+      case 'signup':
+        return <SignupForm />;
+      case 'forgotPassword':
+        return <ForgotPasswordForm />;
+      default:
+        return null;
+    }
+  };
+
+  const getModalTitle = () => {
+    switch (openModal) {
+      case 'signin':
+        return 'Iniciar Sesión';
+      case 'signup':
+        return 'Registrarse';
+      case 'forgotPassword':
+        return 'Recuperar Contraseña';
+      default:
+        return '';
+    }
+  };
+
+  const getModalDescription = () => {
+    switch (openModal) {
+      case 'signin':
+        return 'Ingresa tus credenciales para acceder a tu cuenta.';
+      case 'signup':
+        return 'Crea una cuenta para empezar a usar la plataforma.';
+      case 'forgotPassword':
+        return 'Ingresa tu correo electrónico para restablecer tu contraseña.';
+      default:
+        return '';
+    }
+  };
 
   return (
     <>
-      <Modal
-        isOpen={isSigninOpen}
-        onOpenChange={handleOpenChange(setIsSigninOpen)} // Use helper
-        title="Iniciar Sesión"
-        description="Ingresa tus credenciales para acceder a tu cuenta." // Added description
-        // Conditionally render trigger
-        trigger={
-          showDefaultTriggers ? (
-            <Button variant="outline">Iniciar Sesión</Button>
-          ) : undefined
-        }
-      >
-        <SigninForm />
-      </Modal>
-      <Modal
-        isOpen={isSignupOpen}
-        onOpenChange={handleOpenChange(setIsSignupOpen)} // Use helper
-        title="Registrarse"
-        description="Crea una cuenta para empezar a usar la plataforma." // Added description
-        // Conditionally render trigger
-        trigger={
-          showDefaultTriggers ? (
-            <Button variant="outline">Registrarse</Button>
-          ) : undefined
-        }
-      >
-        <SignupForm />
-      </Modal>
+      {showDefaultTriggers && (
+        <>
+          <Button variant="outline" onClick={() => setOpenModal('signin')}>
+            Iniciar Sesión
+          </Button>
+          <Button variant="outline" onClick={() => setOpenModal('signup')}>
+            Registrarse
+          </Button>
+          <Button variant="outline" onClick={() => setOpenModal('forgotPassword')}>
+            ¿Olvidaste tu contraseña?
+          </Button>
+        </>
+      )}
 
       <Modal
-        isOpen={isForgotPasswordOpen}
-        onOpenChange={handleOpenChange(setIsForgotPasswordOpen)} // Use helper
-        title="Recuperar Contraseña"
-        description="Ingresa tu correo electrónico para restablecer tu contraseña."
-        // Conditionally render trigger
-        trigger={
-          showDefaultTriggers ? (
-            <Button variant="outline">¿Olvidaste tu contraseña?</Button>
-          ) : undefined
-        }
+        isOpen={openModal !== null}
+        onOpenChange={handleOpenChange(null)}
+        title={getModalTitle()}
+        description={getModalDescription()}
       >
-        {/* Pass the specific close handler for this modal */}
-        <ForgotPasswordForm closeModal={() => handleOpenChange(setIsForgotPasswordOpen)(false)} />
+        {renderForm()}
       </Modal>
     </>
   );

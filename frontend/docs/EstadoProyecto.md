@@ -2,12 +2,49 @@
 
 El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cambios:
 
-*   Se integró el carrusel de tarjetas directamente en la sección principal del Hero y se mejoró la imagen de "Cultura Kamëntsá".
-*   Se añadieron imágenes o ilustraciones más atractivas y relevantes para cada característica en la sección de características.
-*   Se utilizaron imágenes específicas para cada lección destacada en la sección de lecciones destacadas.
-*   Se utilizaron fotos reales de los usuarios (si es posible) o avatares más personalizados en la sección de testimonios.
-*   Se añadió un formulario de contacto directamente en la página, en lugar de solo un enlace a un correo electrónico en la sección de contacto.
-*   Se aseguró de que la paleta de colores y la tipografía sean coherentes con la identidad visual de Tabanok.
+*   Se agregó una imagen de fondo a la Hero Section.
+*   Se modificó la descripción de la Hero Section para que sea más concisa y persuasiva.
+*   Se agregaron iconos a las características.
+*   Se agregaron descripciones a las lecciones destacadas.
+*   Se agregó un botón "Ver todas las lecciones" a la sección de Lecciones Destacadas.
+*   Se agregó una capa de superposición oscura a la imagen de fondo de la Hero Section para mejorar el contraste.
+*   Se agregó el componente FAQ a la página de inicio.
+*   Se eliminó la sección FAQ duplicada.
+*   Se cambió el fondo de la sección de contacto a blanco.
+*   Se reemplazó el enlace de contacto con un formulario de contacto.
+*   Se aumentó el padding vertical del footer a `py-2`.
+*   Se mejoró la responsividad de las imágenes en la sección de Lecciones Destacadas.
+*   Se centralizó la lógica de las tarjetas de la sección Hero.
+*   Se utilizó un componente reutilizable para las tarjetas de características.
+*   Se mejoró la accesibilidad de las imágenes en la sección de Lecciones Destacadas.
+*   Se implementó la funcionalidad de "Ver todas las lecciones".
+*   Se agregaron imágenes a los testimonios.
+*   Se ha añadido la funcionalidad de autoplay al carrusel de testimonios utilizando el plugin `embla-carousel-autoplay`.
+*   Se corrigió la estructura del carrusel principal para que el enlace no envuelva toda la tarjeta `HeroSection`, permitiendo que los botones internos sean interactivos.
+*   Se implementó un carrusel interactivo en la HeroSection para mostrar diferentes tarjetas de `heroCardsData` con transiciones suaves y controles de navegación.
+*   Se añadió un efecto de "card hover" a las Lecciones Destacadas para hacerlas más interactivas.
+*   Se ajustó el diseño de la sección de lecciones destacadas para utilizar una cuadrícula responsiva en lugar de desplazamiento horizontal en pantallas pequeñas.
+*   Se corrigió un error de tipo en `heroCards.ts` relacionado con la propiedad `action` en los datos de las tarjetas.
+*   Se implementó un efecto de desplazamiento suave al hacer clic en los enlaces "Ver lección" y "Ver todas las lecciones" utilizando `react-router-hash-link`.
+*   Se centralizó la lógica de las tarjetas de la sección Hero, obteniendo los datos directamente desde `heroCards.ts`.
+*   Se modificó la estructura de datos en `heroCards.ts` para incluir una propiedad `action` en los botones, permitiendo diferenciar acciones de navegación.
+*   Se actualizó `HeroSection.tsx` para utilizar la propiedad `action` al manejar los clics de los botones, desacoplando la acción del texto del botón.
+*   Se mejoró el mensaje de error mostrado al usuario cuando falla la carga de las lecciones destacadas en la página de inicio.
+*   Se eliminó la dependencia del archivo JSON `public/heroCards.json`.
+*   Se implementó una animación de aparición gradual (fade-in) al cargar la página.
+*   Se agregó un efecto parallax a la sección del Hero (`src/components/home/components/HeroSection.tsx`).
+    *   Se ajustó la opacidad del fondo negro para que la imagen sea más visible.
+    *   Se alineó verticalmente el contenido del Hero Section para que esté centrado.
+*   Se reemplazó el carrusel de testimonios con uno que tiene una animación de aparición gradual.
+*   Se añadió un efecto de desplazamiento horizontal a la sección de "Lecciones Destacadas".
+    *   Se añadió un espacio entre las tarjetas.
+    *   Se aumentó el tamaño de la imagen y el texto.
+*   Se modificaron los colores de los botones (`src/components/ui/button.tsx`) para que tengan un color más acorde a la paleta de colores de la cultura Kamëntsá.
+*   Se alinearon los campos del formulario y se aumentó el tamaño del texto en `src/components/home/components/ContactForm.tsx`.
+*   Se implementaron indicadores interactivos en el carrusel de la HeroSection.
+*   Se implementó la carga dinámica de las lecciones destacadas desde la API del backend.
+*   Se añadió manejo de estado de carga y error para la sección "Lecciones Destacadas".
+*   Se corrigió el error `ReferenceError: process is not defined` al utilizar `import.meta.env.VITE_API_URL` en lugar de `process.env.VITE_API_URL`.
 - Backend funcional con NestJS, conectado a PostgreSQL.
 - Frontend funcional con React + Vite, autenticación y consumo de API.
 - Dependencias y configuración centralizadas.
@@ -26,6 +63,7 @@ El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cam
 - **Sidebar desplegable implementado:** Se agregó un sidebar desplegable que aparece en todos los sitios excepto en la ruta "/". Se añadió un buscador al sidebar utilizando el componente Input. Se añadió un sistema de notificaciones al dashboard utilizando el componente Sonner.
 - **Mejoras en el Dashboard:** Se modificó el dashboard para darle un aspecto profesional pero llamativo para los niños, incluyendo un fondo degradado, un título más llamativo y un gráfico de barras para las estadísticas. Se añadieron breadcrumbs para facilitar la navegación dentro del dashboard.
 - **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha solucionado el error 500 al obtener los temas. Se han definido modelos de datos JSON para el panel del docente y multimedia, mejorando la gestión de datos y la integración con el backend. Se han añadido nuevos endpoints para la gestión de estos modelos.
+- **Análisis de accesibilidad del carrusel de testimonios:** Se verificó que el componente `Carousel` base soporta navegación con teclado y botones. La funcionalidad de autoplay está presente (usando `data-autoplay`), pero no hay controles explícitos de pausa/reproducción integrados en el componente actual. Añadir estos controles requeriría desarrollo adicional.
 - **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
 - **Se han actualizado las dependencias del proyecto, incluyendo `react-day-picker`, `date-fns` y `vite`.**
 - **Se ha reemplazado `vite-plugin-components` con `unplugin-vue-components`.**
@@ -34,6 +72,19 @@ El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cam
 - **Documentación de endpoints con Swagger normalizada y profesionalmente documentada.**
 - **Gestión de Contenidos:** Se ha implementado la interfaz de usuario para la gestión de contenidos en el Panel Docente.
 - **Protección de rutas:** Se ha revisado la protección de rutas, redirigiendo a "/" si no está logueado. Se ha modificado la lógica para mostrar el sidebar en `App.tsx` para que también dependa del estado de autenticación.
+
+---
+
+## Mejoras de Diseño y Estilo (Multicolor Kamëntsá)
+
+Se han aplicado mejoras de diseño y estilo en `HomePage.tsx` y `HeroSection.tsx` para incorporar elementos multicolor inspirados en el arte Kamëntsá. Esto incluye:
+
+*   Colores de iconos y bordes en las tarjetas de características.
+*   Colores de indicadores del carrusel principal (activo e inactivos).
+*   Color del título de las lecciones destacadas al pasar el ratón.
+*   Borde de color en las tarjetas de testimonios.
+*   Superposición de color en la imagen de fondo de la sección principal.
+*   Borde de color en la imagen principal de la sección principal.
 
 ---
 
@@ -95,5 +146,18 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - **Chat**: Se eliminó el módulo de chat para simplificar el backend y frontend, ya que no era una funcionalidad prioritaria en la revitalización lingüística ni en la hoja de ruta actual. Si se requiere en el futuro, se planificará e implementará nuevamente con la comunidad.
 
 ---
+- Se ha asegurado la consistencia de la estructura de datos en `heroCardsData` añadiendo el campo `buttons: []` a todos los elementos.
+- Se ha simplificado la lógica de color de los indicadores del carrusel para usar un color para el indicador activo y otro para los inactivos.
+- Se ha eliminado el borde amarillo de las tarjetas de testimonios.
+- Se ha ajustado el espaciado vertical entre las secciones principales de la página a `py-12`.
+- Se ha intentado corregir el comportamiento del carrusel para evitar cambios de tamaño al añadir una altura fija (`h-[500px]`) al contenedor del carrusel y asegurar que los elementos internos ocupen esa altura (`h-full`).
+- Se ha creado un nuevo componente `FeaturedLessonCard` (`src/components/home/components/FeaturedLessonCard.tsx`) para encapsular la lógica de visualización de las tarjetas de lecciones destacadas y se ha integrado en `HomePage.tsx`.
+*   Se mejoró la accesibilidad del carrusel principal y el carrusel de testimonios con atributos ARIA (`role`, `aria-roledescription`, `aria-label`).
+*   Se añadió un botón de pausa/reproducción al carrusel de testimonios para controlar el autoplay.
+*   Se refactorizaron las clases CSS comunes de los `FeatureCard` en una constante para mejorar la mantenibilidad.
+*   Se añadió un mecanismo de reintento para la carga de lecciones destacadas en caso de error, mostrando un botón para reintentar.
+*   Se añadieron enlaces de ejemplo (Política de Privacidad, Términos de Servicio, Contacto) en el pie de página.
 
-Última actualización: 21/4/2025, 8:15:00 p. m. (America/Bogota, UTC-5:00)
+---
+
+Última actualización: 22/4/2025, 6:16 p. m. (America/Bogota, UTC-5:00)
