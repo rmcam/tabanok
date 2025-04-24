@@ -1,4 +1,4 @@
-import { UserActivity } from '@/features/gamification/entities/activity.entity';
+import { Activity } from '../../features/activity/entities/activity.entity';
 import {
   Column,
   CreateDateColumn,
@@ -125,8 +125,8 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => UserActivity, (activity) => activity.user)
-  activities: UserActivity[];
+  @OneToMany(() => Activity, (activity) => activity.user)
+  activities: Activity[];
 
   @UpdateDateColumn()
   updatedAt: Date;

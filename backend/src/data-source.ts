@@ -5,6 +5,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { Account } from './features/account/entities/account.entity';
 import { Content } from './features/content/entities/content.entity';
 import { CulturalContent } from './features/cultural-content/cultural-content.entity';
+import { Statistics } from './features/statistics/entities/statistics.entity';
 import { Evaluation } from './features/evaluation/evaluation.entity';
 import { Exercise } from './features/exercises/entities/exercise.entity';
 import { Achievement } from './features/gamification/entities/achievement.entity';
@@ -26,6 +27,7 @@ import { Reward } from './features/reward/entities/reward.entity';
 import { Topic } from './features/topic/entities/topic.entity';
 import { Unity } from './features/unity/entities/unity.entity';
 import { Vocabulary } from './features/vocabulary/entities/vocabulary.entity';
+import { Activity } from './features/activity/entities/activity.entity';
 
 config();
 
@@ -49,9 +51,10 @@ export const dataSourceOptions: DataSourceOptions = (() => {
       Topic,
       Unity,
       User,
-      // Removed duplicate Unity entry from previous comment
+      Statistics,
       Vocabulary,
       Gamification,
+      Activity,
       Mission,
       UserReward,
       UserAchievement,

@@ -6,8 +6,8 @@
 
 ```
 /
-├── backend/          # API REST con NestJS, conexión a base de datos, lógica de negocio
-├── frontend/         # Aplicación React + Vite, UI, autenticación, consumo API
+├── backend/          # API REST con NestJS
+├── frontend/         # Aplicación React + Vite
 ├── packages/common/  # Tipos y utilidades compartidas
 ├── docs/             # Documentación centralizada
 ├── package.json      # Dependencias y scripts comunes
@@ -22,33 +22,27 @@
 
 ## Flujo general
 
-- **Frontend** consume la API del **backend** para autenticación, datos y funcionalidades.
-- **Backend** se conecta a la base de datos PostgreSQL y expone endpoints REST.
+- **Frontend** consume la API del **backend**.
+- **Backend** se conecta a la base de datos PostgreSQL.
 - **Paquete común** comparte tipos TypeScript y utilidades entre backend y frontend.
-- **Docker Compose** levanta base de datos, backend y frontend con un solo comando.
+- **Docker Compose** levanta base de datos, backend y frontend.
 
 ---
 
 ## Tecnologías principales
 
-- **Backend:** NestJS, TypeORM, PostgreSQL (en Docker, puerto 5433, configuración personalizada), JWT, Docker
-- **Frontend:** React + Vite, TailwindCSS, Auth.js, react-i18next
-- **Monorepo:** pnpm workspaces, lockfile único, variables centralizadas en `.env`
+- **Backend:** NestJS, TypeORM, PostgreSQL, JWT, Docker
+- **Frontend:** React + Vite, TailwindCSS
+- **Monorepo:** pnpm workspaces
 - **Testing:** Jest, Testing Library
-- **Linting/Formateo:** ESLint, Prettier unificados
+- **Linting/Formateo:** ESLint, Prettier
 - **Internacionalización:** react-i18next
-- **Validación:** Zod, LanguageTool (propuesta)
-
----
-
-## Mejoras recientes
-
-- Centralización de dependencias y configuración.
-- Creación de paquete común para tipos y utilidades.
-- Unificación de Docker Compose.
-- Configuración base de TypeScript.
-- Documentación centralizada y actualizada.
+- **Validación:** Zod
 
 ---
 
 Ver pendientes y mejoras futuras en [`docs/Pendientes.md`](./Pendientes.md).
+
+---
+
+Última actualización: 23/4/2025, 3:16 p. m. (America/Bogota, UTC-5:00)

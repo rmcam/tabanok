@@ -5,9 +5,14 @@ import { motion } from 'framer-motion'; // Remove AnimatePresence as navbar is a
 interface HomeNavbarProps {
   onOpenSigninModal: () => void;
   onOpenSignupModal: () => void;
+  isAuthenticated: boolean; // Añadir prop isAuthenticated
 }
 
-const HomeNavbar: React.FC<HomeNavbarProps> = ({ onOpenSigninModal, onOpenSignupModal }) => {
+const HomeNavbar: React.FC<HomeNavbarProps> = ({
+  onOpenSigninModal,
+  onOpenSignupModal,
+  isAuthenticated, // Recibir prop isAuthenticated
+}) => {
   // Remove isVisible state and useEffect for scroll listener
   // The navbar will always be visible and fixed
 
@@ -26,12 +31,16 @@ const HomeNavbar: React.FC<HomeNavbarProps> = ({ onOpenSigninModal, onOpenSignup
         <span className="text-lg font-bold text-teal-700">Tabanok</span>
 
         <div className="space-x-4">
-          <Button variant="outline" onClick={onOpenSigninModal}>
-            Iniciar Sesión
-          </Button>
-          <Button onClick={onOpenSignupModal}>
-            Registrarse
-          </Button>
+          {!isAuthenticated && ( // Renderizar solo si no está autenticado
+            <>
+              <Button variant="outline" onClick={onOpenSigninModal}>
+                Iniciar Sesión
+              </Button>
+              <Button onClick={onOpenSignupModal}>
+                Registrarse
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </motion.nav>

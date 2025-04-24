@@ -1,4 +1,4 @@
-# Estrategia de Validación Lingüística - Frontend Kamëntsá
+![alt text](image.png)# Estrategia de Validación Lingüística - Frontend Kamëntsá
 
 ---
 
@@ -59,4 +59,4 @@ Ver próximos pasos en [`docs/Pendientes.md`](./Pendientes.md).
 
 ## Última actualización
 
-Abril 2025
+23/4/2025, 3:16 p. m. (America/Bogota, UTC-5:00)

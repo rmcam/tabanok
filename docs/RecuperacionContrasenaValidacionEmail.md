@@ -1,25 +1,23 @@
-# Flujo de Recuperación de Contraseña y Validación de Email
+# Recuperación de Contraseña
 
 ---
 
-## Recuperación de Contraseña
+## Flujo
 
-1.  El usuario solicita restablecer su contraseña a través de la interfaz de usuario.
-2.  El frontend envía una solicitud al endpoint `/auth/forgot-password` en el backend, proporcionando el correo electrónico del usuario.
-3.  El backend genera un token único (`resetPasswordToken`) y una fecha de expiración (`resetPasswordExpires`) para el token.
-4.  El backend actualiza la entidad `User` con el token y la fecha de expiración generados.
-5.  El backend envía un correo electrónico al usuario con un enlace que contiene el token de restablecimiento de contraseña.
-6.  El usuario hace clic en el enlace en el correo electrónico, que lo redirige a una página en el frontend donde puede ingresar su nueva contraseña.
-7.  El frontend envía una solicitud al endpoint `/auth/reset-password` en el backend, proporcionando el token y la nueva contraseña.
-8.  El backend verifica que el token sea válido y que no haya expirado.
-9.  Si el token es válido, el backend actualiza la contraseña del usuario en la base de datos y elimina el token y la fecha de expiración de la entidad `User`.
-10. El backend responde con un mensaje de éxito.
-11. El frontend redirige al usuario a la página de inicio de sesión.
+1.  Usuario solicita restablecer contraseña.
+2.  Frontend: envía email a `/auth/forgot-password`.
+3.  Backend: genera token y fecha de expiración, actualiza `User`.
+4.  Backend: envía email con enlace.
+5.  Usuario: hace clic en enlace.
+6.  Frontend: envía token y nueva contraseña a `/auth/reset-password`.
+7.  Backend: valida token, actualiza contraseña, elimina token.
+8.  Backend: responde con éxito.
+9.  Frontend: redirige a inicio de sesión.
 
 ### Endpoints
 
--   **Solicitar restablecimiento de contraseña:** `POST /auth/forgot-password`
--   **Restablecer contraseña:** `POST /auth/reset-password`
+*   `/auth/forgot-password`: Solicitar restablecimiento.
+*   `/auth/reset-password`: Restablecer contraseña.
 
 ### Payloads y Respuestas
 
@@ -66,11 +64,10 @@ POST /auth/reset-password
 
 ### Entidad `User`
 
-La entidad `User` contiene las siguientes propiedades relacionadas con el restablecimiento de contraseña:
-
--   `resetPasswordToken`: Token único para restablecer la contraseña.
--   `resetPasswordExpires`: Fecha de expiración del token.
+*   `resetPasswordToken`: Token para restablecer.
+*   `resetPasswordExpires`: Fecha de expiración.
 
 ## Validación de Email
 
-(Pendiente de documentación)
+Pendiente.
+---

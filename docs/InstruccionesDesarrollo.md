@@ -2,123 +2,48 @@
 
 ---
 
-## Requisitos previos
+## Requisitos
 
-- Node.js >= 18.19.0
-- pnpm >= 8.x
-- Docker (opcional, para base de datos y entorno unificado)
+*   Node.js >= 18.19.0
+*   pnpm install
+*   Docker (opcional)
 
----
+## Entorno de Desarrollo
 
-## Instalación
-
-```bash
-pnpm install
-```
-
----
-
-## Levantar entorno de desarrollo
-
-- **Backend:**
-
-  ```bash
-  pnpm --filter backend dev
-  ```
-
-- **Frontend:**
-
-  ```bash
-  pnpm --filter frontend dev
-  ```
-  (Acceder en http://localhost:3000)
-
-  **Nota:** Si estás ejecutando el frontend localmente, asegúrate de que la variable `VITE_API_URL` en el archivo `.env` esté configurada como `http://localhost:8000`.
-
-- **Base de datos, backend y frontend con Docker Compose:**
-
-  ```bash
-  docker-compose up --build
-  ```
-
-  - La base de datos estará accesible en **localhost:5433**
-  - Las credenciales y configuración se encuentran en el archivo `.env`
-  - Para conectarte con pgAdmin, usa **SSL mode: disable** y base de mantenimiento según `.env`
-
----
+*   **Backend:** `pnpm run --filter backend dev`
+*   **Frontend:** `pnpm run --filter frontend dev` (acceder en http://localhost:3000)
+    *   Asegúrate de que `VITE_API_URL` en `.env` sea `http://localhost:8000` si ejecutas el frontend localmente.
+*   **Docker Compose:** `docker-compose up --build`
+    *   Base de datos: localhost:5433 (SSL mode: disable, credenciales en .env)
 
 ## Testing
 
-- Ejecutar todos los tests:
+*   Ejecutar tests: `pnpm run test`
+*   Cobertura: `pnpm run --filter backend test:cov`
 
-  ```bash
-  pnpm -r test
-  ```
+## Linting y Formateo
 
-- Cobertura:
+*   Lint: `npm run lint`
+*   Formatear: `npm exec prettier --write .`
 
-  ```bash
-  pnpm --filter backend test:cov
-  ```
+## Buenas prácticas
 
----
-
-## Linting y formateo
-
-- Lint en todos los paquetes:
-
-  ```bash
-  pnpm -r lint
-  ```
-
-- Formatear con Prettier:
-
-  ```bash
-  pnpm exec prettier --write .
-  ```
-
----
-
-## Buenas prácticas generales
-
-- Centralizar dependencias y configuración en la raíz.
-- Mantener documentación actualizada en `docs/`.
-- Escribir y mantener tests con buena cobertura.
-- Usar commits claros y descriptivos.
-- Revisar advertencias y actualizar dependencias obsoletas.
-- Sincronizar con el equipo antes de cambios mayores.
-- Usar el paquete común para tipos y utilidades compartidas.
+*   Documentación en `docs/`.
+*   Tests con buena cobertura.
+*   Commits claros.
+*   Actualizar dependencias.
+*   Usar el paquete común.
 
 ## Variables de Entorno
 
-**Nota:** Además de `VITE_API_URL`, existen otras variables de entorno que deben ser configuradas. Consultar la documentación del backend para más detalles.
+Ver detalles en `docs/Codigos.md`.
 
-```
-VITE_API_URL=http://localhost:8000/api/v1
-```
-
-## Endpoints de Gamificación
-
-- **Otorgar puntos a un usuario:**
-  ```
-  POST /api/v1/gamification/grant-points/:userId
-  ```
-  Requiere el ID del usuario y la cantidad de puntos a otorgar en el cuerpo de la solicitud.
-
-## Objetivos actuales
-
-- Mejorar accesibilidad del frontend.
-- Integrar control ortográfico y gramatical avanzado.
-- Mejorar cobertura de tests en el frontend.
-- Configurar CI/CD y automatizar despliegues.
-- **Licencia:** MIT License
-
----
-
-## Comandos para Ejecutar Migraciones
+## Migraciones
 
 ```bash
-psql "postgres://postgres:Rm88cam88@localhost:5432/tabanok_db" -f backend/src/migrations/1674280800001-AddLevelColumnToUsersTable.sql
+pnpm typeorm migration:run -d src/data-source.ts
 ```
 
-## Variables de Entorno
+---
+
+Última actualización: 20/4/2025, 2:00:00 a. m. (America/Bogota, UTC-5:00)

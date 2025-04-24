@@ -17,15 +17,26 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
-import CategoryManager from './CategoryManager';
-import TagManager from './TagManager';
+import { useState, useEffect } from 'react'; // Import useEffect
+// import CategoryManager from './CategoryManager'; // Removed unused import
+// import TagManager from './TagManager'; // Removed unused import
 import Form from '@/components/common/Form';
+
+// Define a type for content items
+interface ContentItem {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  tags: string;
+  type: string;
+  content: string | null; // Store text content or file name
+}
 
 const ContentManager = () => {
   const [showForm, setShowForm] = useState(false);
   const [contentType, setContentType] = useState('');
-  const [contents, setContents] = useState([
+  const [contents, setContents] = useState<ContentItem[]>([ // Use the defined type
     {
       id: 1,
       title: 'Contenido 1',
@@ -33,6 +44,7 @@ const ContentManager = () => {
       category: 'Categoría 1',
       tags: 'tag1, tag2',
       type: 'texto',
+      content: 'Este es el contenido de texto 1',
     },
     {
       id: 2,
@@ -41,6 +53,7 @@ const ContentManager = () => {
       category: 'Categoría 2',
       tags: 'tag3, tag4',
       type: 'imagen',
+      content: null, // Representing a file, actual file object won't be stored here
     },
     {
       id: 3,
@@ -49,101 +62,124 @@ const ContentManager = () => {
       category: 'Categoría 3',
       tags: 'tag5, tag6',
       type: 'video',
+      content: null, // Representing a file
     },
   ]);
-  const [editContent, setEditContent] = useState(null);
+  const [editContent, setEditContent] = useState<ContentItem | null>(null); // Use the defined type
+
+  // State for form fields
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const [tags, setTags] = useState('');
+  const [content, setContent] = useState<string | File | null>(null); // Updated state type
+
+  // Populate form fields when editing
+  useEffect(() => {
+    if (editContent) {
+      setTitle(editContent.title);
+      setDescription(editContent.description);
+      setCategory(editContent.category);
+      setTags(editContent.tags);
+      setContentType(editContent.type);
+      // Set content only if it's text, otherwise it's a file input
+      setContent(editContent.type === 'texto' ? editContent.content : null);
+    } else {
+      // Clear form fields when not editing
+      setTitle('');
+      setDescription('');
+      setCategory('');
+      setTags('');
+      setContentType('');
+      setContent(null);
+    }
+  }, [editContent]);
+
 
   const handleSave = () => {
-    if (typeof document !== 'undefined') {
-      const title = (document.getElementById('title') as HTMLInputElement).value;
-      const description = (document.getElementById('description') as HTMLTextAreaElement).value;
-      const category = (document.querySelector('#category > div > button > span') as HTMLSpanElement).innerText;
-      const tags = (document.getElementById('tags') as HTMLInputElement).value;
-      const type = (document.querySelector('#type > div > button > span') as HTMLSpanElement).innerText;
-      const content = (document.getElementById('content') as HTMLInputElement)?.value || '';
+    const newContent: ContentItem = { // Use the defined type
+      id: editContent ? editContent.id : contents.length + 1, // Simple ID generation
+      title,
+      description,
+      category,
+      tags,
+      type: contentType,
+      content: contentType === 'texto' ? (content as string | null) : (content instanceof File ? content.name : null), // Store file name or text content
+    };
 
-      const newContent = {
-        title,
-        description,
-        category,
-        tags,
-        type,
-        content,
-      };
-
-      alert(JSON.stringify(newContent, null, 2));
+    if (editContent) {
+      setContents(contents.map((c) => (c.id === editContent.id ? newContent : c)));
+    } else {
+      setContents([...contents, newContent]);
     }
+
+    // alert(JSON.stringify(newContent, null, 2)); // Keep alert for now as placeholder
 
     setShowForm(false);
     setEditContent(null);
   };
 
+  const handleDelete = (id: number) => { // Add type for id
+    setContents(contents.filter((c) => c.id !== id));
+  };
+
+  const handleEdit = (content: ContentItem) => { // Add type for content
+    setEditContent(content);
+    setShowForm(true); // Show form when editing
+  };
+
+
   return (
     <div>
       <h2>Gestión de Contenidos</h2>
-      <Button onClick={() => setShowForm(!showForm)}>Crear Nuevo Contenido</Button>
+      <Button onClick={() => {
+        setShowForm(!showForm);
+        setEditContent(null); // Clear edit state when toggling form
+      }}>Crear Nuevo Contenido</Button>
       {(showForm || editContent) && (
         <Form
           title={editContent ? 'Editar Contenido' : 'Crear Nuevo Contenido'}
           description="Ingrese la información del nuevo contenido."
-          onSubmit={() => {
-            const title = document.getElementById('title') as HTMLInputElement;
-            const description = document.getElementById('description') as HTMLTextAreaElement;
-            const category = document.getElementById('category') as HTMLSelectElement;
-            const tags = document.getElementById('tags') as HTMLInputElement;
-            const type = document.getElementById('type') as HTMLSelectElement;
-
-            if (editContent) {
-              setContents(
-                contents.map((c) =>
-                  c.id === editContent.id
-                    ? {
-                        ...c,
-                        title: title.value,
-                        description: description.value,
-                        category: category.value,
-                        tags: tags.value,
-                        type: type.value,
-                      }
-                    : c,
-                ),
-              );
-            }
-            handleSave();
+          onSubmit={handleSave} // Use the refactored handleSave
+          onCancel={() => {
+            setShowForm(false);
+            setEditContent(null); // Clear edit state on cancel
           }}
-          onCancel={() => setShowForm(false)}
         >
           <div className="grid gap-2">
             <Label htmlFor="title">Título</Label>
-            <Input id="title" defaultValue={editContent?.title || ''} />
+            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="description">Descripción</Label>
-            <Textarea id="description" defaultValue={editContent?.description || ''} />
+            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="category">Categoría</Label>
-            {/* <Select>
-              <SelectTrigger>
+            {/* Integrate CategoryManager here */}
+             <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger id="category">
                 <SelectValue placeholder="Seleccione una categoría" />
               </SelectTrigger>
               <SelectContent>
+                {/* Replace with dynamic categories from CategoryManager */}
                 <SelectItem value="categoria1">Categoría 1</SelectItem>
                 <SelectItem value="categoria2">Categoría 2</SelectItem>
                 <SelectItem value="categoria3">Categoría 3</SelectItem>
               </SelectContent>
-            </Select> */}
-            <CategoryManager />
+            </Select>
+            {/* <CategoryManager /> */} {/* Remove this line */}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="tags">Etiquetas</Label>
-            {/* <Input id="tags" defaultValue={editContent?.tags || ''} /> */}
-            <TagManager />
+            {/* Integrate TagManager here */}
+            <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} />
+            {/* <TagManager /> */} {/* Remove this line */}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="type">Tipo de Contenido</Label>
-            <Select onValueChange={setContentType} defaultValue={editContent?.type || ''}>
-              <SelectTrigger>
+            <Select onValueChange={setContentType} value={contentType}>
+              <SelectTrigger id="type">
                 <SelectValue placeholder="Seleccione un tipo de contenido" />
               </SelectTrigger>
               <SelectContent>
@@ -157,12 +193,12 @@ const ContentManager = () => {
           {contentType === 'texto' ? (
             <div className="grid gap-2">
               <Label htmlFor="content">Contenido</Label>
-              <Textarea id="content" />
+              <Textarea id="content" value={content as string} onChange={(e) => setContent(e.target.value)} />
             </div>
           ) : (contentType === 'imagen' || contentType === 'video' || contentType === 'audio') ? (
             <div className="grid gap-2">
               <Label htmlFor="content">Archivo</Label>
-              <Input id="content" type="file" />
+              <Input id="content" type="file" onChange={(e) => setContent(e.target.files ? e.target.files[0] : null)} />
             </div>
           ) : null}
         </Form>
@@ -189,10 +225,10 @@ const ContentManager = () => {
                 <TableCell>{content.tags}</TableCell>
                 <TableCell>{content.type}</TableCell>
                 <TableCell>
-                  <Button onClick={() => setContents(contents.filter((c) => c.id !== content.id))}>
+                  <Button onClick={() => handleDelete(content.id)}>
                     Eliminar
                   </Button>
-                  <Button onClick={() => setEditContent(content)}>Editar</Button>
+                  <Button onClick={() => handleEdit(content)}>Editar</Button>
                 </TableCell>
               </TableRow>
             ))}

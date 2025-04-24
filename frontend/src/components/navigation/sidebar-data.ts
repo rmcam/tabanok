@@ -1,141 +1,70 @@
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
   Settings2,
-  SquareTerminal,
+  LayoutDashboard, // Añadido para Dashboard
+  Folder, // Añadido para Unidades/Proyectos
+  Activity, // Añadido para Actividades
+  Film, // Añadido para Multimedia
+  Award, // Añadido para Gamificación
 } from "lucide-react";
 
+// Datos estáticos para la navegación principal (ajustados a endpoints disponibles)
+// Los datos de usuario, equipos y proyectos serán dinámicos
 export const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
+      title: "Dashboard",
+      url: "/dashboard", // Asumiendo esta es la ruta del dashboard
+      icon: LayoutDashboard,
+      isActive: true, // Podría ser dinámico basado en la ruta actual
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      title: "Unidades", // Renombrado de Projects
+      url: "/units", // Asumiendo una ruta para listar unidades
+      icon: Folder,
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Actividades",
+      url: "/activities", // Asumiendo una ruta para listar actividades
+      icon: Activity,
+    },
+    {
+      title: "Multimedia",
+      url: "/multimedia",
+      icon: Film,
+    },
+    {
+      title: "Gamificación",
+      url: "/gamification", // Asumiendo una ruta principal de gamificación
+      icon: Award,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Leaderboard",
+          url: "/gamification/leaderboard",
         },
         {
-          title: "Get Started",
-          url: "#",
+          title: "Logros",
+          url: "/gamification/achievements",
         },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
+        // Otros sub-items de gamificación si son necesarios
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings", // Asumiendo una ruta de configuración
       icon: Settings2,
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "Perfil",
+          url: "/settings/profile", // Usaría GET /auth/profile y PUT /auth/profile
         },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
+        // Otros sub-items de configuración si son necesarios
       ],
     },
-  ],
-  projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      title: "Panel Docente",
+      url: "/teacher-dashboard", // Asumiendo esta es la ruta del dashboard
+      icon: Settings2,
     },
   ],
+  // user, teams, projects data will be fetched dynamically
 };

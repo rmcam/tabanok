@@ -3,7 +3,7 @@ export const heroCardsData = [
     title: 'Transforma la educación',
     description: 'Aprende Kamëntsá de forma divertida y efectiva. ¡Únete ahora!',
     buttons: [
-      { label: 'Comienza ahora', variant: 'default' as const, href: '/signup' }, // Cambiado action a href
+      { label: 'Comienza ahora', variant: 'default' as const, action: 'openSignupModal' as const }, // Cambiado action a href
       { label: 'Más información', variant: 'secondary' as const, href: '/about' },
       { label: 'Lecciones populares', variant: 'link' as const, href: '/lessons' },
     ],
@@ -14,7 +14,7 @@ export const heroCardsData = [
   {
     title: 'Potencia tu enseñanza',
     buttons: [
-      { label: 'Comienza ahora', variant: 'default' as const, href: '/signup' }, // Cambiado action a href
+      { label: 'Comienza ahora', variant: 'default' as const, action: 'openSignupModal' as const }, // Cambiado action a href
       { label: 'Más información', variant: 'secondary' as const, href: '/about' },
     ],
     description:

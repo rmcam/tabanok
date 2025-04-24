@@ -15,6 +15,7 @@ import { AuthService } from './auth.service';
 import { RolesGuard } from './guards/roles.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { StatisticsService } from '../features/statistics/statistics.service';
+import { ActivityModule } from '../features/activity/activity.module';
 
 @Module({
     imports: [
@@ -34,18 +35,21 @@ import { StatisticsService } from '../features/statistics/statistics.service';
         MailModule,
         HttpModule,
         TypeOrmModule.forFeature([Statistics]),
-        GamificationModule
+        GamificationModule,
+        ActivityModule
     ],
     controllers: [AuthController],
     providers: [
         AuthService,
         StatisticsService,
-        RolesGuard // Eliminado JwtStrategy de aquí
+        RolesGuard,
+        JwtStrategy
     ],
     exports: [
         JwtModule,
         AuthService,
-        RolesGuard
+        RolesGuard,
+        JwtStrategy
     ],
 })
 export class AuthModule { }

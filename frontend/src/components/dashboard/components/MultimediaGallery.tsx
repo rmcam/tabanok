@@ -19,10 +19,17 @@ const MultimediaGallery: React.FC = () => {
   useEffect(() => {
     const fetchMultimedia = async () => {
       try {
+        const cachedMultimedia = sessionStorage.getItem('multimediaItems');
+        if (cachedMultimedia) {
+          setMultimediaItems(JSON.parse(cachedMultimedia));
+          setLoading(false);
+          return;
+        }
         const response = await fetch('/multimedia'); // Usar el endpoint GET /multimedia
         if (response.ok) {
           const data: MultimediaItem[] = await response.json();
           setMultimediaItems(data);
+          sessionStorage.setItem('multimediaItems', JSON.stringify(data));
         } else {
           setError('Error al obtener la lista de multimedia.');
         }

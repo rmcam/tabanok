@@ -1,8 +1,8 @@
-import { UserActivity } from '@/features/gamification/entities/activity.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { User } from '../auth/entities/user.entity';
+import { Activity } from '../features/activity/entities/activity.entity';
 import { Account } from '../features/account/entities/account.entity';
 import { Content } from '../features/content/entities/content.entity';
 import { CulturalContent } from '../features/cultural-content/cultural-content.entity';
@@ -79,7 +79,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         SpecialEvent,
         Statistics,
         UserMission,
-        UserActivity,
+        Activity,
         Multimedia,
       ],
       synchronize: true,

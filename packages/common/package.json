@@ -5,5 +5,11 @@
   "types": "index.ts",
   "private": true,
   "description": "Tipos, utilidades y constantes compartidas para backend y frontend",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "axios": "^1.8.4"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0"
+  }
 }

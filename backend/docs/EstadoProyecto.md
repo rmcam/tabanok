@@ -19,11 +19,17 @@ El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cam
 *   Se mejoró la accesibilidad de las imágenes en la sección de Lecciones Destacadas.
 *   Se implementó la funcionalidad de "Ver todas las lecciones".
 *   Se agregaron imágenes a los testimonios.
-*   Se ha añadido la funcionalidad de autoplay al carrusel de testimonios.
+*   Se ha añadido la funcionalidad de autoplay al carrusel de testimonios utilizando el plugin `embla-carousel-autoplay`.
+*   Se corrigió la estructura del carrusel principal para que el enlace no envuelva toda la tarjeta `HeroSection`, permitiendo que los botones internos sean interactivos.
 *   Se implementó un carrusel interactivo en la HeroSection para mostrar diferentes tarjetas de `heroCardsData` con transiciones suaves y controles de navegación.
 *   Se añadió un efecto de "card hover" a las Lecciones Destacadas para hacerlas más interactivas.
+*   Se ajustó el diseño de la sección de lecciones destacadas para utilizar una cuadrícula responsiva en lugar de desplazamiento horizontal en pantallas pequeñas.
+*   Se corrigió un error de tipo en `heroCards.ts` relacionado con la propiedad `action` en los datos de las tarjetas.
 *   Se implementó un efecto de desplazamiento suave al hacer clic en los enlaces "Ver lección" y "Ver todas las lecciones" utilizando `react-router-hash-link`.
 *   Se centralizó la lógica de las tarjetas de la sección Hero, obteniendo los datos directamente desde `heroCards.ts`.
+*   Se modificó la estructura de datos en `heroCards.ts` para incluir una propiedad `action` en los botones, permitiendo diferenciar acciones de navegación.
+*   Se actualizó `HeroSection.tsx` para utilizar la propiedad `action` al manejar los clics de los botones, desacoplando la acción del texto del botón.
+*   Se mejoró el mensaje de error mostrado al usuario cuando falla la carga de las lecciones destacadas en la página de inicio.
 *   Se eliminó la dependencia del archivo JSON `public/heroCards.json`.
 *   Se implementó una animación de aparición gradual (fade-in) al cargar la página.
 *   Se agregó un efecto parallax a la sección del Hero (`src/components/home/components/HeroSection.tsx`).
@@ -37,6 +43,7 @@ El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cam
 *   Se alinearon los campos del formulario y se aumentó el tamaño del texto en `src/components/home/components/ContactForm.tsx`.
 *   Se implementaron indicadores interactivos en el carrusel de la HeroSection.
 *   Se implementó la carga dinámica de las lecciones destacadas desde la API del backend.
+*   Se añadió manejo de estado de carga y error para la sección "Lecciones Destacadas".
 *   Se corrigió el error `ReferenceError: process is not defined` al utilizar `import.meta.env.VITE_API_URL` en lugar de `process.env.VITE_API_URL`.
 - Backend funcional con NestJS, conectado a PostgreSQL.
 - Frontend funcional con React + Vite, autenticación y consumo de API.
@@ -56,6 +63,9 @@ El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cam
 - **Sidebar desplegable implementado:** Se agregó un sidebar desplegable que aparece en todos los sitios excepto en la ruta "/". Se añadió un buscador al sidebar utilizando el componente Input. Se añadió un sistema de notificaciones al dashboard utilizando el componente Sonner.
 - **Mejoras en el Dashboard:** Se modificó el dashboard para darle un aspecto profesional pero llamativo para los niños, incluyendo un fondo degradado, un título más llamativo y un gráfico de barras para las estadísticas. Se añadieron breadcrumbs para facilitar la navegación dentro del dashboard.
 - **Buenas prácticas React y seguridad:** Se corrigieron errores de estructura de rutas y uso de `<Route>`, y se mejoró la gestión de tokens y roles en frontend. Se ha solucionado el error 500 al obtener los temas. Se han definido modelos de datos JSON para el panel del docente y multimedia, mejorando la gestión de datos y la integración con el backend. Se han añadido nuevos endpoints para la gestión de estos modelos.
+- **Implementación de HttpOnly cookies:** Los tokens de autenticación (`accessToken` y `refreshToken`) ahora se almacenan en cookies HttpOnly en el backend para mejorar la seguridad. La implementación en el frontend para utilizar estas cookies en lugar de `localStorage` está completa.
+- **Mejoras en el módulo de autenticación del frontend:** Se integró `sonner` para notificaciones, se mejoró el manejo de errores en los servicios y contexto, y se unificó el manejo de errores en el `AuthContext` para lanzar excepciones en lugar de retornar booleanos en caso de fallo. Se actualizaron los componentes de formulario (`SigninForm`, `SignupForm`, `ForgotPasswordForm`) para manejar estos errores.
+- **Análisis de accesibilidad del carrusel de testimonios:** Se verificó que el componente `Carousel` base soporta navegación con teclado y botones. La funcionalidad de autoplay está presente (usando `data-autoplay`), pero no hay controles explícitos de pausa/reproducción integrados en el componente actual. Añadir estos controles requeriría desarrollo adicional.
 - **Se han resuelto los errores de TypeScript y ESLint en el frontend relacionados con las props `units`, `unitsLoading` y `unitsError` en `App.tsx` y `Dashboard`.**
 - **Se han actualizado las dependencias del proyecto, incluyendo `react-day-picker`, `date-fns` y `vite`.**
 - **Se ha reemplazado `vite-plugin-components` con `unplugin-vue-components`.**
@@ -64,6 +74,19 @@ El componente `HomePage` ha sido refactorizado y mejorado con los siguientes cam
 - **Documentación de endpoints con Swagger normalizada y profesionalmente documentada.**
 - **Gestión de Contenidos:** Se ha implementado la interfaz de usuario para la gestión de contenidos en el Panel Docente.
 - **Protección de rutas:** Se ha revisado la protección de rutas, redirigiendo a "/" si no está logueado. Se ha modificado la lógica para mostrar el sidebar en `App.tsx` para que también dependa del estado de autenticación.
+
+---
+
+## Mejoras de Diseño y Estilo (Multicolor Kamëntsá)
+
+Se han aplicado mejoras de diseño y estilo en `HomePage.tsx` y `HeroSection.tsx` para incorporar elementos multicolor inspirados en el arte Kamëntsá. Esto incluye:
+
+*   Colores de iconos y bordes en las tarjetas de características.
+*   Colores de indicadores del carrusel principal (activo e inactivos).
+*   Color del título de las lecciones destacadas al pasar el ratón.
+*   Borde de color en las tarjetas de testimonios.
+*   Superposición de color en la imagen de fondo de la sección principal.
+*   Borde de color en la imagen principal de la sección principal.
 
 ---
 
@@ -92,8 +115,8 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - Se eliminó el componente `src/components/common/CommonContent.tsx` ya que no se estaba utilizando en el proyecto.
 - Se movieron los hooks de `src/hooks/auth/` a `src/auth/hooks/`.
 - Rutas públicas y privadas gestionadas con React Router y el componente `PrivateRoute`. La autenticación por el momento funciona, hay que revisar a detalle.
-- Autenticación y manejo de roles implementados completamente.
-- La información del usuario, el token de autenticación y los roles se guardan en el almacenamiento local.
+- **Autenticación y manejo de roles implementados completamente utilizando un Contexto de React (`AuthContext`) y un Proveedor (`AuthProvider`).**
+- La información del usuario, el token de autenticación y los roles ahora se gestionan a través de cookies HttpOnly en el backend y se obtienen mediante la verificación de sesión.
 - El componente `PrivateRoute` verifica si el usuario está autenticado y si tiene el rol necesario para acceder a la ruta, devolviendo solo los hijos autorizados.
 - Se ha agregado una ruta para la página "unauthorized".
 - El componente `App` verifica si el usuario está autenticado al cargar la aplicación.
@@ -125,5 +148,20 @@ Ver documentación completa y actualizada en [`docs/Gamificacion.md`](./Gamifica
 - **Chat**: Se eliminó el módulo de chat para simplificar el backend y frontend, ya que no era una funcionalidad prioritaria en la revitalización lingüística ni en la hoja de ruta actual. Si se requiere en el futuro, se planificará e implementará nuevamente con la comunidad.
 
 ---
+- Se ha asegurado la consistencia de la estructura de datos en `heroCardsData` añadiendo el campo `buttons: []` a todos los elementos.
+- Se ha simplificado la lógica de color de los indicadores del carrusel para usar un color para el indicador activo y otro para los inactivos.
+- Se ha eliminado el borde amarillo de las tarjetas de testimonios.
+- Se ha ajustado el espaciado vertical entre las secciones principales de la página a `py-12`.
+- Se ha intentado corregir el comportamiento del carrusel para evitar cambios de tamaño al añadir una altura fija (`h-[500px]`) al contenedor del carrusel y asegurar que los elementos internos ocupen esa altura (`h-full`).
+- Se ha creado un nuevo componente `FeaturedLessonCard` (`src/components/home/components/FeaturedLessonCard.tsx`) para encapsular la lógica de visualización de las tarjetas de lecciones destacadas y se ha integrado en `HomePage.tsx`.
+*   Se mejoró la accesibilidad del carrusel principal y el carrusel de testimonios con atributos ARIA (`role`, `aria-roledescription`, `aria-label`).
+*   Se añadió un botón de pausa/reproducción al carrusel de testimonios para controlar el autoplay.
+*   Se refactorizaron las clases CSS comunes de los `FeatureCard` en una constante para mejorar la mantenibilidad.
+*   Se añadió un mecanismo de reintento para la carga de lecciones destacadas en caso de error, mostrando un botón para reintentar.
+*   Se añadieron enlaces de ejemplo (Política de Privacidad, Términos de Servicio, Contacto) en el pie de página.
+*   Se agregó una barra de navegación estática (`HomeNavbar.tsx`) a la página de inicio que es visible al cargar y permanece fija al desplazarse, conteniendo los botones "Iniciar Sesión" y "Registrarse".
+*   Se eliminó la acción directa de abrir el modal de registro del botón "Comienza ahora" en la sección principal, ya que esta funcionalidad ahora se maneja a través de la barra de navegación estática.
 
-Última actualización: 22/4/2025, 12:17:58 a. m. (America/Bogota, UTC-5:00)
+---
+
+Última actualización: 23/4/2025, 1:42 p. m. (America/Bogota, UTC-5:00)

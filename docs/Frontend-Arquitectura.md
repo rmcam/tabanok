@@ -1,145 +1,34 @@
-# Arquitectura Frontend Tabanok
+## Componente HomePage
 
-## Tecnologías principales
+El componente `HomePage` es la página principal de la plataforma Tabanok.
 
-- **React**
-- **Vite** como bundler
-- **TypeScript**
-- **Three.js** para animaciones 3D
-- **Tailwind CSS** para estilos
+### Características
 
-## Organización general
+*   Sección Hero (título, descripción, imagen de fondo, botones).
+*   Sección de Características (Lecciones Interactivas, Gamificación, Seguimiento de Progreso).
+*   Sección de Lecciones Destacadas.
+*   Sección de Testimonios.
+*   Sección de Preguntas Frecuentes.
+*   Sección de Contacto.
+*   Footer.
+*   Integración de Modales de Autenticación.
 
-El frontend está organizado por **dominios funcionales** y **tipos de componentes** para facilitar la escalabilidad y el mantenimiento.
+### Barra Lateral Dinámica
 
-### Estructura de carpetas
+Muestra información del usuario, unidades y roles.
 
-```
-src/
-├── App.tsx         # Componente principal
-├── main.tsx        # Punto de entrada
-├── assets/         # Archivos estáticos
-├── components/     # Componentes React
-│   ├── ui/         # Componentes UI genéricos y reutilizables (Atomic Design)
-│   │   ├── atoms/
-│   │   ├── molecules/
-│   │   └── organisms/
-│   ├── auth/       # Componentes relacionados con autenticación
-│   ├── gamification/   # Componentes de gamificación
-│   ├── profile/    # Perfil de usuario
-│   ├── dashboard/  # Componentes del dashboard
-│   │   ├── ProgressSection.tsx
-│   │   ├── RewardsSection.tsx
-│   │   ├── FeaturedContent.tsx
-│   │   ├── RecommendationsSection.tsx
-│   │   └── CommunitySection.tsx
-│   └── layout/     # Layouts, barras laterales, navegación
-├── features/       # Funcionalidades específicas
-│   ├── auth/       # Autenticación
-│   │   ├── components/ # Componentes React
-│   │   ├── hooks/      # Hooks React
-│   │   └── lib/        # Lógica de negocio
-│   ├── gamification/   # Gamificación
-│   │   ├── components/ # Componentes React
-│   │   ├── hooks/      # Hooks React
-│   │   └── lib/        # Lógica de negocio
-├── hooks/          # Hooks React genéricos
-├── lib/            # Lógica de negocio genérica
-├── styles/         # Estilos CSS
-│   ├── components/ # Estilos para componentes
-│   ├── base/       # Estilos base (reset, tipografía)
-│   └── utils/      # Mixins, variables
-└── ...             # Otros archivos
+### Mejoras de Diseño y Estilo
 
-public/             # Archivos estáticos
-```
+Se han aplicado mejoras de diseño y estilo.
 
-### Convenciones
+### Carrusel Interactivo
 
-- **Alias `@/`**: configurado en `vite.config.ts` para importar desde la raíz del frontend.
-- **Componentes UI**: deben ser lo más genéricos posible y ubicarse en `components/ui/`.
-- **Componentes específicos**: se agrupan por dominio funcional.
-- **Hooks**: generales o específicos, organizados en subcarpetas.
-- **Lógica de negocio**: en `lib/`, separada por dominio.
+Carrusel interactivo en la HeroSection.
 
-### Ventajas
+### Carga Dinámica de Lecciones Destacadas
 
-- Facilita la escalabilidad y el trabajo en equipo.
-- Permite identificar rápidamente dónde agregar o modificar funcionalidades.
-- Separa claramente UI genérica de lógica y componentes específicos.
-
-## Notas para desarrollo
-
-- Mantener la separación por dominios.
-- Reutilizar componentes UI cuando sea posible.
-- Documentar nuevos hooks, componentes y acciones.
-- Actualizar esta documentación cuando se hagan cambios estructurales.
+Carga dinámica de lecciones destacadas desde la API del backend.
 
 ---
 
-## Integración con Backend
-
-El frontend consume el backend mediante un **cliente Axios centralizado** ubicado en:
-
-- `src/lib/api.ts`
-
-Este cliente:
-
-- Usa la URL base configurada en `VITE_API_URL`.
-- Añade automáticamente el token JWT a las peticiones, obteniéndolo del usuario almacenado en sessionStorage.
-- Permite interceptar y manejar errores globales.
-
-### Hooks para consumir el backend
-
-Se han implementado hooks específicos para interactuar con los endpoints del backend, ubicados en:
-
-- `src/features/auth/useAuth.ts` — signin, logout, estado autenticado
-- `src/features/dictionary/hooks/useSearch.ts` — búsqueda de términos (ahora usa la ruta `/api/v1/search`)
-- `src/features/dictionary/hooks/useEntry.ts` — detalle de una entrada
-- `src/features/dictionary/hooks/useCategories.ts` — categorías
-- `src/features/dictionary/hooks/useVariations.ts` — variaciones dialectales (ahora usa la ruta `/api/v1/search`)
-- `src/features/gamification/hooks/useGamification.ts` - Gamificación
-
-### Componentes que usan estos hooks
-
-- `src/features/auth/components/LoginForm.tsx` — formulario de login
-- `src/features/dictionary/components/SearchView.tsx` — vista de búsqueda
-- `src/features/dictionary/components/EntryDetail.tsx` — detalle de entrada
-- `src/features/dictionary/components/CategoriesList.tsx` — listado de categorías
-- `src/features/dictionary/components/VariationsList.tsx` — listado de variaciones dialectales
-- `src/features/gamification/components/Leaderboard.tsx` - Leaderboard
-- `src/features/gamification/components/CulturalAchievement.tsx` - Cultural Achievement
-- `src/features/gamification/components/Mentor.tsx` - Mentor
-
-
-### Flujo general
-
-Los **hooks** gestionan la lógica de consumo del backend y estado.  
-Los **componentes** usan estos hooks para mostrar datos y gestionar la UI.  
-Esto permite una integración **modular, escalable y segura**.
-
-### Buenas prácticas
-
-- Crear hooks para cada nuevo endpoint o conjunto de endpoints
-- Crear componentes que usen estos hooks para mostrar datos
-- Mantener la separación por dominios funcionales
-- Documentar cualquier nuevo hook o componente
-- Actualizar esta sección cuando se agreguen nuevas integraciones
-
----
-
-## Licencia
-
-MIT License
-
-## Modelos de Datos
-
-El frontend utiliza modelos de datos JSON para gestionar la información recibida del backend.  Estos modelos mejoran la organización y la eficiencia del código.
-
-### `teacher_dashboard_model.json`
-
-Este modelo define la estructura de datos para el panel del docente, incluyendo información del usuario, lecciones, actividades, unidades, progreso y evaluaciones.
-
-### `multimedia_model.json`
-
-Este modelo define la estructura de datos para la gestión de archivos multimedia, incluyendo información sobre el ID, título, descripción, tipo, URL, ID de la lección y metadatos.
+Última actualización: 23/4/2025, 3:16 p. m. (America/Bogota, UTC-5:00)

@@ -1,19 +1,22 @@
 import {
+  BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Get,
   Headers,
   Post,
   Put,
   Request,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
-  ConflictException,
-  BadRequestException,
-  UnauthorizedException,
+  Res,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
 import { AuthService } from './auth.service';
+import { Public } from './decorators/public.decorator';
 import {
   ChangePasswordDto,
   LoginDto,
@@ -23,7 +26,8 @@ import {
   UpdateProfileDto,
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
+import { Response } from 'express';
+import { User } from './entities/user.entity'; // Importar la entidad User
 
 @ApiTags('auth')
 @Controller('auth')
@@ -31,6 +35,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UsePipes(new CustomValidationPipe({ transform: true }))
+  @Public() // Marcar esta ruta como pública
   @Post('signin')
   @ApiOperation({
     summary: 'Iniciar sesión',
@@ -38,10 +43,14 @@ export class AuthController {
   })
   @ApiResponse({ status: 200, description: 'Usuario autenticado exitosamente', type: LoginDto })
   @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
     try {
-      const result = await this.authService.login(loginDto);
-      return result;
+      const { accessToken, refreshToken } = await this.authService.login(loginDto);
+
+      res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+
+      return { message: 'Login successful' };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
@@ -51,6 +60,7 @@ export class AuthController {
   }
 
   @UsePipes(new CustomValidationPipe({ transform: true }))
+  @Public() // Marcar esta ruta como pública
   @Post('signup')
   @ApiOperation({
     summary: 'Registrar nuevo usuario',
@@ -149,7 +159,30 @@ export class AuthController {
   @ApiOperation({ summary: 'Renovar token de acceso' })
   @ApiResponse({ status: 200, description: 'Tokens renovados exitosamente' })
   @ApiResponse({ status: 401, description: 'Refresh token inválido o expirado' })
-  async refreshTokens(@Body() body: { refreshToken: string }) {
-    return this.authService.refreshTokens(body.refreshToken);
+  async refreshTokens(@Request() req, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await this.authService.refreshTokens(refreshToken);
+
+    res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+
+    return { message: 'Tokens refreshed successfully' };
+  }
+
+  @Get('verify-session')
+  @UseGuards(JwtAuthGuard) // Asume que JwtAuthGuard verifica la cookie HttpOnly
+  @ApiBearerAuth() // Documentación para Swagger, aunque la auth sea por cookie
+  @ApiOperation({
+    summary: 'Verificar sesión',
+    description: 'Verifica la validez de la sesión actual basada en la cookie HttpOnly y devuelve los datos del usuario si es válida.',
+  })
+  @ApiResponse({ status: 200, description: 'Sesión válida', type: User }) // Asume que User entity puede ser devuelta
+  @ApiResponse({ status: 401, description: 'Sesión inválida o ausente' })
+  async verifySession(@Request() req) {
+    // Si el JwtAuthGuard pasa, req.user contendrá los datos del usuario
+    return req.user;
   }
 }

@@ -6,6 +6,7 @@ export interface SignupData {
   secondName: string;
   firstLastName: string;
   secondLastName: string;
+  avatar?: string;
 }
 
 export interface SigninData {
@@ -14,9 +15,14 @@ export interface SigninData {
 }
 
 export interface User {
-  id: number;
+  id: string;
   email: string;
-  role: string;
+  roles: string[];
+  firstName: string;
+  secondName: string;
+  firstLastName: string;
+  secondLastName: string;
+  avatar?: string;
 }
 
 export interface AuthResponse {

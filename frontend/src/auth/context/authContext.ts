@@ -3,12 +3,12 @@ import { SigninData, SignupData, User } from '../types/authTypes';
 
 export interface AuthContextType {
   user: User | null;
-  loading: boolean; // Estado de carga inicial (verificación de autenticación)
-  signingIn: boolean; // Estado de carga para signin
-  signingUp: boolean; // Estado de carga para signup
-  requestingPasswordReset: boolean; // Estado de carga para forgotPassword
-  signin: (data: SigninData) => Promise<boolean>;
-  signup: (data: SignupData) => Promise<boolean>;
+  loading: boolean;
+  signingIn: boolean;
+  signingUp: boolean;
+  requestingPasswordReset: boolean;
+  signin: (data: SigninData) => Promise<void>;
+  signup: (data: SignupData) => Promise<void>;
   signout: () => void;
   forgotPassword: (email: string) => Promise<void>;
 }

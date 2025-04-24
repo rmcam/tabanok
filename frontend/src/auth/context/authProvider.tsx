@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner'; // Importar toast de sonner
+import { toast } from 'sonner';
 import useAuthService from '../hooks/useAuthService';
-import { SigninData, SignupData, User } from '../types/authTypes'; // Importar User desde types
-import {} from '../utils/authUtils';
-import { AuthContext } from './authContext'; // Importar AuthContext y AuthContextType del nuevo archivo
+import { SigninData, SignupData, User } from '../types/authTypes';
+import { AuthContext } from './authContext';
 
 const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
   if (type === 'success') {
@@ -17,40 +16,50 @@ const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info')
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Estado de carga inicial
-  const [signingIn, setSigningIn] = useState(false); // Estado de carga para signin
-  const [signingUp, setSigningUp] = useState(false); // Estado de carga para signup
-  const [requestingPasswordReset, setRequestingPasswordReset] = useState(false); // Estado de carga para forgotPassword
+  const [loading, setLoading] = useState(true);
+  const [signingIn, setSigningIn] = useState(false);
+  const [signingUp, setSigningUp] = useState(false);
+  const [requestingPasswordReset, setRequestingPasswordReset] = useState(false);
 
   const {
     handleSignup: signupService,
     handleSignin: signinService,
     handleForgotPassword: forgotPasswordService,
-    // handleRefreshToken ya no es necesario en el frontend
     handleSignout: signoutService,
-    verifySession: verifySessionService, // Importar la nueva función
+    verifySession: verifySessionService,
   } = useAuthService();
 
-  const signout = useCallback(() => {
-    signoutService(); // Llama al servicio que interactúa con el backend para eliminar cookies
-    setUser(null);
+  const signout = useCallback(async () => {
+    try {
+      await signoutService();
+      setUser(null);
+      showToast('Sesión cerrada exitosamente.', 'success');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      const errorMessage =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Error al cerrar sesión. Por favor, inténtalo de nuevo.';
+      showToast(errorMessage, 'error');
+      throw error;
+    }
   }, [signoutService]);
 
+  // Efecto para verificar la sesión al cargar la aplicación
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Verificar la sesión usando el nuevo servicio que interactúa con el backend
         const authenticatedUser = await verifySessionService();
         setUser(authenticatedUser);
       } catch (error) {
         console.error('Error checking authentication session:', error);
-        setUser(null); // Asegurarse de que el usuario sea null en caso de error
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
     checkAuth();
-  }, [verifySessionService]); // Dependencia correcta
+  }, [verifySessionService]); // Dependencia: verifySessionService
 
   const signup = async (data: SignupData) => {
     setSigningUp(true);
@@ -68,7 +77,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const authenticatedUser = await verifySessionService();
       setUser(authenticatedUser);
       showToast('Registro exitoso. ¡Bienvenido!', 'success');
-      return true; // Indica éxito
     } catch (error) {
       console.error('Error al registrarse:', error);
       const errorMessage =
@@ -76,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ? error.message
           : 'Error al registrarse. Por favor, inténtalo de nuevo.';
       showToast(errorMessage, 'error');
-      throw error; // Lanzar el error
+      throw error;
     } finally {
       setSigningUp(false);
     }
@@ -90,7 +98,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const authenticatedUser = await verifySessionService();
       setUser(authenticatedUser);
       showToast('Inicio de sesión exitoso.', 'success');
-      return true; // Indica éxito
     } catch (error: unknown) {
       console.error('Error al iniciar sesión:', error);
       const errorMessage =
@@ -98,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ? error.message
           : 'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
       showToast(errorMessage, 'error');
-      throw error; // Lanzar el error
+      throw error;
     } finally {
       setSigningIn(false);
     }
@@ -116,7 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ? error.message
           : 'Error al solicitar el restablecimiento de contraseña. Por favor, inténtalo de nuevo.';
       showToast(errorMessage, 'error');
-      throw error; // Re-lanzar el error
+      throw error;
     } finally {
       setRequestingPasswordReset(false);
     }

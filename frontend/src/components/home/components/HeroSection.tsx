@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import clsx from 'clsx';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { HashLink } from 'react-router-hash-link'; // Importar HashLink
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 
 interface HeroProps {
   title: string;
@@ -15,6 +16,7 @@ interface HeroProps {
   }[];
   imageSrc: string;
   imageAlt: string;
+  isAuthenticated: boolean; // Añadir propiedad isAuthenticated
   onComienzaAhoraClick?: () => void;
 }
 
@@ -24,8 +26,10 @@ const HeroSection: React.FC<HeroProps> = ({
   buttons,
   imageSrc,
   imageAlt,
+  isAuthenticated, // Añadir propiedad isAuthenticated
   onComienzaAhoraClick,
 }) => {
+  const navigate = useNavigate(); // Obtener la función de navegación
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
 
@@ -50,8 +54,17 @@ const HeroSection: React.FC<HeroProps> = ({
           <div className="space-x-4 mt-8">
             {buttons.map((button, buttonIndex) => {
               // Determinar el manejador de clic
-              const handleClick =
-                button.action === 'openSignupModal' ? onComienzaAhoraClick : button.onClick;
+              const handleClick = () => {
+                if (button.action === 'openSignupModal') {
+                  if (isAuthenticated) {
+                    navigate('/dashboard'); // Redirigir si está autenticado
+                  } else {
+                    onComienzaAhoraClick?.(); // Abrir modal si no está autenticado
+                  }
+                } else {
+                  button.onClick?.(); // Ejecutar onClick si existe
+                }
+              };
 
               // Renderizar como HashLink si tiene href, de lo contrario como Button
               if (button.href) {
@@ -67,7 +80,7 @@ const HeroSection: React.FC<HeroProps> = ({
                           | 'outline'
                           | 'ghost'
                       }
-                      onClick={handleClick} // Mantener el manejador de clic para acciones adicionales si es necesario
+                      onClick={handleClick} // Usar el nuevo manejador de clic
                     >
                       {button.label}
                     </Button>
@@ -86,7 +99,7 @@ const HeroSection: React.FC<HeroProps> = ({
                         | 'outline'
                         | 'ghost'
                     }
-                    onClick={handleClick}
+                    onClick={handleClick} // Usar el nuevo manejador de clic
                   >
                     {button.label}
                   </Button>

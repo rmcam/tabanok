@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -44,6 +45,7 @@ export class Lesson {
   unityId: string;
 
   @ManyToOne(() => Unity, (unity) => unity.lessons)
+  @JoinColumn({ name: 'unityId' }) // Añadir JoinColumn
   unity: Unity;
 
   @OneToMany(() => Exercise, (exercise) => exercise.lesson)

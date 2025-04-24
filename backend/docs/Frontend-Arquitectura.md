@@ -1,4 +1,4 @@
- ## Componente HomePage
+## Componente HomePage
 
 El componente `HomePage` es la página principal de la plataforma Tabanok. Muestra las características de la plataforma, testimonios e información de contacto.
 
@@ -11,7 +11,8 @@ El componente `HomePage` es la página principal de la plataforma Tabanok. Muest
 *   **Sección de Preguntas Frecuentes:** Muestra una lista de preguntas frecuentes y sus respuestas.
 *   **Sección de Contacto:** Muestra un formulario de contacto.
 *   **Footer:** Muestra un texto de copyright.
-*   **Integración de Modales de Autenticación:** Utiliza el componente `AuthModals` para mostrar los modales de inicio de sesión, registro y recuperación de contraseña. El botón "Comienza ahora" en la sección Hero está configurado para abrir directamente el modal de registro. Los disparadores por defecto de `AuthModals` están ocultos (`showDefaultTriggers={false}`).
+*   **Integración de Modales de Autenticación:** Utiliza el componente `AuthModals` para mostrar los modales de inicio de sesión, registro y recuperación de contraseña. El botón "Comienza ahora" en la sección Hero está configurado para abrir directamente el modal de registro.
+*   Se ha modificado la lógica en `HeroSection.tsx` para que el botón "Comienza ahora" (y otros botones con `action='openSignupModal'`) utilicen la propiedad `action` en lugar del texto del `label` para desencadenar la apertura del modal de registro, mejorando la flexibilidad y mantenibilidad. Los disparadores por defecto de `AuthModals` están ocultos (`showDefaultTriggers={false}`).
 
 ### Mejoras recientes
 
@@ -25,7 +26,27 @@ El componente `HomePage` es la página principal de la plataforma Tabanok. Muest
 *   Se mejoró la accesibilidad de las imágenes en la sección de Lecciones Destacadas.
 *   Se implementó la funcionalidad de "Ver todas las lecciones".
 *   Se agregaron imágenes a los testimonios.
-*   Se ha añadido la funcionalidad de autoplay al carrusel de testimonios.
+*   Se ha añadido la funcionalidad de autoplay al carrusel de testimonios utilizando el plugin `embla-carousel-autoplay`.
+*   Se corrigió la estructura del carrusel principal para que el enlace no envuelva toda la tarjeta `HeroSection`, permitiendo que los botones internos sean interactivos.
+*   Se ajustó el diseño de la sección de lecciones destacadas para utilizar una cuadrícula responsiva en lugar de desplazamiento horizontal en pantallas pequeñas.
+*   Se corrigió un error de tipo en `heroCards.ts` relacionado con la propiedad `action` en los datos de las tarjetas.
+*   Se ha asegurado la consistencia de la estructura de datos en `heroCardsData` añadiendo el campo `buttons: []` a todos los elementos.
+*   Se ha simplificado la lógica de color de los indicadores del carrusel para usar un color para el indicador activo y otro para los inactivos.
+*   Se ha eliminado el borde amarillo de las tarjetas de testimonios.
+*   Se ha ajustado el espaciado vertical entre las secciones principales de la página a `py-12`.
+*   Se ha intentado corregir el comportamiento del carrusel para evitar cambios de tamaño al añadir una altura fija (`h-[500px]`) al contenedor del carrusel y asegurar que los elementos internos ocupen esa altura (`h-full`).
+*   Se ha creado un nuevo componente `FeaturedLessonCard` (`src/components/home/components/FeaturedLessonCard.tsx`) para encapsular la lógica de visualización de las tarjetas de lecciones destacadas y se ha integrado en `HomePage.tsx`.
+
+### Mejoras de Diseño y Estilo (Multicolor Kamëntsá)
+
+Se han aplicado mejoras de diseño y estilo en `HomePage.tsx` y `HeroSection.tsx` para incorporar elementos multicolor inspirados en el arte Kamëntsá. Esto incluye:
+
+*   Colores de iconos y bordes en las tarjetas de características.
+*   Colores de indicadores del carrusel principal (activo e inactivos).
+*   Color del título de las lecciones destacadas al pasar el ratón.
+*   Borde de color en las tarjetas de testimonios.
+*   Superposición de color en la imagen de fondo de la sección principal.
+*   Borde de color en la imagen principal de la sección principal.
 
 ### Carrusel Interactivo
 
@@ -72,8 +93,10 @@ src/
 ├── lib/            # Lógica de negocio genérica
 ├── hooks/          # Hooks React genéricos
 ├── auth/          # Autenticación
-│   ├── hooks/     # Hooks React para autenticación
-│   │   ├── useAuth.ts # Hook para la autenticación
+│   ├── context/   # Contexto de autenticación
+│   │   └── authContext.ts # Contexto y tipo AuthContextType
+│   │   └── authProvider.tsx # Proveedor AuthProvider
+│   ├── hooks/     # Hooks React para autenticación (useAuthService, useAuth)
 │   │   └── useAuthService.ts # Hook para el servicio de autenticación
 ├── styles/         # Estilos CSS
 └── ...             # Otros archivos
@@ -84,9 +107,9 @@ public/             # Archivos estáticos
 ### Convenciones
 
 - **Alias `@/`**: configurado en `vite.config.ts` para importar desde la raíz del frontend.
-- **Componentes UI**: deben ser lo más genéricos posible y ubicarse en `components/ui/`.
+- **Componentes UI**: deben ser lo más genérico posible y ubicarse en `components/ui/`.
 - **Componentes específicos**: se agrupan por dominio funcional.
-- **Hooks**: generales o específicos, organizados en subcarpetas.
+- **Hooks**: generales o específicos, organizados en subcarpetas. El hook `useAuth` ahora se exporta desde el contexto de autenticación.
 - **Lógica de negocio**: en `lib/`, separada por dominio.
 
 ### Ventajas
@@ -103,7 +126,7 @@ El frontend consume el backend mediante un **cliente Axios centralizado** ubicad
 
 ### Hooks para consumir el backend
 
-- `src/auth/hooks/useAuth.ts` — Autenticación
+- `src/auth/hooks/useAuth.ts` (a través del hook `useAuth`) — Autenticación
 - `src/features/dictionary/hooks/` — Diccionario
 - `src/features/gamification/hooks/useGamification.ts` - Gamificación
 
@@ -146,7 +169,12 @@ The `AppSidebar` component in `src/components/navigation/app-sidebar.tsx` define
 
 ---
 
-Última actualización: 21/4/2025, 10:50:00 p. m. (America/Bogota, UTC-5:00)
+Última actualización: 23/4/2025, 2:28:00 p. m. (America/Bogota, UTC-5:00)
 
--   `SignupForm.tsx`: Implementa un formulario de varios pasos con validación en tiempo real (que solo se ejecuta al interactuar con el campo) utilizando el hook `useFormValidation`.
--   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`.
+-   `SignupForm.tsx`: Implementa un formulario de varios pasos con **indicador de progreso** y **validación por pasos**. Utiliza el hook `useFormValidation`, incluye **feedback visual de error** en los inputs, y ahora utiliza el hook `useAuth` para realizar la operación de registro y manejar la navegación. Se ha refactorizado para **eliminar estados locales redundantes** y utilizar el estado de carga del contexto (`signingUp`).
+-   `SigninForm.tsx`: Implementa un formulario con validación utilizando el hook `useFormValidation`, incluye **feedback visual de error** en los inputs, y ahora utiliza el hook `useAuth` para realizar la operación de inicio de sesión y manejar la navegación. Se ha refactorizado para utilizar el estado de carga del contexto (`signingIn`).
+-   `ForgotPasswordForm.tsx`: Implementa un formulario con validación básica, incluye **feedback visual de error** en el input, y ahora utiliza el hook `useAuth` para realizar la operación de recuperación de contraseña. Se ha refactorizado para utilizar el estado de carga del contexto (`requestingPasswordReset`).
+
+---
+
+Última actualización: 23/4/2025, 3:35:00 p. m. (America/Bogota, UTC-5:00)

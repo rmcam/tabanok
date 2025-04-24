@@ -1,3 +1,4 @@
+import { useAuth } from '@/auth/hooks/useAuth'; // Importar useAuth
 import AuthModals from '@/components/common/AuthModals';
 import FeatureCard from '@/components/common/FeatureCard';
 import Loading from '@/components/common/Loading'; // Importar el componente Loading
@@ -17,6 +18,7 @@ import { Activity, Book, Gamepad2, Pause, Play } from 'lucide-react'; // Importa
 import { useCallback, useEffect, useState } from 'react'; // Importar useCallback
 import { useInView } from 'react-intersection-observer';
 import { HashLink } from 'react-router-hash-link';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 import { useCarousel } from '../../hooks/useCarousel';
 import { Card, CardContent } from '../ui';
 import ContactForm from './components/ContactForm';
@@ -54,6 +56,8 @@ const testimonials = [
 ];
 
 const HomePage = () => {
+  const { user, loading } = useAuth(); // Obtener el estado de autenticación y loading
+  const navigate = useNavigate(); // Obtener la función de navegación
   const { slide, setSlide } = useCarousel(0, heroCardsData.length);
   const [featuredLessons, setFeaturedLessons] = useState<FeaturedLesson[]>([]); // Usar la interfaz definida
   const [loadingFeaturedLessons, setLoadingFeaturedLessons] = useState(true); // Estado de carga
@@ -167,11 +171,38 @@ const HomePage = () => {
     }
   }, [inView, animation]);
 
+  // Efecto para redirigir al usuario si ya está autenticado y la carga inicial ha terminado
+  useEffect(() => {
+    if (user && !loading) {
+      navigate('/dashboard');
+    }
+  }, [user, loading, navigate]); // Dependencias: user, loading, navigate
+
+  // Función para manejar el clic en "Empieza ahora"
+  const handleComienzaAhoraClick = () => {
+    if (user) {
+      // Si está autenticado, redirigir al dashboard
+      navigate('/dashboard'); // Usar useNavigate
+    } else {
+      // Si no está autenticado, abrir el modal de iniciar sesión
+      handleOpenSigninModal();
+    }
+  };
+
+  // Si el usuario está cargando o ya autenticado, no renderizar el contenido de la página de inicio
+  // Esto evita que la página de inicio parpadee antes de la redirección.
+  if (loading || user) {
+    return <Loading />; // O un spinner, etc.
+  }
+
   return (
-    <> {/* Usar fragmento para envolver múltiples elementos */}
+    <>
+      {' '}
+      {/* Usar fragmento para envolver múltiples elementos */}
       <HomeNavbar
         onOpenSigninModal={handleOpenSigninModal}
         onOpenSignupModal={handleOpenSignupModal}
+        isAuthenticated={!!user} // Pasar el estado de autenticación
       />
       <motion.div
         className="container mx-auto py-8"
@@ -185,7 +216,11 @@ const HomePage = () => {
           showDefaultTriggers={false}
           onModalClose={handleModalClose} // Pass the handler
         />
-        <Carousel className="w-full max-w-5xl mx-auto" role="region" aria-roledescription="carousel">
+        <Carousel
+          className="w-full max-w-5xl mx-auto"
+          role="region"
+          aria-roledescription="carousel"
+        >
           <CarouselContent
             className="w-full h-[500px]"
             role="group"
@@ -203,7 +238,8 @@ const HomePage = () => {
                   buttons={card.buttons}
                   imageSrc={card.imageSrc}
                   imageAlt={card.alt}
-                  // onComienzaAhoraClick={handleOpenSignupModal} // Eliminar este prop
+                  isAuthenticated={!!user} // Pasar el estado de autenticación
+                  onComienzaAhoraClick={handleComienzaAhoraClick} // Pasar el nuevo manejador
                 />
               </CarouselItem>
             ))}
@@ -351,7 +387,9 @@ const HomePage = () => {
                             />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500 text-center">- {testimonial.name}</p>
+                            <p className="text-sm text-gray-500 text-center">
+                              - {testimonial.name}
+                            </p>
                           </div>
                         </div>
                       </CardContent>
@@ -369,7 +407,9 @@ const HomePage = () => {
                 size="icon"
                 className="absolute bottom-4 right-4 size-8 rounded-full" // Posicionar el botón
                 onClick={toggleTestimonialAutoplay}
-                aria-label={isTestimonialAutoplayPlaying ? 'Pausar autoplay' : 'Reproducir autoplay'}
+                aria-label={
+                  isTestimonialAutoplayPlaying ? 'Pausar autoplay' : 'Reproducir autoplay'
+                }
               >
                 {isTestimonialAutoplayPlaying ? (
                   <Pause className="size-4" />

@@ -39,8 +39,13 @@ const MultimediaUploadForm: React.FC = () => {
         setMessage('Archivo subido con éxito: ' + result.url);
         setSelectedFile(null); // Limpiar la selección después de subir
       } else {
-        const error = await response.text();
-        setMessage('Error al subir el archivo: ' + error);
+        try {
+          const errorJson = await response.json();
+          setMessage('Error al subir el archivo: ' + errorJson.message);
+        } catch {
+          const errorText = await response.text();
+          setMessage('Error al subir el archivo: ' + errorText);
+        }
       }
     } catch (error) {
       setMessage('Error de red o del servidor: ' + error);

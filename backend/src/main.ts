@@ -3,15 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
+import cookieParser from 'cookie-parser'; // Importar cookie-parser
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import { join } from 'path';
+import favicon from 'serve-favicon';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import favicon from 'serve-favicon';
-import { join } from 'path';
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'; // Importar JwtAuthGuard
-import { Reflector } from '@nestjs/core'; // Importar Reflector
 
 async function bootstrap() {
   // Crear la aplicación con opciones de seguridad
@@ -19,11 +18,15 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log'],
   });
 
+  const configService = app.get(ConfigService); // Mover la declaración aquí
+  const allowedOrigins = configService.get<string>('ALLOWED_ORIGINS').split(',');
   app.enableCors({
-    origin: '*',
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
   });
+
+  app.use(cookieParser()); // Usar el middleware cookie-parser
 
   // Middleware para imprimir el cuerpo crudo recibido
   // app.use((req, res, next) => {
@@ -38,7 +41,6 @@ async function bootstrap() {
   //   });
   // });
 
-  const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
 
   // Configurar middleware de seguridad

@@ -51,9 +51,8 @@
 
 ## Próximos pasos
 
-- Automatizar despliegues a producción.
-- Mejorar cobertura de tests en el frontend.
-- Documentar nuevas funcionalidades y mejoras.
-
 Ver próximos pasos en [`docs/Pendientes.md`](./Pendientes.md).
-- **Licencia:** MIT License
+
+---
+
+Última actualización: 22/4/2025, 12:18:11 a. m. (America/Bogota, UTC-5:00)

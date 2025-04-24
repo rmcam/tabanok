@@ -21,8 +21,8 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, requiredRoles }) 
     return <Navigate to="/" state={{ from: location, showSigninModal: true }} />;
   }
 
-  // Descomentar la lógica de verificación de roles
-  if (requiredRoles && user && !requiredRoles.includes(user.role)) {
+  // Lógica de verificación de roles
+  if (requiredRoles && user && !user.roles.some(role => requiredRoles.includes(role))) {
     return <Navigate to="/unauthorized" />;
   }
 
